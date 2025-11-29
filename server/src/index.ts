@@ -8,15 +8,15 @@ const app = express();
 const http = createServer(app);
 const port = process.env.PORT || 8081;
 
-// redirect to https
-app.enable('trust proxy');
-app.all('*', (req, res, next) => {
-  if (req.ip !== '::1' && req.ip !== '::ffff:127.0.0.1' && !req.secure) {
-    res.redirect(`https://${req.hostname}${req.url}`);
-  } else {
-    next();
-  }
-});
+// redirect to https - disabled for local dev
+// app.enable('trust proxy');
+// app.all('*', (req, res, next) => {
+//   if (req.ip !== '::1' && req.ip !== '::ffff:127.0.0.1' && !req.secure) {
+//     res.redirect(`https://${req.hostname}${req.url}`);
+//   } else {
+//     next();
+//   }
+// });
 
 const io = new Server(http, { path: '/s/' });
 initSocket(io);
