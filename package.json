@@ -2,8 +2,8 @@
     "name": "citadels-online",
     "version": "0.0.0",
     "scripts": {
-        "heroku-prebuild": "npm install --prefix common && npm install --prefix server && npm install --prefix client",
-        "heroku-postbuild": "cd ./server && npm run build && cd ../client && npm run build"
+        "heroku-prebuild": "npm install --prefix common && npm install --prefix server && npm install --prefix ui",
+        "heroku-postbuild": "cd ./server && npm run build && cd ../ui && npm run build"
     },
     "engines": {
         "node": "^16.5.0",
