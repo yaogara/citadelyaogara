@@ -6,8 +6,8 @@ const friendlyNameToSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-
 
 // Mapping of district id (from citadels-common) to a best-guess asset path. If an image is missing
 // Vite will serve the placeholder from /public/cards/.
-export const DISTRICT_IMAGE_MAP: Record<string, string> = Object.entries(districts).reduce((acc, [id, payload]) => {
-  const slug = friendlyNameToSlug(payload.name);
+export const DISTRICT_IMAGE_MAP: Record<string, string> = Object.entries(districts).reduce((acc, [id]) => {
+  const slug = friendlyNameToSlug(id);
   acc[id] = `/cards/${slug}.jpg`;
   return acc;
 }, {} as Record<string, string>);

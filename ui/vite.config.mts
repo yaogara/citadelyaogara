@@ -7,6 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'citadels-common': path.resolve(__dirname, '../common/src/index.ts'),
     },
   },
   build: {
