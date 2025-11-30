@@ -154,8 +154,8 @@ export default function App() {
   const labMode = isCurrentPlayerSelf && clientState?.board?.turnState === ClientTurnState.LABORATORY_DISCARD_CARD;
   const chooseCardMode = isCurrentPlayerSelf && clientState?.board?.turnState === ClientTurnState.CHOOSE_CARD;
   const putAsideMode = clientState?.board?.characters.state.type !== undefined
-    && isCurrentPlayerSelf
     && [CCST.PUT_ASIDE_FACE_UP, CCST.PUT_ASIDE_FACE_DOWN, CCST.PUT_ASIDE_FACE_DOWN_UP].includes(clientState.board.characters.state.type);
+  const canInteractWithCharacters = putAsideMode && isCurrentPlayerSelf;
   const exchangeHandMode = isCurrentPlayerSelf && clientState?.board?.turnState === ClientTurnState.MAGICIAN_EXCHANGE_HAND;
 
   const currentPlayerId = clientState?.board
@@ -240,9 +240,9 @@ export default function App() {
         </div>
         <div className="text-xs text-slate-400">City ({board.city.length}):</div>
         <div className="flex flex-wrap gap-2">
-          {districts.map((card) => card && (
+          {districts.map((card, index) => card && (
             <div
-              key={card.id}
+              key={`city-${card.id}-${index}`}
               className="relative"
               onClick={() => destroyMode && handleDestroyDistrict(id, card.id as DistrictId)}
             >
@@ -258,9 +258,9 @@ export default function App() {
           <div className="space-y-2">
             <div className="text-xs text-slate-400">Hand ({board.hand.filter(Boolean).length}):</div>
             <div className="flex gap-2 flex-wrap">
-              {hand.map((card) => card && (
+              {hand.map((card, index) => card && (
                 <div
-                  key={card.id}
+                  key={`hand-${card.id}-${index}`}
                   onClick={() => {
                     if (buildMode) return handleBuildCard(card.id as DistrictId);
                     if (discardCardsMode) return handleDiscardCard(card.id as DistrictId);
@@ -277,8 +277,8 @@ export default function App() {
               <div className="space-y-1">
                 <div className="text-xs text-amber-300">Choose from drawn cards:</div>
                 <div className="flex gap-2 flex-wrap">
-                  {tmpHand.map((card) => card && (
-                    <div key={card.id} onClick={() => handleDrawnCardChoice(card.id as DistrictId)}>
+                  {tmpHand.map((card, index) => card && (
+                    <div key={`tmpHand-${card.id}-${index}`} onClick={() => handleDrawnCardChoice(card.id as DistrictId)}>
                       <DistrictCard district={card} mini />
                     </div>
                   ))}
@@ -302,9 +302,22 @@ export default function App() {
           <div className="text-sm font-semibold text-slate-200 mb-2">Callable characters</div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
             {characters.callable.map((character, index) => {
-              const meta = CHARACTER_BY_ID[character.id - 1] || CHARACTER_BY_ID[character.id];
+              const isHidden = character.id === 0;
+              const meta = isHidden ? null : (CHARACTER_BY_ID[character.id - 1] || CHARACTER_BY_ID[character.id]);
+              if (isHidden && !meta) {
+                // Show hidden card placeholder
+                return (
+                  <div key={`hidden-${index}`}>
+                    <CharacterCard
+                      character={{ id: -1, name: 'Hidden', rank: 0, color: 'purple', description: '' }}
+                      hidden
+                      disabled
+                    />
+                  </div>
+                );
+              }
               if (!meta) return null;
-              const disabled = !putAsideMode && !killMode && !robMode && characters.state.type !== CCST.CHOOSE_CHARACTER;
+              const disabled = !canInteractWithCharacters && !killMode && !robMode && characters.state.type !== CCST.CHOOSE_CHARACTER && characters.state.type !== CCST.INITIAL;
               return (
                 <div key={character.id} onClick={() => !disabled && handleCharacterSelect(index, character.id)}>
                   <CharacterCard

@@ -49,6 +49,12 @@ export default defineConfig(({ command }) => ({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    proxy: {
+      '/s/': {
+        target: 'http://localhost:8081',
+        ws: true,
+      },
+    },
   },
   preview: {
     host: '0.0.0.0',

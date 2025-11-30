@@ -2,6 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import os from 'os';
 import path from 'path';
+import cors from 'cors';
 import { Server } from 'socket.io';
 import { initSocket } from './socket/server';
 
@@ -9,6 +10,13 @@ const app = express();
 const http = createServer(app);
 const port = process.env.PORT || 8081;
 const host = process.env.HOST || '0.0.0.0';
+
+// Enable CORS for HTTP requests
+app.use(cors({
+  origin: process.env.CLIENT_ORIGIN || '*',
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
 
 function getLanAddresses() {
   const nets = os.networkInterfaces();
@@ -36,9 +44,11 @@ function getLanAddresses() {
 const io = new Server(http, {
   path: '/s/',
   cors: {
-    origin: process.env.CLIENT_ORIGIN || '*',
+    origin: '*',
     methods: ['GET', 'POST'],
+    credentials: true
   },
+  allowEIO3: true
 });
 initSocket(io);
 
