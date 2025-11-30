@@ -52,15 +52,55 @@ class SocketGameService {
 
   private playerId?: PlayerId;
 
+  private resolveSocketUrl() {
+    const envUrl = import.meta.env.VITE_SERVER_URL || import.meta.env.VITE_SOCKET_URL;
+    if (envUrl) return envUrl as string;
+
+    if (typeof window === 'undefined') return undefined;
+
+    const { protocol, hostname, port } = window.location;
+    const devPort = (import.meta.env.VITE_SERVER_PORT as string) || '8081';
+
+    // In development (Vite defaults to 5173/4173) we need to hit the API port instead.
+    if (port && port !== '80' && port !== '443' && port !== devPort) {
+      return `${protocol}//${hostname}:${devPort}`;
+    }
+
+    return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
+  }
+
   private ensureSocket() {
     if (!this.socket) {
-      this.socket = io({ path: '/s/' });
+      const serverUrl = this.resolveSocketUrl();
+      // eslint-disable-next-line no-console
+      console.log(`[socket] connecting to ${serverUrl ?? 'current origin'}...`);
+      this.socket = io(serverUrl, { path: '/s/' });
       this.registerSocketEvents();
     }
   }
 
   private registerSocketEvents() {
     if (!this.socket) return;
+
+    this.socket.on('connect', () => {
+      // eslint-disable-next-line no-console
+      console.log(`[socket] connected as ${this.socket?.id}`);
+    });
+
+    this.socket.on('connect_error', (error) => {
+      // eslint-disable-next-line no-console
+      console.error('[socket] connection error', error);
+    });
+
+    this.socket.on('error', (error) => {
+      // eslint-disable-next-line no-console
+      console.error('[socket] error', error);
+    });
+
+    this.socket.on('joined room', (joinedId: RoomId) => {
+      // eslint-disable-next-line no-console
+      console.log('[socket] joined room', joinedId);
+    });
 
     this.socket.on('update game state', (payload: SerializedClientGameState) => {
       const state = inflateClientGameState(payload);
@@ -113,6 +153,8 @@ class SocketGameService {
           return;
         }
         this.roomId = roomId;
+        // eslint-disable-next-line no-console
+        console.log('[socket] room created', roomId);
         resolve(roomId);
       });
     });
@@ -134,6 +176,8 @@ class SocketGameService {
           }
           this.roomId = roomId;
           this.playerId = state.self;
+          // eslint-disable-next-line no-console
+          console.log('[socket] joined room acknowledged', roomId, 'as', this.playerId);
           this.pushState(state);
           resolve(state);
         },

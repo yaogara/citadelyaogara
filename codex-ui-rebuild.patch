@@ -1,0 +1,579 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/server/src/index.ts b/server/src/index.ts
+index 0d19d16c7f69033a23fb1a32505d0c8786083388..8c663410e870c991833b539fd3eaef8a3bbe84f0 100644
+--- a/server/src/index.ts
++++ b/server/src/index.ts
+@@ -1,32 +1,58 @@
+ import express from 'express';
+ import { createServer } from 'http';
++import os from 'os';
+ import path from 'path';
+ import { Server } from 'socket.io';
+ import { initSocket } from './socket/server';
+ 
+ const app = express();
+ const http = createServer(app);
+ const port = process.env.PORT || 8081;
++const host = process.env.HOST || '0.0.0.0';
++
++function getLanAddresses() {
++  const nets = os.networkInterfaces();
++  const addresses: string[] = [];
++  Object.values(nets).forEach((net) => {
++    net?.forEach((details) => {
++      if (details.family === 'IPv4' && !details.internal) {
++        addresses.push(details.address);
++      }
++    });
++  });
++  return addresses;
++}
+ 
+ // redirect to https - disabled for local dev
+ // app.enable('trust proxy');
+ // app.all('*', (req, res, next) => {
+ //   if (req.ip !== '::1' && req.ip !== '::ffff:127.0.0.1' && !req.secure) {
+ //     res.redirect(`https://${req.hostname}${req.url}`);
+ //   } else {
+ //     next();
+ //   }
+ // });
+ 
+-const io = new Server(http, { path: '/s/' });
++const io = new Server(http, {
++  path: '/s/',
++  cors: {
++    origin: process.env.CLIENT_ORIGIN || '*',
++    methods: ['GET', 'POST'],
++  },
++});
+ initSocket(io);
+ 
+ const uiDistPath = path.join(__dirname, '../../ui/dist');
+ app.use(express.static(uiDistPath));
+ app.get('*', (_, res) => {
+   res.sendFile(path.join(uiDistPath, 'index.html'));
+ });
+ 
+-http.listen(port, () => {
+-  console.log(`Citadels game server listening on http://localhost:${port}`);
++http.listen(Number(port), host, () => {
++  console.log(`Citadels game server listening on http://${host}:${port}`);
++  const lanAddresses = getLanAddresses();
++  if (lanAddresses.length > 0) {
++    console.log('LAN access points:');
++    lanAddresses.forEach((addr) => console.log(`  http://${addr}:${port}`));
++  }
+ });
+diff --git a/ui/postcss.config.js b/ui/postcss.config.js
+index 2e7af2b7f1a6f391da1631d93968a9d487ba977d..66188972a82895c8fb78382fdc51d29469de3745 100644
+--- a/ui/postcss.config.js
++++ b/ui/postcss.config.js
+@@ -1,6 +1,6 @@
+-export default {
+-  plugins: {
+-    tailwindcss: {},
+-    autoprefixer: {},
+-  },
+-}
++module.exports = {
++  plugins: [
++    require('./tailwind.postcss.cjs'),
++    require('autoprefixer'),
++  ],
++};
+diff --git a/ui/public/favicon.ico b/ui/public/favicon.ico
+new file mode 100644
+index 0000000000000000000000000000000000000000..1e7a00beac584150ef38518df0470092f67bf8e3
+GIT binary patch
+literal 1150
+zcmZQzU<5(|0R|wcz>vYhz#zuJz@P!dKp~(AL>x#lFaYJy!T&0T|D$*`3`Wzy$V>z1
+I<pHUD0AIg(VE_OC
+
+literal 0
+HcmV?d00001
+
+diff --git a/ui/src/cardMetadata.ts b/ui/src/cardMetadata.ts
+index ae2a2a83a6c469d6efa88b8c81ce1ea2ce5c110c..1e4a3525008096cc76389944fddfd90031d44c4c 100644
+--- a/ui/src/cardMetadata.ts
++++ b/ui/src/cardMetadata.ts
+@@ -1,18 +1,20 @@
+ import { districts } from 'citadels-common';
+ 
+ export const CARD_IMAGE_PLACEHOLDER = '/cards/placeholder.svg';
+ 
+ const friendlyNameToSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+ 
++const safeDistrictEntries = districts ? Object.entries(districts) : [];
++
+ // Mapping of district id (from citadels-common) to a best-guess asset path. If an image is missing
+ // Vite will serve the placeholder from /public/cards/.
+-export const DISTRICT_IMAGE_MAP: Record<string, string> = Object.entries(districts).reduce((acc, [id]) => {
++export const DISTRICT_IMAGE_MAP: Record<string, string> = safeDistrictEntries.reduce((acc, [id]) => {
+   const slug = friendlyNameToSlug(id);
+   acc[id] = `/cards/${slug}.jpg`;
+   return acc;
+ }, {} as Record<string, string>);
+ 
+ export function resolveDistrictImage(id?: string | null) {
+   if (!id) return CARD_IMAGE_PLACEHOLDER;
+   return DISTRICT_IMAGE_MAP[id] ?? CARD_IMAGE_PLACEHOLDER;
+ }
+diff --git a/ui/src/constants.ts b/ui/src/constants.ts
+index 34d6700bf4681addc081c3a22266210406f89a0d..6579676e915c45f24833dbea4b0eedab2b4e00b2 100644
+--- a/ui/src/constants.ts
++++ b/ui/src/constants.ts
+@@ -1,36 +1,75 @@
+ import { CharacterType, districts } from 'citadels-common';
+ import { CharacterMeta, DistrictMeta } from './types';
+ import { resolveDistrictImage } from './cardMetadata';
+ 
++type DistrictDefinition = {
++  type?: number;
++  cost?: number;
++  name?: string;
++  color?: string;
++  description?: string;
++  extra_points?: number;
++};
++
++const DISTRICT_COLOR_BY_TYPE: Record<number, DistrictMeta['color']> = {
++  1: 'yellow',
++  2: 'blue',
++  3: 'green',
++  4: 'red',
++  5: 'purple',
++};
++
++const districtEntries = districts
++  ? Object.entries(districts as Record<string, DistrictDefinition>)
++  : [];
++
++function toFriendlyDistrictName(id: string, payload?: DistrictDefinition) {
++  if (payload?.name) return payload.name;
++  return id
++    .split('_')
++    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
++    .join(' ');
++}
++
+ export const CHARACTERS: CharacterMeta[] = [
+   { id: CharacterType.ASSASSIN, name: 'Assassin', rank: 1, color: 'purple', description: 'Silently remove a rival from this round.' },
+   { id: CharacterType.THIEF, name: 'Thief', rank: 2, color: 'green', description: 'Steal the gold of the named character when their turn begins.' },
+   { id: CharacterType.MAGICIAN, name: 'Magician', rank: 3, color: 'purple', description: 'Swap hands or cycle cards with the deck.' },
+   { id: CharacterType.KING, name: 'King', rank: 4, color: 'yellow', description: 'Takes the crown and earns from noble districts.' },
+   { id: CharacterType.BISHOP, name: 'Bishop', rank: 5, color: 'blue', description: 'Protects cities from destruction and earns from religious districts.' },
+   { id: CharacterType.MERCHANT, name: 'Merchant', rank: 6, color: 'green', description: 'Gains extra gold and earns from trade districts.' },
+   { id: CharacterType.ARCHITECT, name: 'Architect', rank: 7, color: 'blue', description: 'Builds quickly with additional cards drawn.' },
+   { id: CharacterType.WARLORD, name: 'Warlord', rank: 8, color: 'red', description: 'Destroys enemy districts and earns from military sites.' },
+ ];
+ 
+ export const CHARACTER_BY_ID: Record<number, CharacterMeta> = CHARACTERS.reduce((acc, char) => ({
+   ...acc,
+   [char.id]: char,
+ }), {} as Record<number, CharacterMeta>);
+ 
+-export const DISTRICTS: Record<string, DistrictMeta> = Object.entries(districts).reduce((acc, [id, payload]) => ({
+-  ...acc,
+-  [id]: {
++export const DISTRICTS: Record<string, DistrictMeta> = districtEntries.reduce((acc, [id, payload]) => {
++  const color = payload?.color || DISTRICT_COLOR_BY_TYPE[payload?.type ?? 5] || 'purple';
++  const description = payload?.description
++    || (payload?.extra_points ? `Worth ${payload.extra_points} extra points.` : undefined);
++
++  acc[id] = {
+     id,
+-    name: payload.name,
+-    color: payload.color as DistrictMeta['color'],
+-    cost: payload.cost,
+-    description: payload.description,
++    name: toFriendlyDistrictName(id, payload),
++    color,
++    cost: payload?.cost ?? 0,
++    description,
+     image: resolveDistrictImage(id),
+-  },
+-}), {} as Record<string, DistrictMeta>);
++  };
++  return acc;
++}, {} as Record<string, DistrictMeta>);
+ 
+ export function getDistrictMeta(id: string | null | undefined): DistrictMeta | undefined {
+   if (!id) return undefined;
+-  return DISTRICTS[id];
++  return DISTRICTS[id] ?? {
++    id,
++    name: toFriendlyDistrictName(id),
++    color: 'purple',
++    cost: 0,
++    image: resolveDistrictImage(id),
++  };
+ }
+diff --git a/ui/src/services/gameService.ts b/ui/src/services/gameService.ts
+index 743f923399733aec9e498e2105d4df1e2c08d68a..18f5a38b98dd31eecf5a0f1c350401b763a99667 100644
+--- a/ui/src/services/gameService.ts
++++ b/ui/src/services/gameService.ts
+@@ -30,60 +30,100 @@ function inflateClientGameState(state: SerializedClientGameState | null): Client
+   if (!state) return null;
+ 
+   const players = new Map(state.players);
+   const board = state.board
+     ? { ...state.board, players: new Map(state.board.players) }
+     : undefined;
+ 
+   return {
+     ...state,
+     players,
+     board: board as ClientGameState['board'],
+   } as ClientGameState;
+ }
+ 
+ class SocketGameService {
+   private socket: Socket | null = null;
+ 
+   private listeners = new Set<(state: ClientGameState) => void>();
+ 
+   private latestState: ClientGameState | null = null;
+ 
+   private roomId?: RoomId;
+ 
+   private playerId?: PlayerId;
+ 
++  private resolveSocketUrl() {
++    const envUrl = import.meta.env.VITE_SERVER_URL || import.meta.env.VITE_SOCKET_URL;
++    if (envUrl) return envUrl as string;
++
++    if (typeof window === 'undefined') return undefined;
++
++    const { protocol, hostname, port } = window.location;
++    const devPort = (import.meta.env.VITE_SERVER_PORT as string) || '8081';
++
++    // In development (Vite defaults to 5173/4173) we need to hit the API port instead.
++    if (port && port !== '80' && port !== '443' && port !== devPort) {
++      return `${protocol}//${hostname}:${devPort}`;
++    }
++
++    return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
++  }
++
+   private ensureSocket() {
+     if (!this.socket) {
+-      this.socket = io({ path: '/s/' });
++      const serverUrl = this.resolveSocketUrl();
++      // eslint-disable-next-line no-console
++      console.log(`[socket] connecting to ${serverUrl ?? 'current origin'}...`);
++      this.socket = io(serverUrl, { path: '/s/' });
+       this.registerSocketEvents();
+     }
+   }
+ 
+   private registerSocketEvents() {
+     if (!this.socket) return;
+ 
++    this.socket.on('connect', () => {
++      // eslint-disable-next-line no-console
++      console.log(`[socket] connected as ${this.socket?.id}`);
++    });
++
++    this.socket.on('connect_error', (error) => {
++      // eslint-disable-next-line no-console
++      console.error('[socket] connection error', error);
++    });
++
++    this.socket.on('error', (error) => {
++      // eslint-disable-next-line no-console
++      console.error('[socket] error', error);
++    });
++
++    this.socket.on('joined room', (joinedId: RoomId) => {
++      // eslint-disable-next-line no-console
++      console.log('[socket] joined room', joinedId);
++    });
++
+     this.socket.on('update game state', (payload: SerializedClientGameState) => {
+       const state = inflateClientGameState(payload);
+       if (state) this.pushState(state);
+     });
+ 
+     this.socket.on('add player', (player) => {
+       if (!this.latestState) return;
+       const players = new Map(this.latestState.players);
+       players.set(player.id, player);
+       this.pushState({ ...this.latestState, players });
+     });
+ 
+     this.socket.on('left room', (playerId: PlayerId) => {
+       if (!this.latestState) return;
+       const players = new Map(this.latestState.players);
+       const player = players.get(playerId);
+       if (player) {
+         players.set(playerId, { ...player, online: false });
+         this.pushState({ ...this.latestState, players });
+       }
+     });
+   }
+ 
+   private pushState(state: ClientGameState) {
+     this.latestState = state;
+@@ -91,71 +131,75 @@ class SocketGameService {
+   }
+ 
+   disconnect() {
+     this.socket?.removeAllListeners();
+     this.socket?.disconnect();
+     this.socket = null;
+     this.latestState = null;
+     this.listeners.clear();
+   }
+ 
+   onStateUpdate(callback: (state: ClientGameState) => void) {
+     this.listeners.add(callback);
+     if (this.latestState) callback(this.latestState);
+     return () => this.listeners.delete(callback);
+   }
+ 
+   async createRoom(): Promise<RoomId> {
+     this.ensureSocket();
+     return new Promise((resolve, reject) => {
+       this.socket?.emit('create room', (roomId: RoomId) => {
+         if (!roomId) {
+           reject(new Error('Failed to create room'));
+           return;
+         }
+         this.roomId = roomId;
++        // eslint-disable-next-line no-console
++        console.log('[socket] room created', roomId);
+         resolve(roomId);
+       });
+     });
+   }
+ 
+   async joinRoom(roomId: RoomId, playerId: PlayerId | undefined, username: string) {
+     this.ensureSocket();
+     return new Promise<ClientGameState | null>((resolve, reject) => {
+       this.socket?.emit(
+         'join room',
+         roomId,
+         playerId,
+         username,
+         (payload: SerializedClientGameState | null) => {
+           const state = inflateClientGameState(payload);
+           if (!state) {
+             reject(new Error('Room is closed or not found'));
+             return;
+           }
+           this.roomId = roomId;
+           this.playerId = state.self;
++          // eslint-disable-next-line no-console
++          console.log('[socket] joined room acknowledged', roomId, 'as', this.playerId);
+           this.pushState(state);
+           resolve(state);
+         },
+       );
+     });
+   }
+ 
+   async startGame(setup: GameSetupData) {
+     this.ensureSocket();
+     return new Promise<void>((resolve, reject) => {
+       this.socket?.emit('start game', setup, (result: { status: string; message?: string }) => {
+         if (result?.status === 'ok') {
+           resolve();
+         } else {
+           reject(new Error(result?.message || 'Unable to start game'));
+         }
+       });
+     });
+   }
+ 
+   async sendMove(move: Move) {
+     this.ensureSocket();
+     return new Promise<void>((resolve, reject) => {
+       this.socket?.emit('make move', move, (result: { status: string; message?: string }) => {
+         if (result?.status === 'ok') {
+diff --git a/ui/tailwind.config.js b/ui/tailwind.config.js
+index dca8ba02d37dfd402f17d6004160b24574432251..1595ec9dc2ba1fc8eb7bebec6838a9623147eee0 100644
+--- a/ui/tailwind.config.js
++++ b/ui/tailwind.config.js
+@@ -1,11 +1,11 @@
+ /** @type {import('tailwindcss').Config} */
+-export default {
++module.exports = {
+   content: [
+-    "./index.html",
+-    "./src/**/*.{js,ts,jsx,tsx}",
++    './index.html',
++    './src/**/*.{js,ts,jsx,tsx}',
+   ],
+   theme: {
+     extend: {},
+   },
+   plugins: [],
+-}
++};
+diff --git a/ui/tailwind.postcss.cjs b/ui/tailwind.postcss.cjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..445828ee7088462558569a14f73795284e703426
+--- /dev/null
++++ b/ui/tailwind.postcss.cjs
+@@ -0,0 +1,64 @@
++const fs = require('fs');
++const path = require('path');
++const postcss = require('postcss');
++const { compile } = require('tailwindcss');
++
++function collectFiles(targetPath, bucket = []) {
++  if (!fs.existsSync(targetPath)) return bucket;
++  const stats = fs.statSync(targetPath);
++  if (stats.isDirectory()) {
++    for (const entry of fs.readdirSync(targetPath)) {
++      if (entry === 'node_modules' || entry.startsWith('.')) continue;
++      collectFiles(path.join(targetPath, entry), bucket);
++    }
++  } else {
++    bucket.push(targetPath);
++  }
++  return bucket;
++}
++
++function extractCandidates(text) {
++  const candidates = new Set();
++  const pattern = /(?:[A-Za-z0-9_-]+\[[^\]]+\])|[A-Za-z0-9_:\-./%]+/g;
++  const matches = text.match(pattern) || [];
++  for (const token of matches) {
++    if (token.length < 2) continue;
++    if (!/[A-Za-z]/.test(token)) continue;
++    if (token.includes('class') || token.includes('http')) continue;
++    candidates.add(token);
++  }
++  return candidates;
++}
++
++module.exports = () => {
++  return {
++    postcssPlugin: 'tailwindcss-lite',
++    async Once(root, { result }) {
++      const cssInput = root.toString();
++      const compiled = await compile(cssInput, { from: result.opts.from });
++
++      const projectRoot = __dirname;
++      const targets = [path.join(projectRoot, 'index.html'), path.join(projectRoot, 'src')];
++      const candidates = new Set();
++      for (const target of targets) {
++        const files = collectFiles(target);
++        for (const file of files) {
++          try {
++            const content = fs.readFileSync(file, 'utf8');
++            extractCandidates(content).forEach((token) => candidates.add(token));
++          } catch (error) {
++            // eslint-disable-next-line no-console
++            console.warn(`tailwindcss-lite: unable to read ${file}:`, error.message);
++          }
++        }
++      }
++
++      const outputCss = compiled.build(Array.from(candidates));
++      const parsed = postcss.parse(outputCss, { from: result.opts.from });
++      root.removeAll();
++      root.append(parsed.nodes);
++    },
++  };
++};
++
++module.exports.postcss = true;
+diff --git a/ui/tsconfig.node.json b/ui/tsconfig.node.json
+index 70be5918767687880574001361924942a1de3b9d..0e6353de4c0ba8001ea6aec7102aabe6454bb6fc 100644
+--- a/ui/tsconfig.node.json
++++ b/ui/tsconfig.node.json
+@@ -1,10 +1,13 @@
+ {
+   "compilerOptions": {
+     "composite": true,
+     "skipLibCheck": true,
+     "module": "ESNext",
+-    "moduleResolution": "Node",
+-    "allowSyntheticDefaultImports": true
++    "moduleResolution": "Bundler",
++    "allowSyntheticDefaultImports": true,
++    "types": ["node"],
++    "lib": ["ESNext"],
++    "typeRoots": ["./node_modules/@types", "../server/node_modules/@types"]
+   },
+   "include": ["vite.config.mts"]
+ }
+diff --git a/ui/vite.config.mts b/ui/vite.config.mts
+index ba071400eb18c9ca4f533ffd35996c96e4c91af0..674d65c1c373e8d7c903fcaefe001caa9c7fa1b9 100644
+--- a/ui/vite.config.mts
++++ b/ui/vite.config.mts
+@@ -1,17 +1,61 @@
+-import { defineConfig } from 'vite';
++import { defineConfig, type Plugin } from 'vite';
+ import react from '@vitejs/plugin-react';
+-import path from 'path';
++import { networkInterfaces } from 'os';
++import { dirname, resolve } from 'path';
++import { fileURLToPath } from 'url';
+ 
+-export default defineConfig({
+-  plugins: [react()],
++const rootDir = dirname(fileURLToPath(import.meta.url));
++
++function lanAddressLogger(): Plugin {
++  return {
++    name: 'lan-address-logger',
++    configureServer(server) {
++      server.httpServer?.on('listening', () => {
++        const addresses: string[] = [];
++        const nets = networkInterfaces();
++        Object.values(nets).forEach((net = []) => {
++          net.forEach((details) => {
++            if (details.family === 'IPv4' && !details.internal) {
++              addresses.push(details.address);
++            }
++          });
++        });
++
++        if (addresses.length > 0) {
++          const port = server.config.server.port ?? 5173;
++          // Vite already prints host/port, but make LAN URLs explicit for mobile testing.
++          // eslint-disable-next-line no-console
++          console.log('\nAccess the dev server on your LAN:');
++          addresses.forEach((addr) => {
++            // eslint-disable-next-line no-console
++            console.log(`  http://${addr}:${port}`);
++          });
++          // eslint-disable-next-line no-console
++          console.log('');
++        }
++      });
++    },
++  };
++}
++
++export default defineConfig(({ command }) => ({
++  plugins: [react(), ...(command === 'serve' ? [lanAddressLogger()] : [])],
+   resolve: {
+     alias: {
+-      '@': path.resolve(__dirname, './src'),
+-      'citadels-common': path.resolve(__dirname, '../common/src/index.ts'),
++      '@': resolve(rootDir, './src'),
++      'citadels-common': resolve(rootDir, '../common/src/index.ts'),
+     },
+   },
++  server: {
++    host: '0.0.0.0',
++    port: 5173,
++  },
++  preview: {
++    host: '0.0.0.0',
++    port: 4173,
++  },
+   build: {
+     outDir: 'dist',
+     emptyOutDir: true,
+   },
+-});
++}));
+ 
+EOF
+)

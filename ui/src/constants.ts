@@ -2,6 +2,35 @@ import { CharacterType, districts } from 'citadels-common';
 import { CharacterMeta, DistrictMeta } from './types';
 import { resolveDistrictImage } from './cardMetadata';
 
+type DistrictDefinition = {
+  type?: number;
+  cost?: number;
+  name?: string;
+  color?: string;
+  description?: string;
+  extra_points?: number;
+};
+
+const DISTRICT_COLOR_BY_TYPE: Record<number, DistrictMeta['color']> = {
+  1: 'yellow',
+  2: 'blue',
+  3: 'green',
+  4: 'red',
+  5: 'purple',
+};
+
+const districtEntries = districts
+  ? Object.entries(districts as Record<string, DistrictDefinition>)
+  : [];
+
+function toFriendlyDistrictName(id: string, payload?: DistrictDefinition) {
+  if (payload?.name) return payload.name;
+  return id
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
 export const CHARACTERS: CharacterMeta[] = [
   { id: CharacterType.ASSASSIN, name: 'Assassin', rank: 1, color: 'purple', description: 'Silently remove a rival from this round.' },
   { id: CharacterType.THIEF, name: 'Thief', rank: 2, color: 'green', description: 'Steal the gold of the named character when their turn begins.' },
@@ -18,19 +47,29 @@ export const CHARACTER_BY_ID: Record<number, CharacterMeta> = CHARACTERS.reduce(
   [char.id]: char,
 }), {} as Record<number, CharacterMeta>);
 
-export const DISTRICTS: Record<string, DistrictMeta> = Object.entries(districts).reduce((acc, [id, payload]) => ({
-  ...acc,
-  [id]: {
+export const DISTRICTS: Record<string, DistrictMeta> = districtEntries.reduce((acc, [id, payload]) => {
+  const color = payload?.color || DISTRICT_COLOR_BY_TYPE[payload?.type ?? 5] || 'purple';
+  const description = payload?.description
+    || (payload?.extra_points ? `Worth ${payload.extra_points} extra points.` : undefined);
+
+  acc[id] = {
     id,
-    name: payload.name,
-    color: payload.color as DistrictMeta['color'],
-    cost: payload.cost,
-    description: payload.description,
+    name: toFriendlyDistrictName(id, payload),
+    color,
+    cost: payload?.cost ?? 0,
+    description,
     image: resolveDistrictImage(id),
-  },
-}), {} as Record<string, DistrictMeta>);
+  };
+  return acc;
+}, {} as Record<string, DistrictMeta>);
 
 export function getDistrictMeta(id: string | null | undefined): DistrictMeta | undefined {
   if (!id) return undefined;
-  return DISTRICTS[id];
+  return DISTRICTS[id] ?? {
+    id,
+    name: toFriendlyDistrictName(id),
+    color: 'purple',
+    cost: 0,
+    image: resolveDistrictImage(id),
+  };
 }
