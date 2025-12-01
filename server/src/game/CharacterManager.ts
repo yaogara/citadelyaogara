@@ -1,5 +1,6 @@
 import { ClientTurnState, CharacterChoosingStateType as CCST, PlayerPosition } from 'citadels-common';
 import { CharacterChoosingState } from './ChoosingState';
+import Debug from 'debug';
 
 export enum CharacterType {
   NONE = -1,
@@ -73,6 +74,8 @@ export enum CharacterPosition {
   PLAYER_6,
   PLAYER_7,
 }
+
+const debug = Debug('citadels-server:char-manager');
 
 export default class CharacterManager {
   // player count between 2 and 7
@@ -359,6 +362,7 @@ export default class CharacterManager {
   }
 
   exportCharactersList(dest: PlayerPosition) {
+    debug('exportCharactersList for player %d', dest);
     let characters = {};
 
     switch (this.choosingState.getState().type) {
@@ -379,6 +383,7 @@ export default class CharacterManager {
       default:
     }
 
+    debug('Exported characters list: %O', { state: this.choosingState.getState(), ...characters });
     return {
       state: this.choosingState.getState(),
       ...characters,
@@ -407,13 +412,14 @@ export default class CharacterManager {
   }
 
   private exportListPutAside(dest: PlayerPosition) {
-    return this.exportListChooseCard(dest, false);
+    const { player: currentPlayer } = this.choosingState.getState();
+    const canSee = dest === currentPlayer;
+    debug('exportListPutAside for dest: %d, currentPlayer: %d, canSee: %s', dest, currentPlayer, canSee);
+    return this.exportListChooseCard(dest, canSee);
   }
 
   private exportListChooseCard(dest: PlayerPosition, canSee = true) {
     const { player } = this.choosingState.getState();
-    const isSpectator = player === PlayerPosition.SPECTATOR;
-    const canSeeList = canSee && (isSpectator || dest === player);
 
     return {
       // current character
@@ -423,7 +429,7 @@ export default class CharacterManager {
         (characterType) => this.getCharactersAtPosition(CharacterPosition.NOT_CHOSEN)
           ?.includes(characterType),
       ).map((characterType) => ({
-        id: canSeeList ? characterType + 1 : 0,
+        id: canSee ? characterType + 1 : 0,
         selectable: dest === player,
       })),
       // characters that are put aside

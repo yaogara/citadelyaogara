@@ -135,6 +135,17 @@ export default function App() {
 
   const isCurrentPlayerSelf = useMemo(() => {
     if (!clientState?.board) return false;
+    
+    // During character selection, use the choosing state's player instead of board's current player
+    if (clientState.board.gamePhase === GamePhase.CHOOSE_CHARACTERS && clientState.board.characters.state.player !== undefined) {
+      const choosingPlayerPosition = clientState.board.characters.state.player;
+      if (choosingPlayerPosition === -1) return false; // -1 is SPECTATOR
+      
+      const choosingPlayerId = clientState.board.playerOrder[choosingPlayerPosition];
+      return clientState.self === choosingPlayerId;
+    }
+    
+    // During other phases, use the board's current player
     const currentPlayerId = clientState.board.playerOrder[clientState.board.currentPlayer];
     return clientState.self === currentPlayerId;
   }, [clientState]);
@@ -145,6 +156,17 @@ export default function App() {
   const statusBar = clientState && clientState.board
     ? getStatusBarData(clientState, selectedCards)
     : null;
+
+  // Debug: Log character selection state
+  if (clientState?.board?.gamePhase === GamePhase.CHOOSE_CHARACTERS) {
+    console.log('Character selection state:', {
+      state: clientState.board.characters.state,
+      isCurrentPlayerSelf,
+      self: clientState.self,
+      playerOrder: clientState.board.playerOrder,
+      currentPlayer: clientState.board.currentPlayer,
+    });
+  }
 
   const killMode = isCurrentPlayerSelf && clientState?.board?.turnState === ClientTurnState.ASSASSIN_KILL;
   const robMode = isCurrentPlayerSelf && clientState?.board?.turnState === ClientTurnState.THIEF_ROB;
@@ -164,11 +186,16 @@ export default function App() {
 
   const handleCharacterSelect = async (index: number, characterId: number) => {
     if (!clientState) return;
-    let move: Move = { type: MoveType.CHOOSE_CHARACTER, data: index };
-    if (killMode) {
+    let move: Move;
+    if (characterId === -1) {
+      // Special case for starting character selection
+      move = { type: MoveType.CHOOSE_CHARACTER, data: -1 };
+    } else if (killMode) {
       move = { type: MoveType.ASSASSIN_KILL, data: characterId };
     } else if (robMode) {
       move = { type: MoveType.THIEF_ROB, data: characterId };
+    } else {
+      move = { type: MoveType.CHOOSE_CHARACTER, data: index };
     }
     await sendMove(move);
   };
@@ -304,8 +331,9 @@ export default function App() {
             {characters.callable.map((character, index) => {
               const isHidden = character.id === 0;
               const meta = isHidden ? null : (CHARACTER_BY_ID[character.id - 1] || CHARACTER_BY_ID[character.id]);
-              if (isHidden && !meta) {
-                // Show hidden card placeholder
+              
+              if (isHidden) {
+                // Show hidden card placeholder for all players during put-aside phases
                 return (
                   <div key={`hidden-${index}`}>
                     <CharacterCard
@@ -316,6 +344,7 @@ export default function App() {
                   </div>
                 );
               }
+              
               if (!meta) return null;
               const disabled = !canInteractWithCharacters && !killMode && !robMode && characters.state.type !== CCST.CHOOSE_CHARACTER && characters.state.type !== CCST.INITIAL;
               return (

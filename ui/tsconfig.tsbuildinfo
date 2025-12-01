@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/cardmetadata.ts","./src/constants.ts","./src/index.tsx","./src/types.ts","./src/components/cardcomponents.tsx","./src/services/gameservice.ts","./src/services/statusbar.ts"],"version":"5.9.3"}

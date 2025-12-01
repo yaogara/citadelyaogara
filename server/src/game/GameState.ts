@@ -14,6 +14,7 @@ import Debug from 'debug';
 import { Observer, Subject } from '../utils/observerPattern';
 import BoardState from './BoardState';
 import { CharacterPosition, CharacterType, TurnState } from './CharacterManager';
+import CharacterManager from './CharacterManager';
 
 import GameSetupData from './GameSetupData';
 import Player from './Player';
@@ -126,17 +127,12 @@ export default class GameState implements Subject {
       case GameProgress.IN_GAME:
         switch (this.board?.gamePhase) {
           case GamePhase.INITIAL:
-            if (move.type === MoveType.AUTO) {
-              setTimeout(() => {
-                if (this.board) {
-                  this.board.gamePhase = GamePhase.CHOOSE_CHARACTERS;
-                  this.step();
-                  this.notify();
-                }
-              }, 3000);
+            if (move.type === MoveType.CHOOSE_CHARACTER && move.data === -1) {
+              this.board.gamePhase = GamePhase.CHOOSE_CHARACTERS;
+              // We don't need to call step() here, the next AUTO move will handle it.
               return true;
             }
-            return false;
+            return move.type === MoveType.AUTO;
 
           case GamePhase.CHOOSE_CHARACTERS:
             {
@@ -145,24 +141,44 @@ export default class GameState implements Subject {
               const ccs = cm.choosingState;
               switch (ccs.getState().type) {
                 case CCST.INITIAL:
-                  if (move.type === MoveType.AUTO) {
-                    setTimeout(() => {
-                      ccs.step();
-                      this.notify();
-                    }, 3000);
+                  debug('Handling move in CCST.INITIAL: %s', MoveType[move.type]);
+                  if (move.type === MoveType.CHOOSE_CHARACTER && move.data === -1) {
+                    ccs.step();
                     return true;
                   }
+                  debug('Move was not CHOOSE_CHARACTER with data -1, returning false.');
+                  return false;
+
+                case CCST.GET_ASIDE_FACE_DOWN:
+                  // this is an automatic step, should not be triggered by a player move
                   return false;
 
                 case CCST.PUT_ASIDE_FACE_DOWN:
-                  return move.type === MoveType.CHOOSE_CHARACTER && cm.chooseRandomCharacter();
+                  if (move.type === MoveType.CHOOSE_CHARACTER && cm.chooseRandomCharacter()) {
+                    return true;
+                  }
+                  return move.type === MoveType.AUTO; // Allow auto move to set up timeout, but don't act on it.
 
                 case CCST.PUT_ASIDE_FACE_UP:
-                  return move.type === MoveType.CHOOSE_CHARACTER && cm.chooseRandomCharacter(true);
+                  if (move.type === MoveType.CHOOSE_CHARACTER && cm.chooseRandomCharacter(true)) {
+                    return true;
+                  }
+                  // Auto-choose after timeout if player doesn't act
+                  if (move.type === MoveType.AUTO) {
+                    return true; // Acknowledge AUTO move, but don't set a timeout for now.
+                  }
+                  return false;
 
                 case CCST.CHOOSE_CHARACTER:
                 case CCST.PUT_ASIDE_FACE_DOWN_UP:
-                  return move.type === MoveType.CHOOSE_CHARACTER && cm.chooseCharacter(move.data);
+                  if (move.type === MoveType.CHOOSE_CHARACTER && cm.chooseCharacter(move.data)) {
+                    return true;
+                  }
+                  // Auto-choose random character after timeout if player doesn't act
+                  if (move.type === MoveType.AUTO) {
+                    return true; // Acknowledge AUTO move, but don't set a timeout for now.
+                  }
+                  return false;
 
                 case CCST.DONE:
                   if (move.type === MoveType.AUTO) {
@@ -178,6 +194,9 @@ export default class GameState implements Subject {
                   return false;
 
                 default:
+                  if (move.type === MoveType.AUTO) {
+                    return false; // Ignore auto moves in other character choosing states
+                  }
                   break;
               }
             }

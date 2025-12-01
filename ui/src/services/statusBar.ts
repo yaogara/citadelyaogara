@@ -113,8 +113,20 @@ export function getStatusBarData(state: ClientGameState, selectedCards: string[]
           };
 
         case GamePhase.CHOOSE_CHARACTERS: {
+          // Determine who is the current chooser during character selection
+          let currentPlayerId: string;
+          if (state.board.characters.state.player !== undefined && state.board.characters.state.player !== -1) { // -1 is SPECTATOR
+            const choosingPlayerPosition = state.board.characters.state.player;
+            currentPlayerId = state.board.playerOrder[choosingPlayerPosition];
+          } else {
+            currentPlayerId = state.board.playerOrder[state.board.currentPlayer];
+          }
+          
+          const isCurrentPlayerSelf = currentPlayerId === state.self;
+          const currentPlayerName = state.players.get(currentPlayerId)?.username ?? '';
+
           const message = {
-            [CCST.INITIAL]: 'Choose characters',
+            [CCST.INITIAL]: 'Ready to start character selection',
             [CCST.PUT_ASIDE_FACE_UP]: 'Put aside a character face up',
             [CCST.PUT_ASIDE_FACE_DOWN]: 'Put aside a character face down',
             [CCST.PUT_ASIDE_FACE_DOWN_UP]: 'Put aside a character face down',
@@ -122,11 +134,25 @@ export function getStatusBarData(state: ClientGameState, selectedCards: string[]
             [CCST.DONE]: 'Waiting for other players',
           }[state.board.characters.state.type];
 
+          const actions = state.board.characters.state.type === CCST.INITIAL && isCurrentPlayerSelf
+            ? [{ title: 'Start Character Selection', move: { type: MoveType.CHOOSE_CHARACTER, data: -1 } }]
+            : [];
+
+          // Debug: Log action creation
+          console.log('Character selection actions:', {
+            stateType: state.board.characters.state.type,
+            isCurrentPlayerSelf,
+            actions,
+            currentPlayerId,
+            statePlayer: state.board.characters.state.player,
+          });
+
           if (message) {
             return {
               type: isCurrentPlayerSelf ? 'HIGHLIGHTED' : 'NORMAL',
               message,
               args: [currentPlayerName],
+              actions,
             };
           }
           break;
