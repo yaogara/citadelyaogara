@@ -129,9 +129,6 @@ export default class GameState implements Subject {
           case GamePhase.INITIAL:
             if (move.type === MoveType.CHOOSE_CHARACTER && move.data === -1) {
               this.board.gamePhase = GamePhase.CHOOSE_CHARACTERS;
-              if (this.board.characterManager.choosingState.getState().type === CCST.INITIAL) {
-                this.board.characterManager.choosingState.step();
-              }
               return true;
             }
             return move.type === MoveType.AUTO;
