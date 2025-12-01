@@ -129,7 +129,9 @@ export default class GameState implements Subject {
           case GamePhase.INITIAL:
             if (move.type === MoveType.CHOOSE_CHARACTER && move.data === -1) {
               this.board.gamePhase = GamePhase.CHOOSE_CHARACTERS;
-              // We don't need to call step() here, the next AUTO move will handle it.
+              if (this.board.characterManager.choosingState.getState().type === CCST.INITIAL) {
+                this.board.characterManager.choosingState.step();
+              }
               return true;
             }
             return move.type === MoveType.AUTO;
@@ -142,11 +144,11 @@ export default class GameState implements Subject {
               switch (ccs.getState().type) {
                 case CCST.INITIAL:
                   debug('Handling move in CCST.INITIAL: %s', MoveType[move.type]);
-                  if (move.type === MoveType.CHOOSE_CHARACTER && move.data === -1) {
+                  if (move.type === MoveType.AUTO) {
                     ccs.step();
                     return true;
                   }
-                  debug('Move was not CHOOSE_CHARACTER with data -1, returning false.');
+                  debug('Move was not AUTO, returning false.');
                   return false;
 
                 case CCST.GET_ASIDE_FACE_DOWN:

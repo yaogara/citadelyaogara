@@ -418,7 +418,7 @@ export default class CharacterManager {
     return this.exportListChooseCard(dest, canSee);
   }
 
-  private exportListChooseCard(dest: PlayerPosition, canSee = true) {
+  private exportListChooseCard(dest: PlayerPosition, canSee = false) {
     const { player } = this.choosingState.getState();
 
     return {
@@ -429,7 +429,7 @@ export default class CharacterManager {
         (characterType) => this.getCharactersAtPosition(CharacterPosition.NOT_CHOSEN)
           ?.includes(characterType),
       ).map((characterType) => ({
-        id: canSee ? characterType + 1 : 0,
+        id: canSee || dest === PlayerPosition.SPECTATOR ? characterType + 1 : 0,
         selectable: dest === player,
       })),
       // characters that are put aside
