@@ -1,538 +1,542 @@
-diff --git a/client/src/components/game/elements/PlayerCity.vue b/client/src/components/game/elements/PlayerCity.vue
-index 7f49b0204fd6a2601e9f284f5c1deed081572831..0fd5985a97eb38dcbdd152d4c6c9a39fbbbd263f 100644
---- a/client/src/components/game/elements/PlayerCity.vue
-+++ b/client/src/components/game/elements/PlayerCity.vue
-@@ -1,65 +1,86 @@
+diff --git a/client/src/components/game/elements/CharactersList.vue b/client/src/components/game/elements/CharactersList.vue
+index 4da1edf787b79cb6c9585d228228651b4b2493e5..1a708586d52409bc15d4b026aaa39ce3a5322795 100644
+--- a/client/src/components/game/elements/CharactersList.vue
++++ b/client/src/components/game/elements/CharactersList.vue
+@@ -1,172 +1,461 @@
  <template>
--  <div class="w-100 card bg-secondary shadow-sm" style="min-width: 9em;">
--    <div class="p-1 text-light d-flex flex-column">
--      <div class="bg-dark p-1 flex-fill rounded d-flex flex-column">
--        <h5><span class="badge w-100" :class="{ 'bg-primary': isCurrentPlayer }">
--          {{ username }}
--        </span></h5>
--        <p class="text-center">
--          <span v-if="board.crown" class="badge badge-pill badge-danger p-2 mr-2">
--            <emoji emoji="👑"></emoji>
--          </span>
--          <span class="badge badge-pill badge-secondary p-2 mr-2">
--            {{ board.stash }} <emoji emoji="🪙"></emoji>
--          </span>
--          <span
--            class="badge badge-pill p-2"
--            :class="{
--              'badge-secondary': !exchangeHandMode,
--              'badge-primary cursor-pointer': exchangeHandMode,
--            }"
--            @click="exchangeHand()"
--            v-tooltip="exchangeHandMode ? $t('ui.game.actions.choose_hand') : ''"
--          >{{ board.hand.length }} <emoji emoji="🃏"></emoji></span>
--        </p>
--        <CharactersList v-if="gameProgress === 'IN_GAME'" :characters="board.characters" />
-+  <div class="player-city card bg-secondary shadow-sm" style="min-width: 9em;">
-+    <div class="card-body p-2 d-flex flex-column gap-2">
-+      <div class="card player-header bg-dark text-light shadow-sm">
-+        <div class="card-body py-2">
-+          <div class="header-row d-flex align-items-center justify-content-between flex-wrap">
-+            <div class="name-row d-flex align-items-center flex-wrap">
-+              <span
-+                class="player-name badge rounded-pill px-3 py-2"
-+                :class="{ 'bg-primary': isCurrentPlayer, 'bg-secondary': !isCurrentPlayer }"
-+              >
-+                {{ username }}
-+              </span>
-+              <div class="chip-row">
-+                <span v-if="board.crown" class="pill-chip crown-chip">
-+                  <emoji emoji="👑" class="mr-1"></emoji>
-+                  <span>{{ $t('ui.game.crown') || 'Crown' }}</span>
-+                </span>
-+                <span class="pill-chip coin-chip">
-+                  <emoji emoji="🪙" class="mr-1"></emoji>
-+                  <span>{{ board.stash }}</span>
-+                </span>
-+                <button
-+                  type="button"
-+                  class="pill-chip action-chip btn btn-sm"
-+                  :class="{ 'btn-primary': exchangeHandMode, 'btn-outline-light text-light': !exchangeHandMode }"
-+                  :disabled="!exchangeHandMode"
-+                  @click="exchangeHand()"
-+                  v-tooltip="exchangeHandMode ? $t('ui.game.actions.choose_hand') : ''"
-+                >
-+                  <emoji emoji="🃏" class="mr-1"></emoji>
-+                  <span>{{ board.hand.length }}</span>
-+                </button>
-+              </div>
-+            </div>
-+          </div>
-+          <CharactersList v-if="gameProgress === 'IN_GAME'" :characters="board.characters" class="mt-2" />
-+        </div>
-       </div>
-+
-+      <div class="card city-grid bg-light shadow-sm">
-+        <div class="card-body py-3 d-flex justify-content-center flex-wrap overflow-auto">
-+          <div
-+            v-for="id, i in board.city"
-+            :key="i"
-+            class="city-slot"
-+            :class="{ 'is-selectable': canDestroy(id) }"
-+            @click="chooseCardDestroy(id)"
-+          >
-+            <DistrictCard
-+              :district-id="id"
-+              :disabled="destroyMode && !canDestroy(id)"
-+              :selectable="canDestroy(id)"
-+              small
-+            />
-+          </div>
-+        </div>
-+      </div>
-+
-+      <PlayerScore v-if="gameProgress === 'FINISHED'" :score="board.score" />
-     </div>
--    <div class="p-2 bg-secondary d-flex justify-content-center flex-wrap overflow-auto gap-2">
--      <DistrictCard
--        v-for="id, i in board.city"
--        :key="i"
--        :district-id="id"
--        @click="chooseCardDestroy(id)"
--        :disabled="destroyMode && !canDestroy(id)"
--        :selectable="canDestroy(id)"
--        small
--      />
--    </div>
--    <div class="flex-fill"></div>
--    <PlayerScore v-if="gameProgress === 'FINISHED'" :score="board.score" />
-   </div>
- </template>
- 
- <script lang="ts">
- import { defineComponent } from 'vue';
- import { mapGetters } from 'vuex';
- import { Move, MoveType, DistrictId } from 'citadels-common';
- import { store } from '../../../store';
- import CharactersList from './CharactersList.vue';
- import DistrictCard from './DistrictCard.vue';
- import PlayerScore from './PlayerScore.vue';
- 
- export default defineComponent({
-   name: 'PlayerCity',
-   components: {
-     DistrictCard,
-     CharactersList,
-     PlayerScore,
-   },
-   props: {
-     playerId: {
-       type: String,
-       required: true,
-     },
-     board: {
-@@ -107,25 +128,104 @@ export default defineComponent({
-             player: store.getters.getPlayerPosition(this.playerId),
-             card: name,
-           },
-         };
-         await store.dispatch('sendMove', move);
-       } catch (error) {
-         console.log('error when sending move', error);
-       }
-     },
-     async exchangeHand() {
-       if (!this.exchangeHandMode) return;
- 
-       try {
-         const move: Move = {
-           type: MoveType.MAGICIAN_EXCHANGE_HAND,
-           data: store.getters.getPlayerPosition(this.playerId),
-         };
-         await store.dispatch('sendMove', move);
-       } catch (error) {
-         console.log('error when sending move', error);
-       }
-     },
-   },
- });
- </script>
-+
-+<style scoped lang="scss">
-+.player-city {
-+  border: 0;
-+}
-+
-+.player-header {
-+  border: 0;
-+}
-+
-+.header-row,
-+.name-row {
-+  gap: 0.5rem;
-+}
-+
-+.chip-row {
-+  display: flex;
-+  flex-wrap: wrap;
-+  gap: 0.5rem;
-+}
-+
-+.pill-chip {
-+  display: inline-flex;
-+  align-items: center;
-+  gap: 0.35rem;
-+  border-radius: 999px;
-+  padding: 0.35rem 0.75rem;
-+  background: rgba(255, 255, 255, 0.1);
-+  border: 1px solid rgba(255, 255, 255, 0.2);
-+  color: inherit;
-+  font-weight: 600;
-+}
-+
-+.crown-chip {
-+  background: rgba(220, 53, 69, 0.2);
-+  border-color: rgba(220, 53, 69, 0.4);
-+}
-+
-+.coin-chip {
-+  background: rgba(255, 193, 7, 0.1);
-+  border-color: rgba(255, 193, 7, 0.5);
-+}
-+
-+.action-chip {
-+  border-radius: 999px;
-+  padding: 0.35rem 0.75rem;
-+  display: inline-flex;
-+  align-items: center;
-+  gap: 0.35rem;
-+  min-height: 2.25rem;
-+}
-+
-+.city-grid {
-+  border: 0;
-+}
-+
-+.city-grid .card-body {
-+  gap: 0.75rem;
-+}
-+
-+.city-slot {
-+  flex: 0 1 8rem;
-+  display: flex;
-+  justify-content: center;
-+  align-items: center;
-+  padding: 0.35rem;
-+  border-radius: 0.5rem;
-+  transition: box-shadow 0.15s ease, transform 0.15s ease;
-+}
-+
-+.city-slot.is-selectable {
-+  cursor: pointer;
-+  box-shadow: 0 0.35rem 0.7rem rgba(0, 0, 0, 0.15);
-+}
-+
-+.city-slot.is-selectable:hover {
-+  transform: translateY(-2px);
-+}
-+</style>
-diff --git a/client/src/components/game/elements/PlayerHand.vue b/client/src/components/game/elements/PlayerHand.vue
-index 6d4f8b42e920f6dc0c08024afef236ee1b8838d0..c60876b7bcf1ecd6e64eca474fb472b149b55797 100644
---- a/client/src/components/game/elements/PlayerHand.vue
-+++ b/client/src/components/game/elements/PlayerHand.vue
-@@ -1,199 +1,229 @@
- <template>
--<div class="d-flex justify-content-start align-items-end overflow-auto">
--  <div v-if="board.crown" class="crown card rounded-pill bg-danger p-3 m-2 shadow-sm">
--    <emoji emoji="👑"></emoji>
+-<div v-if="characters.length > 0" class="card bg-dark">
+-  <div v-if="title" class="card-header bg-secondary text-light text-center px-0">
+-    {{ title }}
 -  </div>
--  <div class="flex-grow-1 px-2 pb-2 d-flex overflow-hidden">
--    <div
--      class="district-card-wrapper pt-3"
--      v-for="id, i in board.hand"
--      :key="i"
--    >
--      <div class="district-card">
--        <DistrictCard
--          :district-id="id"
--          :disabled="showTmpHand || (buildMode && !canBuild(id))"
--          :selectable="canBuild(id) || discardCardsMode || laboratoryMode"
--          v-model:selected="selectedCards[i]"
--        />
-+  <div class="player-hand card bg-secondary shadow-sm w-100">
-+    <div class="card-body p-2">
-+      <div class="d-flex justify-content-end flex-wrap align-items-center chip-row mb-2">
-+        <span v-if="board.crown" class="pill-chip crown-chip">
-+          <emoji emoji="👑" class="mr-1"></emoji>
-+          <span>{{ $t('ui.game.crown') || 'Crown' }}</span>
-+        </span>
-+        <span class="pill-chip coin-chip">
-+          <emoji emoji="🪙" class="mr-1"></emoji>
-+          <span>{{ board.stash }}</span>
-+        </span>
-+      </div>
-+
-+      <div class="hand-scroll d-flex align-items-stretch overflow-auto pb-2">
-+        <div
-+          class="hand-card"
-+          v-for="id, i in board.hand"
-+          :key="i"
-+          :class="{
-+            'is-focused': focusedCard === i,
-+            'is-selected': selectedCards[i],
-+            'is-disabled': showTmpHand || (buildMode && !canBuild(id)),
-+          }"
-+          @click="focusCard(i)"
-+        >
-+          <DistrictCard
-+            :district-id="id"
-+            :disabled="showTmpHand || (buildMode && !canBuild(id))"
-+            :selectable="canBuild(id) || discardCardsMode || laboratoryMode"
-+            v-model:selected="selectedCards[i]"
-+          />
-+        </div>
-+      </div>
-+
-+      <div v-if="showTmpHand" class="temp-hand card bg-light shadow-sm mt-2">
-+        <div class="card-body py-2 d-flex justify-content-start overflow-auto">
-+          <DistrictCard
-+            v-for="id, i in board.tmpHand"
-+            :key="i"
-+            :district-id="id"
-+            class="mr-2"
-+            @click="chooseCard(id)"
-+            :selectable="showTmpHand"
-+          />
-+        </div>
-       </div>
-     </div>
-   </div>
--  <div
--    v-if="showTmpHand"
--    class="bg-secondary d-flex justify-content-start pl-2 py-2 my-n2"
--  >
--    <DistrictCard
--      v-for="id, i in board.tmpHand"
--      :key="i"
--      :district-id="id"
--      class="mr-2"
--      @click="chooseCard(id)"
--      :selectable="showTmpHand"
--    />
--  </div>
--  <div
--    class="stash d-flex flex-column-reverse flex-wrap-reverse justify-content-start"
--    :style="`width: ${2.5 * Math.ceil(board.stash / 5)}rem;`"
--  >
--    <emoji v-for="i in board.stash" :key="i" class="coin" emoji="🪙"></emoji>
--  </div>
+-  <ul class="list-group list-group-flush text-dark shadow-sm">
+-    <li
+-      v-for="(character, i) in processedCharacters" :key="i"
+-      class="list-group-item p-1 d-flex justify-content-between align-items-center"
+-      :class="{
+-        'list-group-item-dark': !character.killed,
+-        'list-group-item-danger': character.killed,
+-        'bg-secondary text-white-50': character.id < current || character.id === 0,
+-        'active bg-white text-dark border-dark mx-n1 shadow-sm rounded':
+-          character.id === current && current !== 0 && !(killMode || robMode),
+-        'bg-light': character.id > current && !character.killed,
+-        'bg-white text-dark cursor-pointer hover-hint-hitbox': character.selectable,
+-      }"
+-      v-tooltip="$t(`characters.${character.id}.description`)"
+-      data-placement="left"
+-      @click="selectCharacter(i, character.id)"
++  <div v-if="characters.length > 0" class="card bg-dark characters-list">
++    <div v-if="title" class="card-header bg-secondary text-light text-center px-0">
++      {{ title }}
++    </div>
++    <div
++      v-if="killMode || robMode || putAsideMode"
++      class="mode-banner px-3 py-2 text-light"
+     >
+-      <!-- unknown character id -->
+-      <span
+-        v-if="character.id === 0"
+-        class="badge px-2 py-2 shadow-sm bg-dark text-light"
+-      >?</span>
+-      <!-- character id -->
+-      <span
+-        v-else
+-        class="badge px-2 py-2 shadow-sm"
+-        :class="`bg-${bgColor(character.id)} text-${textColor(character.id)}`"
+-      >{{ character.id }}</span>
+-      <!-- character name -->
+-      <span
+-        class="badge text-truncate flex-fill text-left"
+-      >{{ $t(`characters.${character.id}.name`) }}</span>
+-      <!-- character state (killed or robbed) -->
+-      <span
+-        v-if="character.killed"
+-        class="badge badge-pill badge-danger p-1 shadow-sm"
+-      ><emoji emoji="💀"></emoji></span>
+-      <span
+-        v-else-if="character.robbed"
+-        class="badge badge-pill badge-dark p-1 shadow-sm"
+-      ><emoji emoji="💰"></emoji></span>
+-      <!-- hover action hint -->
+-      <span class="hover-hint">
+-        <span
+-          v-if="killMode"
+-          class="badge badge-pill badge-danger p-1 shadow-sm"
+-        ><emoji emoji="💀"></emoji></span>
+-        <span
+-          v-else-if="robMode"
+-          class="badge badge-pill badge-dark p-1 shadow-sm"
+-        ><emoji emoji="💰"></emoji></span>
+-        <span
+-          v-else-if="putAsideMode"
+-        ><emoji emoji="⬇️"></emoji></span>
+-        <span
+-          v-else
+-        ><emoji emoji="✅"></emoji></span>
++      <span v-if="killMode" class="mode-chip kill">
++        <emoji emoji="💀"></emoji>
++        <span class="ml-1">{{ $t('game.actions.assassin_kill') }}</span>
++      </span>
++      <span v-if="robMode" class="mode-chip rob">
++        <emoji emoji="💰"></emoji>
++        <span class="ml-1">{{ $t('game.actions.thief_rob') }}</span>
++      </span>
++      <span v-if="putAsideMode" class="mode-chip put-aside">
++        <emoji emoji="⬇️"></emoji>
++        <span class="ml-1">{{ $t('game.messages.choose_characters.put_aside_face_up') }}</span>
+       </span>
+-    </li>
+-  </ul>
 -</div>
++    </div>
++    <div class="characters-layout">
++      <article
++        v-for="(character, i) in processedCharacters"
++        :key="i"
++        class="character-card"
++        :class="[
++          accentClass(character.id),
++          {
++            'is-current': character.id === current && current !== 0 && !(killMode || robMode),
++            'is-killed': character.killed,
++            'is-robbed': character.robbed,
++            'is-past': character.id < current || character.id === 0,
++            'is-selectable': character.selectable,
++          },
++        ]"
++        v-tooltip="$t(`characters.${character.id}.description`)"
++        data-placement="left"
++        role="button"
++        :aria-pressed="character.id === current"
++        :aria-disabled="!character.selectable"
++        @click="selectCharacter(i, character.id)"
++      >
++        <div class="card-visual">
++          <div class="card-art">
++            <div class="art-icon" aria-hidden="true">
++              <emoji :emoji="characterIcon(character.id)"></emoji>
++            </div>
++            <span class="art-number" :class="`text-${textColor(character.id)}`">{{ character.id }}</span>
++          </div>
++        </div>
++        <div class="card-body text-left">
++          <div class="card-title-row">
++            <span class="character-name text-light">{{ $t(`characters.${character.id}.name`) }}</span>
++            <span v-if="character.selectable" class="state-chip selectable">
++              <emoji emoji="✅"></emoji>
++            </span>
++          </div>
++          <div class="state-chips">
++            <span v-if="character.id === 0" class="state-chip muted">?</span>
++            <span v-if="character.id === current && current !== 0 && !(killMode || robMode)" class="state-chip current">
++              <emoji emoji="👑"></emoji>
++              <span class="ml-1">Current turn</span>
++            </span>
++            <span v-if="character.killed" class="state-chip killed">
++              <emoji emoji="💀"></emoji>
++              <span class="ml-1">{{ $t('game.actions.assassin_kill') }}</span>
++            </span>
++            <span v-else-if="character.robbed" class="state-chip robbed">
++              <emoji emoji="💰"></emoji>
++              <span class="ml-1">{{ $t('game.actions.thief_rob') }}</span>
++            </span>
++            <span v-if="putAsideMode && character.id !== 0" class="state-chip put-aside">
++              <emoji emoji="⬇️"></emoji>
++              <span class="ml-1">{{ $t('game.messages.choose_characters.put_aside_face_down') }}</span>
++            </span>
++          </div>
++        </div>
++      </article>
++    </div>
++  </div>
  </template>
  
  <script lang="ts">
  import { defineComponent } from 'vue';
- import { Move, MoveType, DistrictId } from 'citadels-common';
+ import { Move, MoveType } from 'citadels-common';
  import { store } from '../../../store';
- import DistrictCard from './DistrictCard.vue';
  
  export default defineComponent({
-   name: 'PlayerHand',
-   components: {
-     DistrictCard,
-   },
+   name: 'CharactersList',
    props: {
-     board: {
+     title: {
+       type: String,
+       default: '',
+     },
+     characters: {
+       type: Array,
        required: true,
      },
-     buildMode: {
+     current: {
+       type: Number,
+       default: 0,
+     },
+     killMode: {
        type: Boolean,
        default: false,
      },
-     discardCardsMode: {
+     robMode: {
        type: Boolean,
        default: false,
      },
-     laboratoryMode: {
+     putAsideMode: {
        type: Boolean,
        default: false,
      },
-   },
-   data() {
-     return {
-       selectedCards: [] as boolean[],
-+      focusedCard: null as number | null,
-     };
    },
    computed: {
-     showTmpHand() {
-       return this.board.tmpHand.length > 0;
+     processedCharacters() {
+       return this.characters.map((character) => ({
+         selectable: (this.killMode && character.id > 1)
+           || (this.robMode && character.id > 2 && !character.killed),
+         ...character,
+       }));
      },
    },
    methods: {
-     canBuild(name: DistrictId): boolean {
-       if (!this.buildMode) return false;
-       return !this.board.city.includes(name)
-         && store.getters.getDistrictFromId(name).cost <= this.board.stash;
-     },
-     async chooseCard(name: DistrictId) {
-       try {
-         const move: Move = { type: MoveType.DRAW_CARDS, data: name };
-         await store.dispatch('sendMove', move);
-       } catch (error) {
-         console.log('error when sending move', error);
+-    bgColor(character: number) {
+-      if (character < this.current) {
+-        return 'dark';
++    accentClass(character: number) {
++      if (character === 0 || character < this.current) {
++        return 'accent-dark';
        }
-     },
-     async chooseCardBuild(name: DistrictId) {
-       if (!this.canBuild(name)) return;
- 
-       try {
-         const move: Move = { type: MoveType.BUILD_DISTRICT, data: name };
-         await store.dispatch('sendMove', move);
-       } catch (error) {
-         console.log('error when sending move', error);
-       }
-     },
-     async chooseCardLaboratory(name: DistrictId) {
-       try {
-         const move: Move = { type: MoveType.LABORATORY_DISCARD_CARD, data: name };
-         await store.dispatch('sendMove', move);
-       } catch (error) {
-         console.log('error when sending move', error);
-       }
-     },
-+    focusCard(index: number) {
-+      this.focusedCard = this.focusedCard === index ? null : index;
+       switch (character) {
+         case 4:
+-          return 'warning';
++          return 'accent-warning';
+         case 5:
+-          return 'primary';
++          return 'accent-primary';
+         case 6:
+-          return 'success';
++          return 'accent-success';
+         case 8:
+-          return 'danger';
++          return 'accent-danger';
+         default:
+-          return 'secondary';
++          return 'accent-secondary';
++      }
 +    },
-   },
-   watch: {
-     board: {
-       handler(newBoard, oldBoard) {
-         if (newBoard.hand !== oldBoard.hand) {
-           this.selectedCards = [];
-+          this.focusedCard = null;
-         }
-       },
-       deep: true,
++    characterIcon(character: number) {
++      switch (character) {
++        case 1:
++          return '🗡️';
++        case 2:
++          return '🎭';
++        case 3:
++          return '🪄';
++        case 4:
++          return '👑';
++        case 5:
++          return '✝️';
++        case 6:
++          return '💰';
++        case 7:
++          return '🏗️';
++        case 8:
++          return '⚔️';
++        default:
++          return '❓';
+       }
      },
-     selectedCards: {
-       handler(val) {
-         const cards: DistrictId[] = [];
-         val.forEach((isSelected, index) => {
-           if (isSelected) {
-             const card = this.board.hand[index];
-             if (card !== undefined) cards.push(card);
-           }
-         });
+     textColor(character: number) {
+       if (character < this.current) {
+         return 'light';
+       }
+       switch (character) {
+         case 4:
+           return 'dark';
+         default:
+           return 'light';
+       }
+     },
+     async selectCharacter(index: number, characterId: number) {
+       if (!this.processedCharacters[index].selectable) return;
  
-         store.commit('setSelectedCards', { cards });
+       let moveType = MoveType.CHOOSE_CHARACTER;
+       let moveData = index;
  
-         if (cards.length > 0) {
-           if (this.buildMode) {
-             this.chooseCardBuild(cards[0]);
-             this.selectedCards = [];
-           } else if (this.laboratoryMode) {
-             this.chooseCardLaboratory(cards[0]);
-             this.selectedCards = [];
-           }
-         }
-       },
-       deep: true,
+       if (this.killMode) {
+         moveData = characterId;
+         moveType = MoveType.ASSASSIN_KILL;
+       } else if (this.robMode) {
+         moveType = MoveType.THIEF_ROB;
+         moveData = characterId;
+       }
+ 
+       const move: Move = { type: moveType, data: moveData };
+       await store.dispatch('sendMove', move);
      },
    },
  });
  </script>
  
  <style lang="scss" scoped>
--.stash {
--  height: 9em;
--  margin-top: 2.5em;
-+.chip-row {
+-.hover-hint {
+-  display: none;
++.characters-list {
++  border: 1px solid rgba(255, 255, 255, 0.12);
++}
++
++.mode-banner {
 +  display: flex;
 +  flex-wrap: wrap;
 +  gap: 0.5rem;
- }
- 
--.coin {
--  font-size: 2em;
--  height: .8em;
--  position: relative;
--  bottom: .8em;
--  filter: drop-shadow(0 -1px 2px rgba(0, 0, 0, .5));
-+.pill-chip {
-+  display: inline-flex;
-+  align-items: center;
-+  gap: 0.35rem;
-+  border-radius: 999px;
-+  padding: 0.35rem 0.75rem;
-+  background: rgba(255, 255, 255, 0.15);
-+  border: 1px solid rgba(255, 255, 255, 0.25);
-+  color: inherit;
-+  font-weight: 600;
- }
- 
--.crown {
--  font-size: 2em;
--  min-width: 2.5em;
--  text-align: center;
-+.crown-chip {
-+  background: rgba(220, 53, 69, 0.2);
-+  border-color: rgba(220, 53, 69, 0.4);
- }
- 
--.district-card-wrapper {
--  width: 20px;
--  flex: 1;
--  max-width: 7.5rem;
-+.coin-chip {
-+  background: rgba(255, 193, 7, 0.1);
-+  border-color: rgba(255, 193, 7, 0.5);
-+}
- 
--  &:hover {
--    width: 100%;
-+.hand-scroll {
-+  gap: 0.75rem;
-+  scrollbar-width: thin;
-+}
- 
--    .district-card {
--      transform: translatey(-0.35rem);
--    }
--  }
-+.hand-card {
-+  flex: 0 0 7.5rem;
-+  display: flex;
-+  justify-content: center;
-+  align-items: stretch;
-+  padding: 0.35rem;
-+  border-radius: 0.5rem;
-+  background: rgba(255, 255, 255, 0.08);
-+  box-shadow: 0 0.35rem 0.7rem rgba(0, 0, 0, 0.15);
-+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-+}
- 
--  &:hover ~ .card {
--    z-index: 1;
--  }
-+.hand-card.is-focused {
-+  transform: translateY(-3px);
-+  background: rgba(255, 255, 255, 0.16);
-+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
-+}
- 
--  &:last-child {
--    width: auto;
--  }
-+.hand-card.is-selected {
-+  border: 1px solid rgba(0, 123, 255, 0.5);
-+  box-shadow: 0 0.6rem 1.1rem rgba(0, 123, 255, 0.25);
++  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
 +}
 +
-+.hand-card.is-disabled {
-+  opacity: 0.7;
++.mode-chip {
++  display: inline-flex;
++  align-items: center;
++  padding: 0.25rem 0.65rem;
++  border-radius: 999px;
++  font-size: 0.85rem;
++  background: rgba(255, 255, 255, 0.08);
++  border: 1px solid rgba(255, 255, 255, 0.12);
++
++  &.kill {
++    border-color: #b71c1c;
++    color: #ffb3b3;
++  }
++
++  &.rob {
++    border-color: #3a2f1c;
++    color: #f5d29f;
++  }
++
++  &.put-aside {
++    border-color: #1c3a5a;
++    color: #b9d7ff;
++  }
++}
++
++.characters-layout {
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
++  gap: 0.75rem;
++  padding: 0.75rem;
++}
++
++.character-card {
++  --accent-soft: #3c3f46;
++  --accent-strong: #2b2d33;
++  --accent-contrast: #f8f9fa;
++
++  display: flex;
++  flex-direction: column;
++  gap: 0.75rem;
++  padding: 0.75rem;
++  border-radius: 0.85rem;
++  border: 1px solid rgba(255, 255, 255, 0.1);
++  background: linear-gradient(155deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
++  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
++  cursor: pointer;
++  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, opacity 150ms ease;
++
++  &:hover {
++    transform: translateY(-2px);
++    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
++  }
++
++  &[aria-disabled='true'] {
++    cursor: not-allowed;
++    opacity: 0.65;
++  }
++}
++
++.card-visual {
++  position: relative;
++  border-radius: 0.75rem;
++  overflow: hidden;
++  background: linear-gradient(135deg, var(--accent-soft), var(--accent-strong));
++  color: var(--accent-contrast);
++  min-height: 120px;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
++}
++
++.card-art {
++  text-align: center;
++  position: relative;
++  width: 100%;
++  height: 100%;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  justify-content: center;
++  gap: 0.25rem;
++  padding: 0.75rem;
++}
++
++.art-icon {
++  font-size: 2rem;
++}
++
++.art-number {
++  position: absolute;
++  top: 0.5rem;
++  left: 0.65rem;
++  font-weight: 700;
++}
++
++.card-body {
++  display: flex;
++  flex-direction: column;
++  gap: 0.35rem;
++}
++
++.card-title-row {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 0.5rem;
++}
++
++.character-name {
++  font-weight: 600;
++  font-size: 1rem;
++}
++
++.state-chips {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.35rem;
++}
++
++.state-chip {
++  display: inline-flex;
++  align-items: center;
++  padding: 0.15rem 0.6rem;
++  border-radius: 999px;
++  font-size: 0.8rem;
++  background: rgba(255, 255, 255, 0.08);
++  border: 1px solid rgba(255, 255, 255, 0.12);
++  color: #f8f9fa;
++
++  &.muted {
++    opacity: 0.75;
++  }
++
++  &.current {
++    background: rgba(255, 215, 0, 0.15);
++    border-color: #c7a300;
++    color: #ffd700;
++  }
++
++  &.killed {
++    background: rgba(255, 0, 0, 0.16);
++    border-color: #b71c1c;
++    color: #ffc4c4;
++  }
++
++  &.robbed {
++    background: rgba(255, 215, 0, 0.08);
++    border-color: #6b4e0f;
++    color: #f5d29f;
++  }
++
++  &.put-aside {
++    background: rgba(100, 181, 246, 0.12);
++    border-color: #1c3a5a;
++    color: #b9d7ff;
++  }
++
++  &.selectable {
++    border-color: #198754;
++    color: #b4f3d6;
++    background: rgba(25, 135, 84, 0.15);
++  }
++}
++
++.accent-secondary {
++  --accent-soft: #50545c;
++  --accent-strong: #32353c;
++  --accent-contrast: #f8f9fa;
++}
++
++.accent-warning {
++  --accent-soft: #f2c55c;
++  --accent-strong: #d18b16;
++  --accent-contrast: #1f1300;
++}
++
++.accent-primary {
++  --accent-soft: #8fb6ff;
++  --accent-strong: #1f5eff;
++  --accent-contrast: #0c1a33;
 +}
  
--  .district-card {
--    transition: transform .1s linear;
--    margin: auto;
--    box-sizing: border-box;
--  }
-+.temp-hand .card-body {
-+  gap: 0.5rem;
++.accent-success {
++  --accent-soft: #8fd5b5;
++  --accent-strong: #1f7a4d;
++  --accent-contrast: #0b251a;
++}
++
++.accent-danger {
++  --accent-soft: #f5a0a0;
++  --accent-strong: #b71c1c;
++  --accent-contrast: #fff5f5;
++}
++
++.accent-dark {
++  --accent-soft: #575d68;
++  --accent-strong: #2c3038;
++  --accent-contrast: #f8f9fa;
++}
++
++.character-card.is-current {
++  border-color: #ffd700;
++  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2), 0 10px 24px rgba(0, 0, 0, 0.35);
++}
++
++.character-card.is-killed {
++  filter: grayscale(0.2);
++  opacity: 0.8;
++}
++
++.character-card.is-robbed {
++  box-shadow: inset 0 0 0 2px rgba(109, 76, 65, 0.5), 0 6px 16px rgba(0, 0, 0, 0.25);
++}
++
++.character-card.is-past {
++  opacity: 0.6;
++}
++
++.character-card.is-selectable:not([aria-disabled='true']) {
++  border-color: #198754;
++  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.25), 0 10px 24px rgba(0, 0, 0, 0.35);
++}
++
++@media (max-width: 720px) {
++  .characters-layout {
++    display: flex;
++    flex-direction: column;
++  }
++
++  .character-card {
++    flex-direction: row;
++    align-items: stretch;
++  }
++
++  .card-visual {
++    width: 90px;
++    min-height: 90px;
++  }
++
++  .card-body {
++    flex: 1 1 auto;
++  }
+ }
+ 
+-.hover-hint-hitbox:hover {
+-  .hover-hint {
+-    display: block;
++@media (min-width: 1200px) {
++  .characters-layout {
++    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+   }
  }
  </style>
