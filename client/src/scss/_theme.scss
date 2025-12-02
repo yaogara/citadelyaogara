@@ -1,0 +1,66 @@
+:root {
+  /* Colors */
+  --color-surface: #f5f7fb;
+  --color-surface-strong: #ffffff;
+  --color-surface-muted: #eef1f6;
+  --color-border: #d6d9e0;
+  --color-text: #1f2937;
+  --color-text-muted: #4b5563;
+  --color-accent: #4f46e5;
+  --color-accent-strong: #3730a3;
+  --color-overlay: rgba(15, 23, 42, 0.06);
+
+  /* Typography */
+  --font-family-sans: 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+
+  /* Spacing */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Radii */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-subtle: 0 6px 18px rgba(15, 23, 42, 0.08);
+  --shadow-soft: 0 12px 28px rgba(15, 23, 42, 0.12);
+
+  /* Layout */
+  --content-max-width: 1200px;
+}
+
+$theme-spacing: (
+  2xs: var(--space-2xs),
+  xs: var(--space-xs),
+  sm: var(--space-sm),
+  md: var(--space-md),
+  lg: var(--space-lg),
+  xl: var(--space-xl),
+  2xl: var(--space-2xl)
+);
+
+$theme-radii: (
+  sm: var(--radius-sm),
+  md: var(--radius-md),
+  lg: var(--radius-lg),
+  pill: var(--radius-pill)
+);
+
+$theme-shadows: (
+  subtle: var(--shadow-subtle),
+  soft: var(--shadow-soft)
+);

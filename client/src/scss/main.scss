@@ -1,3 +1,4 @@
+@import './theme';
 @import './bootstrap';
 @import './animation';
 
@@ -8,6 +9,14 @@
     width: 100%;
     display: flex;
     flex-flow: column;
+}
+
+body {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
 }
 
 /* Disable user selection */
