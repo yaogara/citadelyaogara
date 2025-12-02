@@ -1,43 +1,64 @@
 <template>
-  <div class="w-100 card bg-secondary shadow-sm" style="min-width: 9em;">
-    <div class="p-1 text-light d-flex flex-column">
-      <div class="bg-dark p-1 flex-fill rounded d-flex flex-column">
-        <h5><span class="badge w-100" :class="{ 'bg-primary': isCurrentPlayer }">
-          {{ username }}
-        </span></h5>
-        <p class="text-center">
-          <span v-if="board.crown" class="badge badge-pill badge-danger p-2 mr-2">
-            <emoji emoji="👑"></emoji>
-          </span>
-          <span class="badge badge-pill badge-secondary p-2 mr-2">
-            {{ board.stash }} <emoji emoji="🪙"></emoji>
-          </span>
-          <span
-            class="badge badge-pill p-2"
-            :class="{
-              'badge-secondary': !exchangeHandMode,
-              'badge-primary cursor-pointer': exchangeHandMode,
-            }"
-            @click="exchangeHand()"
-            v-tooltip="exchangeHandMode ? $t('ui.game.actions.choose_hand') : ''"
-          >{{ board.hand.length }} <emoji emoji="🃏"></emoji></span>
-        </p>
-        <CharactersList v-if="gameProgress === 'IN_GAME'" :characters="board.characters" />
+  <div class="player-city card bg-secondary shadow-sm" style="min-width: 9em;">
+    <div class="card-body p-2 d-flex flex-column gap-2">
+      <div class="card player-header bg-dark text-light shadow-sm">
+        <div class="card-body py-2">
+          <div class="header-row d-flex align-items-center justify-content-between flex-wrap">
+            <div class="name-row d-flex align-items-center flex-wrap">
+              <span
+                class="player-name badge rounded-pill px-3 py-2"
+                :class="{ 'bg-primary': isCurrentPlayer, 'bg-secondary': !isCurrentPlayer }"
+              >
+                {{ username }}
+              </span>
+              <div class="chip-row">
+                <span v-if="board.crown" class="pill-chip crown-chip">
+                  <emoji emoji="👑" class="mr-1"></emoji>
+                  <span>{{ $t('ui.game.crown') || 'Crown' }}</span>
+                </span>
+                <span class="pill-chip coin-chip">
+                  <emoji emoji="🪙" class="mr-1"></emoji>
+                  <span>{{ board.stash }}</span>
+                </span>
+                <button
+                  type="button"
+                  class="pill-chip action-chip btn btn-sm"
+                  :class="{ 'btn-primary': exchangeHandMode, 'btn-outline-light text-light': !exchangeHandMode }"
+                  :disabled="!exchangeHandMode"
+                  @click="exchangeHand()"
+                  v-tooltip="exchangeHandMode ? $t('ui.game.actions.choose_hand') : ''"
+                >
+                  <emoji emoji="🃏" class="mr-1"></emoji>
+                  <span>{{ board.hand.length }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <CharactersList v-if="gameProgress === 'IN_GAME'" :characters="board.characters" class="mt-2" />
+        </div>
       </div>
+
+      <div class="card city-grid bg-light shadow-sm">
+        <div class="card-body py-3 d-flex justify-content-center flex-wrap overflow-auto">
+          <div
+            v-for="id, i in board.city"
+            :key="i"
+            class="city-slot"
+            :class="{ 'is-selectable': canDestroy(id) }"
+            @click="chooseCardDestroy(id)"
+          >
+            <DistrictCard
+              :district-id="id"
+              :disabled="destroyMode && !canDestroy(id)"
+              :selectable="canDestroy(id)"
+              small
+            />
+          </div>
+        </div>
+      </div>
+
+      <PlayerScore v-if="gameProgress === 'FINISHED'" :score="board.score" />
     </div>
-    <div class="p-2 bg-secondary d-flex justify-content-center flex-wrap overflow-auto gap-2">
-      <DistrictCard
-        v-for="id, i in board.city"
-        :key="i"
-        :district-id="id"
-        @click="chooseCardDestroy(id)"
-        :disabled="destroyMode && !canDestroy(id)"
-        :selectable="canDestroy(id)"
-        small
-      />
-    </div>
-    <div class="flex-fill"></div>
-    <PlayerScore v-if="gameProgress === 'FINISHED'" :score="board.score" />
   </div>
 </template>
 
@@ -129,3 +150,82 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped lang="scss">
+.player-city {
+  border: 0;
+}
+
+.player-header {
+  border: 0;
+}
+
+.header-row,
+.name-row {
+  gap: 0.5rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: inherit;
+  font-weight: 600;
+}
+
+.crown-chip {
+  background: rgba(220, 53, 69, 0.2);
+  border-color: rgba(220, 53, 69, 0.4);
+}
+
+.coin-chip {
+  background: rgba(255, 193, 7, 0.1);
+  border-color: rgba(255, 193, 7, 0.5);
+}
+
+.action-chip {
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.25rem;
+}
+
+.city-grid {
+  border: 0;
+}
+
+.city-grid .card-body {
+  gap: 0.75rem;
+}
+
+.city-slot {
+  flex: 0 1 8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.35rem;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.city-slot.is-selectable {
+  cursor: pointer;
+  box-shadow: 0 0.35rem 0.7rem rgba(0, 0, 0, 0.15);
+}
+
+.city-slot.is-selectable:hover {
+  transform: translateY(-2px);
+}
+</style>

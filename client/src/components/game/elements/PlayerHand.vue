@@ -1,44 +1,52 @@
 <template>
-<div class="d-flex justify-content-start align-items-end overflow-auto">
-  <div v-if="board.crown" class="crown card rounded-pill bg-danger p-3 m-2 shadow-sm">
-    <emoji emoji="👑"></emoji>
-  </div>
-  <div class="flex-grow-1 px-2 pb-2 d-flex overflow-hidden">
-    <div
-      class="district-card-wrapper pt-3"
-      v-for="id, i in board.hand"
-      :key="i"
-    >
-      <div class="district-card">
-        <DistrictCard
-          :district-id="id"
-          :disabled="showTmpHand || (buildMode && !canBuild(id))"
-          :selectable="canBuild(id) || discardCardsMode || laboratoryMode"
-          v-model:selected="selectedCards[i]"
-        />
+  <div class="player-hand card bg-secondary shadow-sm w-100">
+    <div class="card-body p-2">
+      <div class="d-flex justify-content-end flex-wrap align-items-center chip-row mb-2">
+        <span v-if="board.crown" class="pill-chip crown-chip">
+          <emoji emoji="👑" class="mr-1"></emoji>
+          <span>{{ $t('ui.game.crown') || 'Crown' }}</span>
+        </span>
+        <span class="pill-chip coin-chip">
+          <emoji emoji="🪙" class="mr-1"></emoji>
+          <span>{{ board.stash }}</span>
+        </span>
+      </div>
+
+      <div class="hand-scroll d-flex align-items-stretch overflow-auto pb-2">
+        <div
+          class="hand-card"
+          v-for="id, i in board.hand"
+          :key="i"
+          :class="{
+            'is-focused': focusedCard === i,
+            'is-selected': selectedCards[i],
+            'is-disabled': showTmpHand || (buildMode && !canBuild(id)),
+          }"
+          @click="focusCard(i)"
+        >
+          <DistrictCard
+            :district-id="id"
+            :disabled="showTmpHand || (buildMode && !canBuild(id))"
+            :selectable="canBuild(id) || discardCardsMode || laboratoryMode"
+            v-model:selected="selectedCards[i]"
+          />
+        </div>
+      </div>
+
+      <div v-if="showTmpHand" class="temp-hand card bg-light shadow-sm mt-2">
+        <div class="card-body py-2 d-flex justify-content-start overflow-auto">
+          <DistrictCard
+            v-for="id, i in board.tmpHand"
+            :key="i"
+            :district-id="id"
+            class="mr-2"
+            @click="chooseCard(id)"
+            :selectable="showTmpHand"
+          />
+        </div>
       </div>
     </div>
   </div>
-  <div
-    v-if="showTmpHand"
-    class="bg-secondary d-flex justify-content-start pl-2 py-2 my-n2"
-  >
-    <DistrictCard
-      v-for="id, i in board.tmpHand"
-      :key="i"
-      :district-id="id"
-      class="mr-2"
-      @click="chooseCard(id)"
-      :selectable="showTmpHand"
-    />
-  </div>
-  <div
-    class="stash d-flex flex-column-reverse flex-wrap-reverse justify-content-start"
-    :style="`width: ${2.5 * Math.ceil(board.stash / 5)}rem;`"
-  >
-    <emoji v-for="i in board.stash" :key="i" class="coin" emoji="🪙"></emoji>
-  </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -72,6 +80,7 @@ export default defineComponent({
   data() {
     return {
       selectedCards: [] as boolean[],
+      focusedCard: null as number | null,
     };
   },
   computed: {
@@ -111,12 +120,16 @@ export default defineComponent({
         console.log('error when sending move', error);
       }
     },
+    focusCard(index: number) {
+      this.focusedCard = this.focusedCard === index ? null : index;
+    },
   },
   watch: {
     board: {
       handler(newBoard, oldBoard) {
         if (newBoard.hand !== oldBoard.hand) {
           this.selectedCards = [];
+          this.focusedCard = null;
         }
       },
       deep: true,
@@ -150,50 +163,67 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.stash {
-  height: 9em;
-  margin-top: 2.5em;
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.coin {
-  font-size: 2em;
-  height: .8em;
-  position: relative;
-  bottom: .8em;
-  filter: drop-shadow(0 -1px 2px rgba(0, 0, 0, .5));
+.pill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: inherit;
+  font-weight: 600;
 }
 
-.crown {
-  font-size: 2em;
-  min-width: 2.5em;
-  text-align: center;
+.crown-chip {
+  background: rgba(220, 53, 69, 0.2);
+  border-color: rgba(220, 53, 69, 0.4);
 }
 
-.district-card-wrapper {
-  width: 20px;
-  flex: 1;
-  max-width: 7.5rem;
+.coin-chip {
+  background: rgba(255, 193, 7, 0.1);
+  border-color: rgba(255, 193, 7, 0.5);
+}
 
-  &:hover {
-    width: 100%;
+.hand-scroll {
+  gap: 0.75rem;
+  scrollbar-width: thin;
+}
 
-    .district-card {
-      transform: translatey(-0.35rem);
-    }
-  }
+.hand-card {
+  flex: 0 0 7.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  padding: 0.35rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0.35rem 0.7rem rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
 
-  &:hover ~ .card {
-    z-index: 1;
-  }
+.hand-card.is-focused {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
 
-  &:last-child {
-    width: auto;
-  }
+.hand-card.is-selected {
+  border: 1px solid rgba(0, 123, 255, 0.5);
+  box-shadow: 0 0.6rem 1.1rem rgba(0, 123, 255, 0.25);
+}
 
-  .district-card {
-    transition: transform .1s linear;
-    margin: auto;
-    box-sizing: border-box;
-  }
+.hand-card.is-disabled {
+  opacity: 0.7;
+}
+
+.temp-hand .card-body {
+  gap: 0.5rem;
 }
 </style>

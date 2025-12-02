@@ -1,473 +1,538 @@
-diff --git a/client/src/components/game/BoardScreen.vue b/client/src/components/game/BoardScreen.vue
-index 0a691eb8ee29b8f53a2b8a93e807bb314b34059e..b04e54d0aeacfe9b90aa99b7a938ab30e0f7a1d3 100644
---- a/client/src/components/game/BoardScreen.vue
-+++ b/client/src/components/game/BoardScreen.vue
-@@ -1,113 +1,122 @@
+diff --git a/client/src/components/game/elements/PlayerCity.vue b/client/src/components/game/elements/PlayerCity.vue
+index 7f49b0204fd6a2601e9f284f5c1deed081572831..0fd5985a97eb38dcbdd152d4c6c9a39fbbbd263f 100644
+--- a/client/src/components/game/elements/PlayerCity.vue
++++ b/client/src/components/game/elements/PlayerCity.vue
+@@ -1,65 +1,86 @@
  <template>
--<div class="d-flex flex-column h-100 bg-dark border-dark shadow">
--  <div class="row no-gutters h-100 overflow-auto">
--    <div class="col-10 h-100 d-flex flex-column">
--      <div class="flex-fill bg-dark d-flex overflow-auto p-2 gap-2">
-+<div class="board-screen">
-+  <div class="board-layout">
-+    <section class="player-section">
-+      <div class="player-boards surface">
-         <div
--          class="col p-0 d-flex"
-+          class="player-column"
-           v-for="[playerId, board] in playerBoards"
-           :key="playerId"
-         >
-           <PlayerCity
-             :player-id="playerId"
-             :board="board"
-             :destroy-mode="destroyMode"
-             :stash="selfBoard.stash"
-             :exchange-hand-mode="exchangeHandMode"
-           />
-         </div>
-       </div>
--      <div class="px-2 bg-gradient-dark border-top border-secondary">
-+      <div class="surface hand-panel">
-         <PlayerHand
-           :board="selfBoard"
-           :build-mode="buildMode"
-           :discard-cards-mode="discardCardsMode"
-           :laboratory-mode="laboratoryMode"
-         />
-       </div>
--    </div>
--    <div
--      class="col-2 p-2 bg-dark border-left border-secondary
--      h-100 d-flex flex-column justify-content-between overflow-auto"
--    >
--      <CharactersList
-+    </section>
-+    <aside class="sidebar" aria-label="Character sections">
-+      <div
-         v-if="gameProgress === 'IN_GAME'"
--        :title="$t('ui.game.characters')"
--        :characters="charactersList.callable"
--        :current="charactersList.current"
--        :kill-mode="killMode"
--        :rob-mode="robMode"
--        :put-aside-mode="putAsideMode"
--      />
-+        class="section-card"
-+      >
-+        <div class="section-header">
-+          <span>{{ $t('ui.game.characters') }}</span>
+-  <div class="w-100 card bg-secondary shadow-sm" style="min-width: 9em;">
+-    <div class="p-1 text-light d-flex flex-column">
+-      <div class="bg-dark p-1 flex-fill rounded d-flex flex-column">
+-        <h5><span class="badge w-100" :class="{ 'bg-primary': isCurrentPlayer }">
+-          {{ username }}
+-        </span></h5>
+-        <p class="text-center">
+-          <span v-if="board.crown" class="badge badge-pill badge-danger p-2 mr-2">
+-            <emoji emoji="👑"></emoji>
+-          </span>
+-          <span class="badge badge-pill badge-secondary p-2 mr-2">
+-            {{ board.stash }} <emoji emoji="🪙"></emoji>
+-          </span>
+-          <span
+-            class="badge badge-pill p-2"
+-            :class="{
+-              'badge-secondary': !exchangeHandMode,
+-              'badge-primary cursor-pointer': exchangeHandMode,
+-            }"
+-            @click="exchangeHand()"
+-            v-tooltip="exchangeHandMode ? $t('ui.game.actions.choose_hand') : ''"
+-          >{{ board.hand.length }} <emoji emoji="🃏"></emoji></span>
+-        </p>
+-        <CharactersList v-if="gameProgress === 'IN_GAME'" :characters="board.characters" />
++  <div class="player-city card bg-secondary shadow-sm" style="min-width: 9em;">
++    <div class="card-body p-2 d-flex flex-column gap-2">
++      <div class="card player-header bg-dark text-light shadow-sm">
++        <div class="card-body py-2">
++          <div class="header-row d-flex align-items-center justify-content-between flex-wrap">
++            <div class="name-row d-flex align-items-center flex-wrap">
++              <span
++                class="player-name badge rounded-pill px-3 py-2"
++                :class="{ 'bg-primary': isCurrentPlayer, 'bg-secondary': !isCurrentPlayer }"
++              >
++                {{ username }}
++              </span>
++              <div class="chip-row">
++                <span v-if="board.crown" class="pill-chip crown-chip">
++                  <emoji emoji="👑" class="mr-1"></emoji>
++                  <span>{{ $t('ui.game.crown') || 'Crown' }}</span>
++                </span>
++                <span class="pill-chip coin-chip">
++                  <emoji emoji="🪙" class="mr-1"></emoji>
++                  <span>{{ board.stash }}</span>
++                </span>
++                <button
++                  type="button"
++                  class="pill-chip action-chip btn btn-sm"
++                  :class="{ 'btn-primary': exchangeHandMode, 'btn-outline-light text-light': !exchangeHandMode }"
++                  :disabled="!exchangeHandMode"
++                  @click="exchangeHand()"
++                  v-tooltip="exchangeHandMode ? $t('ui.game.actions.choose_hand') : ''"
++                >
++                  <emoji emoji="🃏" class="mr-1"></emoji>
++                  <span>{{ board.hand.length }}</span>
++                </button>
++              </div>
++            </div>
++          </div>
++          <CharactersList v-if="gameProgress === 'IN_GAME'" :characters="board.characters" class="mt-2" />
 +        </div>
-+        <CharactersList
-+          class="section-body characters-panel"
-+          :title="''"
-+          :characters="charactersList.callable"
-+          :current="charactersList.current"
-+          :kill-mode="killMode"
-+          :rob-mode="robMode"
-+          :put-aside-mode="putAsideMode"
-+        />
+       </div>
++
++      <div class="card city-grid bg-light shadow-sm">
++        <div class="card-body py-3 d-flex justify-content-center flex-wrap overflow-auto">
++          <div
++            v-for="id, i in board.city"
++            :key="i"
++            class="city-slot"
++            :class="{ 'is-selectable': canDestroy(id) }"
++            @click="chooseCardDestroy(id)"
++          >
++            <DistrictCard
++              :district-id="id"
++              :disabled="destroyMode && !canDestroy(id)"
++              :selectable="canDestroy(id)"
++              small
++            />
++          </div>
++        </div>
 +      </div>
-       <div
-         v-if="gameProgress === 'IN_GAME' && showGraveyard"
--        class="card bg-secondary flex flex-column"
-+        class="section-card"
-       >
--        <div class="card-header text-light text-center px-0">
--          {{ $t('districts.graveyard.name') }}
-+        <div class="section-header">
-+          <span>{{ $t('districts.graveyard.name') }}</span>
-+        </div>
-+        <div class="section-body graveyard-card">
-+          <DistrictCard
-+            class="align-self-center"
-+            :district-id="gameState.board.graveyard"
-+          />
-         </div>
--        <DistrictCard
--          class="align-self-center my-2"
--          :district-id="gameState.board.graveyard"
--        />
-       </div>
--      <CharactersList
-+      <div
-         v-if="gameProgress === 'IN_GAME'"
--        :characters="charactersList.aside"
++
++      <PlayerScore v-if="gameProgress === 'FINISHED'" :score="board.score" />
+     </div>
+-    <div class="p-2 bg-secondary d-flex justify-content-center flex-wrap overflow-auto gap-2">
+-      <DistrictCard
+-        v-for="id, i in board.city"
+-        :key="i"
+-        :district-id="id"
+-        @click="chooseCardDestroy(id)"
+-        :disabled="destroyMode && !canDestroy(id)"
+-        :selectable="canDestroy(id)"
+-        small
 -      />
 -    </div>
-+        class="section-card"
-+      >
-+        <div class="section-header">
-+          <span>{{ $t('ui.game.characters') }}</span>
-+        </div>
-+        <CharactersList
-+          class="section-body characters-panel"
-+          :title="''"
-+          :characters="charactersList.aside"
-+        />
-+      </div>
-+    </aside>
+-    <div class="flex-fill"></div>
+-    <PlayerScore v-if="gameProgress === 'FINISHED'" :score="board.score" />
    </div>
-   <div
--    class="border-top border-secondary h5 p-2 m-0
--      d-flex flex-wrap align-items-stretch justify-content-center"
--    :class="{
--      'bg-secondary': statusBar.type === 'NORMAL',
--      'bg-primary': statusBar.type === 'HIGHLIGHTED',
--      'bg-danger': statusBar.type === 'ERROR',
--    }"
-+    class="action-bar"
-+    :class="statusBarClass"
-   >
--    <!-- status message -->
-     <div
--      class="flex-fill badge badge-lg py-3 text-light text-wrap animate-text"
-+      class="status-message animate-text"
-       ref="statusBarMessage"
-     >
-       <span
-         v-for="c, i in [...$t(statusBar.message, statusBar.args)]"
-         :key="i"
-       >{{ c }}</span>
-     </div>
--    <!-- actions -->
--    <div class="text-center d-flex flex-wrap align-items-stretch justify-content-center m-n1">
--      <input
-+    <div class="action-buttons">
-+      <button
-         v-for="(action, i) in statusBar.actions"
-         :key="i"
-         type="button"
--        class="btn btn-sm btn-light m-1 font-weight-bold"
--        :value="$t(`ui.game.actions.${action.title}`, action.args)"
--        @click="sendMove(action.move, $event.target)"
--      >
-+        class="btn btn-sm action-pill"
-+        @click="sendMove(action.move, $event.target)">
-+        {{ $t(`ui.game.actions.${action.title}`, action.args) }}
-+      </button>
-     </div>
-   </div>
- </div>
  </template>
  
  <script lang="ts">
  import { defineComponent } from 'vue';
- import $ from 'jquery';
  import { mapGetters } from 'vuex';
- import { CharacterChoosingStateType as CCST, ClientTurnState, Move } from 'citadels-common';
- import { store } from '../../store';
- import CharactersList from './elements/CharactersList.vue';
- import PlayerCity from './elements/PlayerCity.vue';
- import PlayerHand from './elements/PlayerHand.vue';
- import DistrictCard from './elements/DistrictCard.vue';
- import { getStatusBarData } from '../../data/statusBarData';
+ import { Move, MoveType, DistrictId } from 'citadels-common';
+ import { store } from '../../../store';
+ import CharactersList from './CharactersList.vue';
+ import DistrictCard from './DistrictCard.vue';
+ import PlayerScore from './PlayerScore.vue';
  
  export default defineComponent({
+   name: 'PlayerCity',
    components: {
-     CharactersList,
-     PlayerCity,
-     PlayerHand,
      DistrictCard,
+     CharactersList,
+     PlayerScore,
    },
-   name: 'LobbyScreen',
-@@ -125,50 +134,60 @@ export default defineComponent({
-       'isCurrentPlayerSelf',
-       'gameProgress',
-     ]),
-     self() {
-       return this.gameState.self;
+   props: {
+     playerId: {
+       type: String,
+       required: true,
      },
-     playerBoards() {
-       const players = [...this.gameState.board.playerOrder];
-       const cutOut = players.splice(players.indexOf(this.gameState.self));
-       players.splice(0, 0, ...cutOut);
-       return players.map((playerId) => (
-         [playerId, {
-           ...this.gameState.board.players.get(playerId),
-           crown: this.gameState.board.playerOrder[0] === playerId,
-         }]));
+     board: {
+@@ -107,25 +128,104 @@ export default defineComponent({
+             player: store.getters.getPlayerPosition(this.playerId),
+             card: name,
+           },
+         };
+         await store.dispatch('sendMove', move);
+       } catch (error) {
+         console.log('error when sending move', error);
+       }
      },
-     selfBoard() {
-       return {
-         ...this.gameState.board.players.get(this.self),
-         crown: this.gameState.board.playerOrder[0] === this.self,
-       };
-     },
-     statusBar() {
-       return getStatusBarData(this.gameState);
-     },
-+    statusBarClass() {
-+      switch (this.statusBar.type) {
-+        case 'HIGHLIGHTED':
-+          return 'action-bar--highlighted';
-+        case 'ERROR':
-+          return 'action-bar--error';
-+        default:
-+          return 'action-bar--normal';
-+      }
-+    },
-     buildMode() {
-       return this.isCurrentPlayerSelf
-       && this.gameState.board.turnState === ClientTurnState.BUILD_DISTRICT;
-     },
-     destroyMode() {
-       return this.isCurrentPlayerSelf
-       && this.gameState.board.turnState === ClientTurnState.WARLORD_DESTROY_DISTRICT;
-     },
-     killMode() {
-       return this.isCurrentPlayerSelf
-       && this.gameState.board.turnState === ClientTurnState.ASSASSIN_KILL;
-     },
-     robMode() {
-       return this.isCurrentPlayerSelf
-       && this.gameState.board.turnState === ClientTurnState.THIEF_ROB;
-     },
-     putAsideMode() {
-       if (!this.isCurrentPlayerSelf) return false;
-       switch (this.gameState.board.characters.state.type) {
-         case CCST.PUT_ASIDE_FACE_UP:
-         case CCST.PUT_ASIDE_FACE_DOWN:
-         case CCST.PUT_ASIDE_FACE_DOWN_UP:
-           return true;
-         default:
-           return false;
-@@ -210,52 +229,238 @@ export default defineComponent({
+     async exchangeHand() {
+       if (!this.exchangeHandMode) return;
+ 
        try {
+         const move: Move = {
+           type: MoveType.MAGICIAN_EXCHANGE_HAND,
+           data: store.getters.getPlayerPosition(this.playerId),
+         };
          await store.dispatch('sendMove', move);
        } catch (error) {
          console.log('error when sending move', error);
        }
      },
    },
-   beforeUnmount() {
-     $('#setupConfirmationModal').modal('hide');
+ });
+ </script>
++
++<style scoped lang="scss">
++.player-city {
++  border: 0;
++}
++
++.player-header {
++  border: 0;
++}
++
++.header-row,
++.name-row {
++  gap: 0.5rem;
++}
++
++.chip-row {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.5rem;
++}
++
++.pill-chip {
++  display: inline-flex;
++  align-items: center;
++  gap: 0.35rem;
++  border-radius: 999px;
++  padding: 0.35rem 0.75rem;
++  background: rgba(255, 255, 255, 0.1);
++  border: 1px solid rgba(255, 255, 255, 0.2);
++  color: inherit;
++  font-weight: 600;
++}
++
++.crown-chip {
++  background: rgba(220, 53, 69, 0.2);
++  border-color: rgba(220, 53, 69, 0.4);
++}
++
++.coin-chip {
++  background: rgba(255, 193, 7, 0.1);
++  border-color: rgba(255, 193, 7, 0.5);
++}
++
++.action-chip {
++  border-radius: 999px;
++  padding: 0.35rem 0.75rem;
++  display: inline-flex;
++  align-items: center;
++  gap: 0.35rem;
++  min-height: 2.25rem;
++}
++
++.city-grid {
++  border: 0;
++}
++
++.city-grid .card-body {
++  gap: 0.75rem;
++}
++
++.city-slot {
++  flex: 0 1 8rem;
++  display: flex;
++  justify-content: center;
++  align-items: center;
++  padding: 0.35rem;
++  border-radius: 0.5rem;
++  transition: box-shadow 0.15s ease, transform 0.15s ease;
++}
++
++.city-slot.is-selectable {
++  cursor: pointer;
++  box-shadow: 0 0.35rem 0.7rem rgba(0, 0, 0, 0.15);
++}
++
++.city-slot.is-selectable:hover {
++  transform: translateY(-2px);
++}
++</style>
+diff --git a/client/src/components/game/elements/PlayerHand.vue b/client/src/components/game/elements/PlayerHand.vue
+index 6d4f8b42e920f6dc0c08024afef236ee1b8838d0..c60876b7bcf1ecd6e64eca474fb472b149b55797 100644
+--- a/client/src/components/game/elements/PlayerHand.vue
++++ b/client/src/components/game/elements/PlayerHand.vue
+@@ -1,199 +1,229 @@
+ <template>
+-<div class="d-flex justify-content-start align-items-end overflow-auto">
+-  <div v-if="board.crown" class="crown card rounded-pill bg-danger p-3 m-2 shadow-sm">
+-    <emoji emoji="👑"></emoji>
+-  </div>
+-  <div class="flex-grow-1 px-2 pb-2 d-flex overflow-hidden">
+-    <div
+-      class="district-card-wrapper pt-3"
+-      v-for="id, i in board.hand"
+-      :key="i"
+-    >
+-      <div class="district-card">
+-        <DistrictCard
+-          :district-id="id"
+-          :disabled="showTmpHand || (buildMode && !canBuild(id))"
+-          :selectable="canBuild(id) || discardCardsMode || laboratoryMode"
+-          v-model:selected="selectedCards[i]"
+-        />
++  <div class="player-hand card bg-secondary shadow-sm w-100">
++    <div class="card-body p-2">
++      <div class="d-flex justify-content-end flex-wrap align-items-center chip-row mb-2">
++        <span v-if="board.crown" class="pill-chip crown-chip">
++          <emoji emoji="👑" class="mr-1"></emoji>
++          <span>{{ $t('ui.game.crown') || 'Crown' }}</span>
++        </span>
++        <span class="pill-chip coin-chip">
++          <emoji emoji="🪙" class="mr-1"></emoji>
++          <span>{{ board.stash }}</span>
++        </span>
++      </div>
++
++      <div class="hand-scroll d-flex align-items-stretch overflow-auto pb-2">
++        <div
++          class="hand-card"
++          v-for="id, i in board.hand"
++          :key="i"
++          :class="{
++            'is-focused': focusedCard === i,
++            'is-selected': selectedCards[i],
++            'is-disabled': showTmpHand || (buildMode && !canBuild(id)),
++          }"
++          @click="focusCard(i)"
++        >
++          <DistrictCard
++            :district-id="id"
++            :disabled="showTmpHand || (buildMode && !canBuild(id))"
++            :selectable="canBuild(id) || discardCardsMode || laboratoryMode"
++            v-model:selected="selectedCards[i]"
++          />
++        </div>
++      </div>
++
++      <div v-if="showTmpHand" class="temp-hand card bg-light shadow-sm mt-2">
++        <div class="card-body py-2 d-flex justify-content-start overflow-auto">
++          <DistrictCard
++            v-for="id, i in board.tmpHand"
++            :key="i"
++            :district-id="id"
++            class="mr-2"
++            @click="chooseCard(id)"
++            :selectable="showTmpHand"
++          />
++        </div>
+       </div>
+     </div>
+   </div>
+-  <div
+-    v-if="showTmpHand"
+-    class="bg-secondary d-flex justify-content-start pl-2 py-2 my-n2"
+-  >
+-    <DistrictCard
+-      v-for="id, i in board.tmpHand"
+-      :key="i"
+-      :district-id="id"
+-      class="mr-2"
+-      @click="chooseCard(id)"
+-      :selectable="showTmpHand"
+-    />
+-  </div>
+-  <div
+-    class="stash d-flex flex-column-reverse flex-wrap-reverse justify-content-start"
+-    :style="`width: ${2.5 * Math.ceil(board.stash / 5)}rem;`"
+-  >
+-    <emoji v-for="i in board.stash" :key="i" class="coin" emoji="🪙"></emoji>
+-  </div>
+-</div>
+ </template>
+ 
+ <script lang="ts">
+ import { defineComponent } from 'vue';
+ import { Move, MoveType, DistrictId } from 'citadels-common';
+ import { store } from '../../../store';
+ import DistrictCard from './DistrictCard.vue';
+ 
+ export default defineComponent({
+   name: 'PlayerHand',
+   components: {
+     DistrictCard,
+   },
+   props: {
+     board: {
+       required: true,
+     },
+     buildMode: {
+       type: Boolean,
+       default: false,
+     },
+     discardCardsMode: {
+       type: Boolean,
+       default: false,
+     },
+     laboratoryMode: {
+       type: Boolean,
+       default: false,
+     },
+   },
+   data() {
+     return {
+       selectedCards: [] as boolean[],
++      focusedCard: null as number | null,
+     };
+   },
+   computed: {
+     showTmpHand() {
+       return this.board.tmpHand.length > 0;
+     },
+   },
+   methods: {
+     canBuild(name: DistrictId): boolean {
+       if (!this.buildMode) return false;
+       return !this.board.city.includes(name)
+         && store.getters.getDistrictFromId(name).cost <= this.board.stash;
+     },
+     async chooseCard(name: DistrictId) {
+       try {
+         const move: Move = { type: MoveType.DRAW_CARDS, data: name };
+         await store.dispatch('sendMove', move);
+       } catch (error) {
+         console.log('error when sending move', error);
+       }
+     },
+     async chooseCardBuild(name: DistrictId) {
+       if (!this.canBuild(name)) return;
+ 
+       try {
+         const move: Move = { type: MoveType.BUILD_DISTRICT, data: name };
+         await store.dispatch('sendMove', move);
+       } catch (error) {
+         console.log('error when sending move', error);
+       }
+     },
+     async chooseCardLaboratory(name: DistrictId) {
+       try {
+         const move: Move = { type: MoveType.LABORATORY_DISCARD_CARD, data: name };
+         await store.dispatch('sendMove', move);
+       } catch (error) {
+         console.log('error when sending move', error);
+       }
+     },
++    focusCard(index: number) {
++      this.focusedCard = this.focusedCard === index ? null : index;
++    },
    },
    watch: {
-     statusBar(oldVal, newVal) {
-       if (oldVal.message !== newVal.message) {
-         const el = this.$refs.statusBarMessage;
-         el.classList.remove('animate-text');
-         // eslint-disable-next-line no-void
-         void el.offsetWidth;
-         el.classList.add('animate-text');
-       }
+     board: {
+       handler(newBoard, oldBoard) {
+         if (newBoard.hand !== oldBoard.hand) {
+           this.selectedCards = [];
++          this.focusedCard = null;
+         }
+       },
+       deep: true,
+     },
+     selectedCards: {
+       handler(val) {
+         const cards: DistrictId[] = [];
+         val.forEach((isSelected, index) => {
+           if (isSelected) {
+             const card = this.board.hand[index];
+             if (card !== undefined) cards.push(card);
+           }
+         });
+ 
+         store.commit('setSelectedCards', { cards });
+ 
+         if (cards.length > 0) {
+           if (this.buildMode) {
+             this.chooseCardBuild(cards[0]);
+             this.selectedCards = [];
+           } else if (this.laboratoryMode) {
+             this.chooseCardLaboratory(cards[0]);
+             this.selectedCards = [];
+           }
+         }
+       },
+       deep: true,
      },
    },
  });
  </script>
  
  <style lang="scss" scoped>
-+.board-screen {
-+  display: flex;
-+  flex-direction: column;
-+  gap: 0.75rem;
-+  height: 100%;
-+  background: #0f0f10;
-+  color: #f8f9fa;
-+}
-+
-+.board-layout {
-+  display: grid;
-+  grid-template-columns: 1fr;
-+  grid-template-rows: auto 1fr;
-+  grid-template-areas:
-+    'players'
-+    'sidebar';
-+  gap: 0.75rem;
-+  padding: 0.75rem;
-+  height: 100%;
-+  overflow: hidden;
-+}
-+
-+@media (min-width: 992px) {
-+  .board-layout {
-+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-+    grid-template-rows: 1fr;
-+    grid-template-areas: 'players sidebar';
-+  }
-+}
-+
-+.player-section {
-+  grid-area: players;
-+  display: flex;
-+  flex-direction: column;
-+  gap: 0.75rem;
-+  min-width: 0;
-+}
-+
-+.player-boards {
-+  display: flex;
-+  gap: 0.75rem;
-+  flex: 1;
-+  min-height: 0;
-+  overflow-x: auto;
-+  padding: 0.75rem;
-+}
-+
-+.player-column {
-+  flex: 1 1 320px;
-+  min-width: 280px;
-+  display: flex;
-+}
-+
-+.surface {
-+  background: linear-gradient(145deg, #1b1c1f, #111114);
-+  border-radius: 0.75rem;
-+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.4);
-+  border: 1px solid rgba(255, 255, 255, 0.04);
-+}
-+
-+.hand-panel {
-+  padding: 0.5rem 0.75rem;
-+}
-+
-+.sidebar {
-+  grid-area: sidebar;
-+  display: flex;
-+  flex-direction: column;
-+  gap: 0.75rem;
-+  min-height: 0;
-+}
-+
-+.section-card {
-+  background: #151518;
-+  border-radius: 0.75rem;
-+  padding: 0.75rem;
-+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.35);
-+  border: 1px solid rgba(255, 255, 255, 0.04);
-+  display: flex;
-+  flex-direction: column;
-+  gap: 0.5rem;
-+}
-+
-+.section-header {
-+  display: flex;
-+  justify-content: space-between;
-+  align-items: center;
-+  font-size: 0.9rem;
-+  letter-spacing: 0.05em;
-+  text-transform: uppercase;
-+  color: rgba(255, 255, 255, 0.7);
-+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-+  padding-bottom: 0.35rem;
-+}
-+
-+.section-body {
-+  display: flex;
-+  flex-direction: column;
-+  gap: 0.5rem;
-+}
-+
-+.characters-panel :deep(.card) {
-+  background: transparent;
-+  border: none;
-+  box-shadow: none;
-+}
-+
-+.characters-panel :deep(.list-group) {
-+  border-radius: 0.5rem;
-+}
-+
-+.characters-panel :deep(.list-group-item) {
-+  background: rgba(255, 255, 255, 0.03);
-+  border-color: rgba(255, 255, 255, 0.05);
-+}
-+
-+.graveyard-card {
-+  align-items: center;
-+  padding: 0.5rem 0;
-+}
-+
-+.action-bar {
-+  position: sticky;
-+  bottom: 0;
-+  left: 0;
-+  right: 0;
+-.stash {
+-  height: 9em;
+-  margin-top: 2.5em;
++.chip-row {
 +  display: flex;
 +  flex-wrap: wrap;
-+  align-items: center;
 +  gap: 0.5rem;
-+  padding: 0.65rem 1rem;
-+  border-top: 1px solid rgba(255, 255, 255, 0.08);
-+  backdrop-filter: blur(8px);
-+  z-index: 10;
-+}
-+
-+.action-bar--normal {
-+  background: rgba(108, 117, 125, 0.35);
-+  box-shadow: 0 -0.5rem 1.25rem rgba(0, 0, 0, 0.4);
-+}
-+
-+.action-bar--highlighted {
-+  background: rgba(0, 123, 255, 0.35);
-+  box-shadow: 0 -0.5rem 1.25rem rgba(0, 123, 255, 0.35);
-+}
-+
-+.action-bar--error {
-+  background: rgba(220, 53, 69, 0.3);
-+  box-shadow: 0 -0.5rem 1.25rem rgba(220, 53, 69, 0.35);
-+}
-+
-+.status-message {
-+  flex: 1 1 220px;
-+  font-weight: 700;
-+  display: flex;
-+  flex-wrap: wrap;
-+  gap: 0.2rem;
-+}
-+
-+.action-buttons {
-+  display: flex;
-+  flex-wrap: wrap;
-+  gap: 0.4rem;
-+  justify-content: flex-end;
-+}
-+
-+.action-pill {
-+  border-radius: 999px;
-+  padding: 0.35rem 0.95rem;
-+  font-weight: 700;
-+  border: 1px solid rgba(255, 255, 255, 0.15);
-+  color: #f8f9fa;
-+  background: rgba(255, 255, 255, 0.06);
-+}
-+
-+.action-bar--highlighted .action-pill {
-+  background: rgba(0, 123, 255, 0.2);
-+  border-color: rgba(0, 123, 255, 0.5);
-+}
-+
-+.action-bar--error .action-pill {
-+  background: rgba(220, 53, 69, 0.18);
-+  border-color: rgba(220, 53, 69, 0.55);
-+}
-+
- @keyframes animate-text {
-   0% {
-     top: 1rem;
-     opacity: 0;
-   }
-   80% {
-     top: -0.1rem;
-     opacity: 1;
-   }
-   100% {
-     top: 0;
-     opacity: 1;
-   }
  }
-+
- .animate-text {
-   > span {
-     position: relative;
-     animation: animate-text .3s both;
  
-     @for $i from 0 to 7 {
-       &:nth-child(#{$i}n) {
-         animation-delay: $i * .05s;
-       }
-     }
-   }
+-.coin {
+-  font-size: 2em;
+-  height: .8em;
+-  position: relative;
+-  bottom: .8em;
+-  filter: drop-shadow(0 -1px 2px rgba(0, 0, 0, .5));
++.pill-chip {
++  display: inline-flex;
++  align-items: center;
++  gap: 0.35rem;
++  border-radius: 999px;
++  padding: 0.35rem 0.75rem;
++  background: rgba(255, 255, 255, 0.15);
++  border: 1px solid rgba(255, 255, 255, 0.25);
++  color: inherit;
++  font-weight: 600;
+ }
+ 
+-.crown {
+-  font-size: 2em;
+-  min-width: 2.5em;
+-  text-align: center;
++.crown-chip {
++  background: rgba(220, 53, 69, 0.2);
++  border-color: rgba(220, 53, 69, 0.4);
+ }
+ 
+-.district-card-wrapper {
+-  width: 20px;
+-  flex: 1;
+-  max-width: 7.5rem;
++.coin-chip {
++  background: rgba(255, 193, 7, 0.1);
++  border-color: rgba(255, 193, 7, 0.5);
++}
+ 
+-  &:hover {
+-    width: 100%;
++.hand-scroll {
++  gap: 0.75rem;
++  scrollbar-width: thin;
++}
+ 
+-    .district-card {
+-      transform: translatey(-0.35rem);
+-    }
+-  }
++.hand-card {
++  flex: 0 0 7.5rem;
++  display: flex;
++  justify-content: center;
++  align-items: stretch;
++  padding: 0.35rem;
++  border-radius: 0.5rem;
++  background: rgba(255, 255, 255, 0.08);
++  box-shadow: 0 0.35rem 0.7rem rgba(0, 0, 0, 0.15);
++  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
++}
+ 
+-  &:hover ~ .card {
+-    z-index: 1;
+-  }
++.hand-card.is-focused {
++  transform: translateY(-3px);
++  background: rgba(255, 255, 255, 0.16);
++  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
++}
+ 
+-  &:last-child {
+-    width: auto;
+-  }
++.hand-card.is-selected {
++  border: 1px solid rgba(0, 123, 255, 0.5);
++  box-shadow: 0 0.6rem 1.1rem rgba(0, 123, 255, 0.25);
++}
++
++.hand-card.is-disabled {
++  opacity: 0.7;
++}
+ 
+-  .district-card {
+-    transition: transform .1s linear;
+-    margin: auto;
+-    box-sizing: border-box;
+-  }
++.temp-hand .card-body {
++  gap: 0.5rem;
  }
  </style>
