@@ -1,328 +1,473 @@
-diff --git a/client/src/components/HomeScreen.vue b/client/src/components/HomeScreen.vue
-index f5c67ef4c4eca5b17290697d9e99cc8a5ea24644..eedf4ea806504a2732690bd1dd8f675f14a3c7b9 100644
---- a/client/src/components/HomeScreen.vue
-+++ b/client/src/components/HomeScreen.vue
-@@ -1,66 +1,295 @@
+diff --git a/client/src/components/game/BoardScreen.vue b/client/src/components/game/BoardScreen.vue
+index 0a691eb8ee29b8f53a2b8a93e807bb314b34059e..b04e54d0aeacfe9b90aa99b7a938ab30e0f7a1d3 100644
+--- a/client/src/components/game/BoardScreen.vue
++++ b/client/src/components/game/BoardScreen.vue
+@@ -1,113 +1,122 @@
  <template>
--<div class="container-fluid h-100 d-flex justify-content-center align-items-center">
--  <div class="card p-4 text-center">
--    <div class="form-group">
--      <p>{{ $t('ui.homepage.intro_text') }}</p>
--      <div class="mb-3">
--        <input
--          v-model="roomId"
--          class="form-control mb-2"
--          type="text"
--          :placeholder="$t('ui.homepage.join_room_placeholder') || 'Enter room code'"
--          @keyup.enter="joinRoom()"
--        >
--        <input
--          class="btn btn-secondary btn-block"
--          type="button"
--          @click="joinRoom()"
--          :value="$t('ui.homepage.join_room') || 'Join Room'"
--          :disabled="!roomId.trim()"
--        >
-+  <div class="home-screen">
-+    <div class="hero-card">
-+      <div class="hero-content">
-+        <p class="eyebrow">{{ $t('ui.homepage.intro_label') || 'Real-time collaboration' }}</p>
-+        <h1 class="headline">{{ $t('ui.homepage.headline') || 'Jump into a room and start creating' }}</h1>
-+        <p class="lede">{{ $t('ui.homepage.intro_text') }}</p>
-+        <div class="cta-group">
-+          <div class="input-group">
-+            <label class="input-label" :for="inputId">{{ $t('ui.homepage.join_room_label') || 'Room code' }}</label>
-+            <div class="input-row">
-+              <input
-+                :id="inputId"
-+                v-model="roomId"
-+                class="room-input"
-+                type="text"
-+                :placeholder="$t('ui.homepage.join_room_placeholder') || 'Enter room code'"
-+                :class="{ 'has-error': joinAttempted && !roomId.trim() }"
-+                @keyup.enter="joinRoom()"
-+              >
-+              <button
-+                class="btn-primary"
-+                type="button"
-+                @click="joinRoom()"
-+                :disabled="!roomId.trim()"
-+              >
-+                {{ $t('ui.homepage.join_room') || 'Join Room' }}
-+              </button>
-+            </div>
-+            <p class="helper-text" :class="{ error: joinAttempted && !roomId.trim() }">
-+              <span v-if="joinAttempted && !roomId.trim()">
-+                {{ $t('ui.homepage.join_room_error') || 'Add a room code to continue.' }}
-+              </span>
-+              <span v-else>
-+                {{ $t('ui.homepage.join_room_hint') || 'Paste or type a room code from a friend.' }}
-+              </span>
-+            </p>
-+          </div>
-+          <div class="divider" role="separator" aria-hidden="true"></div>
-+          <div class="input-group">
-+            <p class="input-label">{{ $t('ui.homepage.create_room_label') || 'New here?' }}</p>
-+            <button
-+              class="btn-ghost"
-+              type="button"
-+              @click="createRoom()"
-+              :disabled="creatingRoom"
-+            >
-+              {{ creatingRoom ? ($t('ui.homepage.creating_room') || 'Creating...') : ($t('ui.homepage.create_room') || 'Create a Room') }}
-+            </button>
-+            <p class="helper-text">
-+              {{ $t('ui.homepage.create_room_hint') || 'Spin up a fresh room and share the code with your team.' }}
-+            </p>
-+          </div>
+-<div class="d-flex flex-column h-100 bg-dark border-dark shadow">
+-  <div class="row no-gutters h-100 overflow-auto">
+-    <div class="col-10 h-100 d-flex flex-column">
+-      <div class="flex-fill bg-dark d-flex overflow-auto p-2 gap-2">
++<div class="board-screen">
++  <div class="board-layout">
++    <section class="player-section">
++      <div class="player-boards surface">
+         <div
+-          class="col p-0 d-flex"
++          class="player-column"
+           v-for="[playerId, board] in playerBoards"
+           :key="playerId"
+         >
+           <PlayerCity
+             :player-id="playerId"
+             :board="board"
+             :destroy-mode="destroyMode"
+             :stash="selfBoard.stash"
+             :exchange-hand-mode="exchangeHandMode"
+           />
+         </div>
+       </div>
+-      <div class="px-2 bg-gradient-dark border-top border-secondary">
++      <div class="surface hand-panel">
+         <PlayerHand
+           :board="selfBoard"
+           :build-mode="buildMode"
+           :discard-cards-mode="discardCardsMode"
+           :laboratory-mode="laboratoryMode"
+         />
+       </div>
+-    </div>
+-    <div
+-      class="col-2 p-2 bg-dark border-left border-secondary
+-      h-100 d-flex flex-column justify-content-between overflow-auto"
+-    >
+-      <CharactersList
++    </section>
++    <aside class="sidebar" aria-label="Character sections">
++      <div
+         v-if="gameProgress === 'IN_GAME'"
+-        :title="$t('ui.game.characters')"
+-        :characters="charactersList.callable"
+-        :current="charactersList.current"
+-        :kill-mode="killMode"
+-        :rob-mode="robMode"
+-        :put-aside-mode="putAsideMode"
+-      />
++        class="section-card"
++      >
++        <div class="section-header">
++          <span>{{ $t('ui.game.characters') }}</span>
 +        </div>
++        <CharactersList
++          class="section-body characters-panel"
++          :title="''"
++          :characters="charactersList.callable"
++          :current="charactersList.current"
++          :kill-mode="killMode"
++          :rob-mode="robMode"
++          :put-aside-mode="putAsideMode"
++        />
++      </div>
+       <div
+         v-if="gameProgress === 'IN_GAME' && showGraveyard"
+-        class="card bg-secondary flex flex-column"
++        class="section-card"
+       >
+-        <div class="card-header text-light text-center px-0">
+-          {{ $t('districts.graveyard.name') }}
++        <div class="section-header">
++          <span>{{ $t('districts.graveyard.name') }}</span>
++        </div>
++        <div class="section-body graveyard-card">
++          <DistrictCard
++            class="align-self-center"
++            :district-id="gameState.board.graveyard"
++          />
+         </div>
+-        <DistrictCard
+-          class="align-self-center my-2"
+-          :district-id="gameState.board.graveyard"
+-        />
        </div>
--      <div class="form-group">
--        <input
--          class="btn btn-primary"
--          type="button"
--          @click="createRoom()"
--          :value="$t('ui.homepage.create_room')"
--          :disabled="creatingRoom"
--        >
-+      <div class="supporting-panel">
-+        <h2 class="panel-title">{{ $t('ui.homepage.how_it_works_title') || 'How it works' }}</h2>
-+        <ol class="panel-list">
-+          <li>{{ $t('ui.homepage.step_join') || 'Join or create a room from this page.' }}</li>
-+          <li>{{ $t('ui.homepage.step_invite') || 'Share the code so others can hop in instantly.' }}</li>
-+          <li>{{ $t('ui.homepage.step_collaborate') || 'Collaborate in real-time with chat and shared tools.' }}</li>
-+        </ol>
-       </div>
+-      <CharactersList
++      <div
+         v-if="gameProgress === 'IN_GAME'"
+-        :characters="charactersList.aside"
+-      />
+-    </div>
++        class="section-card"
++      >
++        <div class="section-header">
++          <span>{{ $t('ui.game.characters') }}</span>
++        </div>
++        <CharactersList
++          class="section-body characters-panel"
++          :title="''"
++          :characters="charactersList.aside"
++        />
++      </div>
++    </aside>
+   </div>
+   <div
+-    class="border-top border-secondary h5 p-2 m-0
+-      d-flex flex-wrap align-items-stretch justify-content-center"
+-    :class="{
+-      'bg-secondary': statusBar.type === 'NORMAL',
+-      'bg-primary': statusBar.type === 'HIGHLIGHTED',
+-      'bg-danger': statusBar.type === 'ERROR',
+-    }"
++    class="action-bar"
++    :class="statusBarClass"
+   >
+-    <!-- status message -->
+     <div
+-      class="flex-fill badge badge-lg py-3 text-light text-wrap animate-text"
++      class="status-message animate-text"
+       ref="statusBarMessage"
+     >
+       <span
+         v-for="c, i in [...$t(statusBar.message, statusBar.args)]"
+         :key="i"
+       >{{ c }}</span>
+     </div>
+-    <!-- actions -->
+-    <div class="text-center d-flex flex-wrap align-items-stretch justify-content-center m-n1">
+-      <input
++    <div class="action-buttons">
++      <button
+         v-for="(action, i) in statusBar.actions"
+         :key="i"
+         type="button"
+-        class="btn btn-sm btn-light m-1 font-weight-bold"
+-        :value="$t(`ui.game.actions.${action.title}`, action.args)"
+-        @click="sendMove(action.move, $event.target)"
+-      >
++        class="btn btn-sm action-pill"
++        @click="sendMove(action.move, $event.target)">
++        {{ $t(`ui.game.actions.${action.title}`, action.args) }}
++      </button>
      </div>
    </div>
--</div>
+ </div>
  </template>
  
  <script lang="ts">
  import { defineComponent } from 'vue';
- import { store } from '../store';
+ import $ from 'jquery';
+ import { mapGetters } from 'vuex';
+ import { CharacterChoosingStateType as CCST, ClientTurnState, Move } from 'citadels-common';
+ import { store } from '../../store';
+ import CharactersList from './elements/CharactersList.vue';
+ import PlayerCity from './elements/PlayerCity.vue';
+ import PlayerHand from './elements/PlayerHand.vue';
+ import DistrictCard from './elements/DistrictCard.vue';
+ import { getStatusBarData } from '../../data/statusBarData';
  
  export default defineComponent({
-   name: 'HomeScreen',
-   data() {
-     return {
-       roomId: '',
-       creatingRoom: false,
-+      joinAttempted: false,
-+      inputId: `room-input-${Math.random().toString(36).slice(2)}`,
-     };
+   components: {
+     CharactersList,
+     PlayerCity,
+     PlayerHand,
+     DistrictCard,
    },
-   methods: {
-     async joinRoom() {
-+      this.joinAttempted = true;
-       if (!this.roomId.trim()) return;
-       this.$router.push({ name: 'room', params: { roomId: this.roomId.trim() } });
+   name: 'LobbyScreen',
+@@ -125,50 +134,60 @@ export default defineComponent({
+       'isCurrentPlayerSelf',
+       'gameProgress',
+     ]),
+     self() {
+       return this.gameState.self;
      },
-     async createRoom() {
-       this.creatingRoom = true;
+     playerBoards() {
+       const players = [...this.gameState.board.playerOrder];
+       const cutOut = players.splice(players.indexOf(this.gameState.self));
+       players.splice(0, 0, ...cutOut);
+       return players.map((playerId) => (
+         [playerId, {
+           ...this.gameState.board.players.get(playerId),
+           crown: this.gameState.board.playerOrder[0] === playerId,
+         }]));
+     },
+     selfBoard() {
+       return {
+         ...this.gameState.board.players.get(this.self),
+         crown: this.gameState.board.playerOrder[0] === this.self,
+       };
+     },
+     statusBar() {
+       return getStatusBarData(this.gameState);
+     },
++    statusBarClass() {
++      switch (this.statusBar.type) {
++        case 'HIGHLIGHTED':
++          return 'action-bar--highlighted';
++        case 'ERROR':
++          return 'action-bar--error';
++        default:
++          return 'action-bar--normal';
++      }
++    },
+     buildMode() {
+       return this.isCurrentPlayerSelf
+       && this.gameState.board.turnState === ClientTurnState.BUILD_DISTRICT;
+     },
+     destroyMode() {
+       return this.isCurrentPlayerSelf
+       && this.gameState.board.turnState === ClientTurnState.WARLORD_DESTROY_DISTRICT;
+     },
+     killMode() {
+       return this.isCurrentPlayerSelf
+       && this.gameState.board.turnState === ClientTurnState.ASSASSIN_KILL;
+     },
+     robMode() {
+       return this.isCurrentPlayerSelf
+       && this.gameState.board.turnState === ClientTurnState.THIEF_ROB;
+     },
+     putAsideMode() {
+       if (!this.isCurrentPlayerSelf) return false;
+       switch (this.gameState.board.characters.state.type) {
+         case CCST.PUT_ASIDE_FACE_UP:
+         case CCST.PUT_ASIDE_FACE_DOWN:
+         case CCST.PUT_ASIDE_FACE_DOWN_UP:
+           return true;
+         default:
+           return false;
+@@ -210,52 +229,238 @@ export default defineComponent({
        try {
-         const roomId = await store.dispatch('createRoom');
-         this.$router.push({ name: 'room', params: { roomId } });
-         this.creatingRoom = false;
+         await store.dispatch('sendMove', move);
        } catch (error) {
-         console.error('error when creating room', error);
-         this.creatingRoom = false;
+         console.log('error when sending move', error);
+       }
+     },
+   },
+   beforeUnmount() {
+     $('#setupConfirmationModal').modal('hide');
+   },
+   watch: {
+     statusBar(oldVal, newVal) {
+       if (oldVal.message !== newVal.message) {
+         const el = this.$refs.statusBarMessage;
+         el.classList.remove('animate-text');
+         // eslint-disable-next-line no-void
+         void el.offsetWidth;
+         el.classList.add('animate-text');
        }
      },
    },
  });
  </script>
-+
-+<style scoped lang="scss">
-+.home-screen {
-+  min-height: 100vh;
-+  display: flex;
-+  align-items: center;
-+  justify-content: center;
-+  background: radial-gradient(circle at 10% 20%, rgba(88, 86, 214, 0.12), transparent 35%),
-+    radial-gradient(circle at 90% 10%, rgba(32, 201, 151, 0.1), transparent 30%),
-+    linear-gradient(135deg, rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.7));
-+  color: var(--bs-body-color);
-+  padding: clamp(1.5rem, 4vw, 3rem);
-+}
-+
-+.hero-card {
-+  display: grid;
-+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-+  gap: clamp(1.5rem, 3vw, 2.5rem);
-+  background: #fff;
-+  border-radius: 24px;
-+  padding: clamp(1.75rem, 4vw, 3rem);
-+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-+  max-width: 1100px;
-+  width: 100%;
-+}
-+
-+.hero-content {
+ 
+ <style lang="scss" scoped>
++.board-screen {
 +  display: flex;
 +  flex-direction: column;
-+  gap: clamp(1rem, 2vw, 1.5rem);
-+}
-+
-+.eyebrow {
-+  font-size: clamp(0.85rem, 1.8vw, 1rem);
-+  font-weight: 600;
-+  color: var(--bs-primary);
-+  letter-spacing: 0.04em;
-+  text-transform: uppercase;
-+  margin: 0;
-+}
-+
-+.headline {
-+  font-size: clamp(1.9rem, 4vw, 2.8rem);
-+  line-height: 1.2;
-+  font-weight: 700;
-+  margin: 0;
-+  color: var(--bs-emphasis-color, #111827);
-+}
-+
-+.lede {
-+  margin: 0;
-+  color: var(--bs-secondary-color, #4b5563);
-+  font-size: clamp(1rem, 2vw, 1.125rem);
-+}
-+
-+.cta-group {
-+  display: grid;
-+  grid-template-columns: 2fr 1px 1.2fr;
-+  gap: clamp(1rem, 2vw, 1.5rem);
-+  align-items: center;
-+}
-+
-+.divider {
-+  width: 100%;
++  gap: 0.75rem;
 +  height: 100%;
-+  background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.08), transparent);
++  background: #0f0f10;
++  color: #f8f9fa;
 +}
 +
-+@media (max-width: 768px) {
-+  .cta-group {
-+    grid-template-columns: 1fr;
-+  }
++.board-layout {
++  display: grid;
++  grid-template-columns: 1fr;
++  grid-template-rows: auto 1fr;
++  grid-template-areas:
++    'players'
++    'sidebar';
++  gap: 0.75rem;
++  padding: 0.75rem;
++  height: 100%;
++  overflow: hidden;
++}
 +
-+  .divider {
-+    height: 1px;
-+    background: linear-gradient(to right, transparent, rgba(15, 23, 42, 0.08), transparent);
++@media (min-width: 992px) {
++  .board-layout {
++    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
++    grid-template-rows: 1fr;
++    grid-template-areas: 'players sidebar';
 +  }
 +}
 +
-+.input-group {
++.player-section {
++  grid-area: players;
++  display: flex;
++  flex-direction: column;
++  gap: 0.75rem;
++  min-width: 0;
++}
++
++.player-boards {
++  display: flex;
++  gap: 0.75rem;
++  flex: 1;
++  min-height: 0;
++  overflow-x: auto;
++  padding: 0.75rem;
++}
++
++.player-column {
++  flex: 1 1 320px;
++  min-width: 280px;
++  display: flex;
++}
++
++.surface {
++  background: linear-gradient(145deg, #1b1c1f, #111114);
++  border-radius: 0.75rem;
++  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.4);
++  border: 1px solid rgba(255, 255, 255, 0.04);
++}
++
++.hand-panel {
++  padding: 0.5rem 0.75rem;
++}
++
++.sidebar {
++  grid-area: sidebar;
++  display: flex;
++  flex-direction: column;
++  gap: 0.75rem;
++  min-height: 0;
++}
++
++.section-card {
++  background: #151518;
++  border-radius: 0.75rem;
++  padding: 0.75rem;
++  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.35);
++  border: 1px solid rgba(255, 255, 255, 0.04);
 +  display: flex;
 +  flex-direction: column;
 +  gap: 0.5rem;
 +}
 +
-+.input-label {
-+  font-weight: 600;
-+  color: var(--bs-emphasis-color, #111827);
-+  margin: 0;
-+}
-+
-+.input-row {
++.section-header {
 +  display: flex;
-+  gap: 0.75rem;
++  justify-content: space-between;
 +  align-items: center;
-+  flex-wrap: wrap;
++  font-size: 0.9rem;
++  letter-spacing: 0.05em;
++  text-transform: uppercase;
++  color: rgba(255, 255, 255, 0.7);
++  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
++  padding-bottom: 0.35rem;
 +}
 +
-+.room-input {
-+  flex: 1;
-+  min-width: 200px;
-+  border: 1px solid var(--bs-border-color, #e5e7eb);
-+  border-radius: 12px;
-+  padding: 0.75rem 1rem;
-+  font-size: 1rem;
-+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
++.section-body {
++  display: flex;
++  flex-direction: column;
++  gap: 0.5rem;
 +}
 +
-+.room-input:focus {
-+  outline: none;
-+  border-color: var(--bs-primary);
-+  box-shadow: 0 0 0 3px rgba(88, 86, 214, 0.18);
-+}
-+
-+.room-input.has-error {
-+  border-color: var(--bs-danger, #dc3545);
-+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.18);
-+}
-+
-+button {
++.characters-panel :deep(.card) {
++  background: transparent;
 +  border: none;
-+  border-radius: 12px;
-+  padding: 0.75rem 1.25rem;
-+  font-weight: 700;
-+  cursor: pointer;
-+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
-+  font-size: 1rem;
-+}
-+
-+button:disabled {
-+  cursor: not-allowed;
-+  opacity: 0.7;
-+  transform: none;
 +  box-shadow: none;
 +}
 +
-+.btn-primary {
-+  background: var(--bs-primary);
-+  color: #fff;
-+  box-shadow: 0 12px 30px rgba(88, 86, 214, 0.35);
++.characters-panel :deep(.list-group) {
++  border-radius: 0.5rem;
 +}
 +
-+.btn-primary:not(:disabled):hover {
-+  transform: translateY(-1px);
-+  box-shadow: 0 14px 34px rgba(88, 86, 214, 0.4);
++.characters-panel :deep(.list-group-item) {
++  background: rgba(255, 255, 255, 0.03);
++  border-color: rgba(255, 255, 255, 0.05);
 +}
 +
-+.btn-ghost {
-+  background: rgba(17, 24, 39, 0.05);
-+  color: var(--bs-emphasis-color, #111827);
++.graveyard-card {
++  align-items: center;
++  padding: 0.5rem 0;
 +}
 +
-+.btn-ghost:not(:disabled):hover {
-+  background: rgba(17, 24, 39, 0.08);
-+  transform: translateY(-1px);
-+}
-+
-+.helper-text {
-+  margin: 0;
-+  color: var(--bs-secondary-color, #4b5563);
-+  font-size: 0.95rem;
-+}
-+
-+.helper-text.error {
-+  color: var(--bs-danger, #dc3545);
-+}
-+
-+.supporting-panel {
-+  background: linear-gradient(145deg, rgba(88, 86, 214, 0.1), rgba(32, 201, 151, 0.12));
-+  border-radius: 16px;
-+  padding: clamp(1.25rem, 3vw, 1.75rem);
-+  height: 100%;
++.action-bar {
++  position: sticky;
++  bottom: 0;
++  left: 0;
++  right: 0;
 +  display: flex;
-+  flex-direction: column;
-+  gap: 0.75rem;
-+  border: 1px solid rgba(15, 23, 42, 0.06);
-+}
-+
-+.panel-title {
-+  margin: 0;
-+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
-+  font-weight: 700;
-+  color: var(--bs-emphasis-color, #111827);
-+}
-+
-+.panel-list {
-+  margin: 0;
-+  padding-left: 1.25rem;
-+  display: grid;
++  flex-wrap: wrap;
++  align-items: center;
 +  gap: 0.5rem;
-+  color: var(--bs-secondary-color, #4b5563);
-+  line-height: 1.5;
++  padding: 0.65rem 1rem;
++  border-top: 1px solid rgba(255, 255, 255, 0.08);
++  backdrop-filter: blur(8px);
++  z-index: 10;
 +}
-+</style>
++
++.action-bar--normal {
++  background: rgba(108, 117, 125, 0.35);
++  box-shadow: 0 -0.5rem 1.25rem rgba(0, 0, 0, 0.4);
++}
++
++.action-bar--highlighted {
++  background: rgba(0, 123, 255, 0.35);
++  box-shadow: 0 -0.5rem 1.25rem rgba(0, 123, 255, 0.35);
++}
++
++.action-bar--error {
++  background: rgba(220, 53, 69, 0.3);
++  box-shadow: 0 -0.5rem 1.25rem rgba(220, 53, 69, 0.35);
++}
++
++.status-message {
++  flex: 1 1 220px;
++  font-weight: 700;
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.2rem;
++}
++
++.action-buttons {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.4rem;
++  justify-content: flex-end;
++}
++
++.action-pill {
++  border-radius: 999px;
++  padding: 0.35rem 0.95rem;
++  font-weight: 700;
++  border: 1px solid rgba(255, 255, 255, 0.15);
++  color: #f8f9fa;
++  background: rgba(255, 255, 255, 0.06);
++}
++
++.action-bar--highlighted .action-pill {
++  background: rgba(0, 123, 255, 0.2);
++  border-color: rgba(0, 123, 255, 0.5);
++}
++
++.action-bar--error .action-pill {
++  background: rgba(220, 53, 69, 0.18);
++  border-color: rgba(220, 53, 69, 0.55);
++}
++
+ @keyframes animate-text {
+   0% {
+     top: 1rem;
+     opacity: 0;
+   }
+   80% {
+     top: -0.1rem;
+     opacity: 1;
+   }
+   100% {
+     top: 0;
+     opacity: 1;
+   }
+ }
++
+ .animate-text {
+   > span {
+     position: relative;
+     animation: animate-text .3s both;
+ 
+     @for $i from 0 to 7 {
+       &:nth-child(#{$i}n) {
+         animation-delay: $i * .05s;
+       }
+     }
+   }
+ }
+ </style>

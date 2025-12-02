@@ -1,10 +1,10 @@
 <template>
-<div class="d-flex flex-column h-100 bg-dark border-dark shadow">
-  <div class="row no-gutters h-100 overflow-auto">
-    <div class="col-10 h-100 d-flex flex-column">
-      <div class="flex-fill bg-dark d-flex overflow-auto p-2 gap-2">
+<div class="board-screen">
+  <div class="board-layout">
+    <section class="player-section">
+      <div class="player-boards surface">
         <div
-          class="col p-0 d-flex"
+          class="player-column"
           v-for="[playerId, board] in playerBoards"
           :key="playerId"
         >
@@ -17,7 +17,7 @@
           />
         </div>
       </div>
-      <div class="px-2 bg-gradient-dark border-top border-secondary">
+      <div class="surface hand-panel">
         <PlayerHand
           :board="selfBoard"
           :build-mode="buildMode"
@@ -25,50 +25,60 @@
           :laboratory-mode="laboratoryMode"
         />
       </div>
-    </div>
-    <div
-      class="col-2 p-2 bg-dark border-left border-secondary
-      h-100 d-flex flex-column justify-content-between overflow-auto"
-    >
-      <CharactersList
-        v-if="gameProgress === 'IN_GAME'"
-        :title="$t('ui.game.characters')"
-        :characters="charactersList.callable"
-        :current="charactersList.current"
-        :kill-mode="killMode"
-        :rob-mode="robMode"
-        :put-aside-mode="putAsideMode"
-      />
+    </section>
+    <aside class="sidebar" aria-label="Character sections">
       <div
-        v-if="gameProgress === 'IN_GAME' && showGraveyard"
-        class="card bg-secondary flex flex-column"
+        v-if="gameProgress === 'IN_GAME'"
+        class="section-card"
       >
-        <div class="card-header text-light text-center px-0">
-          {{ $t('districts.graveyard.name') }}
+        <div class="section-header">
+          <span>{{ $t('ui.game.characters') }}</span>
         </div>
-        <DistrictCard
-          class="align-self-center my-2"
-          :district-id="gameState.board.graveyard"
+        <CharactersList
+          class="section-body characters-panel"
+          :title="''"
+          :characters="charactersList.callable"
+          :current="charactersList.current"
+          :kill-mode="killMode"
+          :rob-mode="robMode"
+          :put-aside-mode="putAsideMode"
         />
       </div>
-      <CharactersList
+      <div
+        v-if="gameProgress === 'IN_GAME' && showGraveyard"
+        class="section-card"
+      >
+        <div class="section-header">
+          <span>{{ $t('districts.graveyard.name') }}</span>
+        </div>
+        <div class="section-body graveyard-card">
+          <DistrictCard
+            class="align-self-center"
+            :district-id="gameState.board.graveyard"
+          />
+        </div>
+      </div>
+      <div
         v-if="gameProgress === 'IN_GAME'"
-        :characters="charactersList.aside"
-      />
-    </div>
+        class="section-card"
+      >
+        <div class="section-header">
+          <span>{{ $t('ui.game.characters') }}</span>
+        </div>
+        <CharactersList
+          class="section-body characters-panel"
+          :title="''"
+          :characters="charactersList.aside"
+        />
+      </div>
+    </aside>
   </div>
   <div
-    class="border-top border-secondary h5 p-2 m-0
-      d-flex flex-wrap align-items-stretch justify-content-center"
-    :class="{
-      'bg-secondary': statusBar.type === 'NORMAL',
-      'bg-primary': statusBar.type === 'HIGHLIGHTED',
-      'bg-danger': statusBar.type === 'ERROR',
-    }"
+    class="action-bar"
+    :class="statusBarClass"
   >
-    <!-- status message -->
     <div
-      class="flex-fill badge badge-lg py-3 text-light text-wrap animate-text"
+      class="status-message animate-text"
       ref="statusBarMessage"
     >
       <span
@@ -76,16 +86,15 @@
         :key="i"
       >{{ c }}</span>
     </div>
-    <!-- actions -->
-    <div class="text-center d-flex flex-wrap align-items-stretch justify-content-center m-n1">
-      <input
+    <div class="action-buttons">
+      <button
         v-for="(action, i) in statusBar.actions"
         :key="i"
         type="button"
-        class="btn btn-sm btn-light m-1 font-weight-bold"
-        :value="$t(`ui.game.actions.${action.title}`, action.args)"
-        @click="sendMove(action.move, $event.target)"
-      >
+        class="btn btn-sm action-pill"
+        @click="sendMove(action.move, $event.target)">
+        {{ $t(`ui.game.actions.${action.title}`, action.args) }}
+      </button>
     </div>
   </div>
 </div>
@@ -146,6 +155,16 @@ export default defineComponent({
     },
     statusBar() {
       return getStatusBarData(this.gameState);
+    },
+    statusBarClass() {
+      switch (this.statusBar.type) {
+        case 'HIGHLIGHTED':
+          return 'action-bar--highlighted';
+        case 'ERROR':
+          return 'action-bar--error';
+        default:
+          return 'action-bar--normal';
+      }
     },
     buildMode() {
       return this.isCurrentPlayerSelf
@@ -232,6 +251,191 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.board-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  background: #0f0f10;
+  color: #f8f9fa;
+}
+
+.board-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'players'
+    'sidebar';
+  gap: 0.75rem;
+  padding: 0.75rem;
+  height: 100%;
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  .board-layout {
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    grid-template-rows: 1fr;
+    grid-template-areas: 'players sidebar';
+  }
+}
+
+.player-section {
+  grid-area: players;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.player-boards {
+  display: flex;
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  padding: 0.75rem;
+}
+
+.player-column {
+  flex: 1 1 320px;
+  min-width: 280px;
+  display: flex;
+}
+
+.surface {
+  background: linear-gradient(145deg, #1b1c1f, #111114);
+  border-radius: 0.75rem;
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.hand-panel {
+  padding: 0.5rem 0.75rem;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+}
+
+.section-card {
+  background: #151518;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.35rem;
+}
+
+.section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.characters-panel :deep(.card) {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.characters-panel :deep(.list-group) {
+  border-radius: 0.5rem;
+}
+
+.characters-panel :deep(.list-group-item) {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.graveyard-card {
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.action-bar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.action-bar--normal {
+  background: rgba(108, 117, 125, 0.35);
+  box-shadow: 0 -0.5rem 1.25rem rgba(0, 0, 0, 0.4);
+}
+
+.action-bar--highlighted {
+  background: rgba(0, 123, 255, 0.35);
+  box-shadow: 0 -0.5rem 1.25rem rgba(0, 123, 255, 0.35);
+}
+
+.action-bar--error {
+  background: rgba(220, 53, 69, 0.3);
+  box-shadow: 0 -0.5rem 1.25rem rgba(220, 53, 69, 0.35);
+}
+
+.status-message {
+  flex: 1 1 220px;
+  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.action-pill {
+  border-radius: 999px;
+  padding: 0.35rem 0.95rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f8f9fa;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.action-bar--highlighted .action-pill {
+  background: rgba(0, 123, 255, 0.2);
+  border-color: rgba(0, 123, 255, 0.5);
+}
+
+.action-bar--error .action-pill {
+  background: rgba(220, 53, 69, 0.18);
+  border-color: rgba(220, 53, 69, 0.55);
+}
+
 @keyframes animate-text {
   0% {
     top: 1rem;
@@ -246,6 +450,7 @@ export default defineComponent({
     opacity: 1;
   }
 }
+
 .animate-text {
   > span {
     position: relative;
