@@ -2,29 +2,36 @@
 <div class="input-group">
   <div class="input-group-prepend">
     <label class="input-group-text px-2" for="inputGroupLocale">
-      <emoji :emoji="$t('flag', $i18n.locale)"></emoji>
+      <emoji :emoji="$t('flag', currentLocale)"></emoji>
     </label>
   </div>
-  <select class="custom-select" v-model="$i18n.locale" id="inputGroupLocale">
-    <option v-for="locale in $i18n.availableLocales" :key="`locale-${locale}`" :value="locale">
-      {{ $t('name', locale, locale) }}
+  <select class="custom-select" v-model="currentLocale" id="inputGroupLocale">
+    <option v-for="locale in availableLocales" :key="`locale-${locale}`" :value="locale">
+      {{ $t('name', locale) }}
     </option>
   </select>
 </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { updateTitle } from '../i18n';
+import { computed, defineComponent } from 'vue';
+import { availableLocales, getLocale, setLocale, updateTitle } from '../i18n';
 
 export default defineComponent({
   name: 'LocaleSelector',
-  watch: {
-    '$i18n.locale': {
-      handler() {
+  setup() {
+    const currentLocale = computed<ReturnType<typeof getLocale>>({
+      get: () => getLocale(),
+      set: (locale) => {
+        setLocale(locale);
         updateTitle();
       },
-    },
+    });
+
+    return {
+      availableLocales,
+      currentLocale,
+    };
   },
 });
 </script>

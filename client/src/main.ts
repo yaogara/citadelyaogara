@@ -5,7 +5,7 @@ import twemoji from 'twemoji';
 import router from './router';
 import { store } from './store';
 import App from './App.vue';
-import i18n from './i18n';
+import { t, setLocale } from './i18n';
 
 import 'bootstrap';
 import './scss/main.scss';
@@ -71,5 +71,6 @@ app.directive('tooltip', {
 
 app.use(store);
 app.use(router);
-app.use(i18n);
+app.config.globalProperties.$t = t;
+setLocale('en');
 app.mount('#app');
