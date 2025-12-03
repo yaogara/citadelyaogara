@@ -1,80 +1,326 @@
-import { ref } from 'vue';
-import { messages, Locale } from './messages';
+const en = {
+  "flag": "\ud83c\uddec\ud83c\udde7",
+  "name": "English",
+  "ui": {
+    "title": "Citadels",
+    "subtitle1": "Bruno Faidutti's",
+    "subtitle2": "Classic Edition",
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "unknown_error": "Unknown error.",
+    "about": {
+      "title": "About",
+      "text": "Original board game created by <a target='_blank' href='http://faidutti.com'>Bruno Faidutti</a>.<br> Unofficial online version developped by <a target='_blank' href='https://brule.info'>Antoine Br\u00fbl\u00e9</a>.<br> This implementation of the game is <a target='_blank' href='https://github.com/antbrl/citadels-online'>open source</a>.<br> Emoji CC-BY 4.0 <a target='_blank' href='https://twemoji.twitter.com/'>Twemoji</a>",
+      "picture_credits": "Picture credits",
+      "by": "by"
+    },
+    "homepage": {
+      "intro_text": "Create a new room",
+      "create_room": "Create a Room",
+      "intro_label": "Real-time collaboration",
+      "headline": "Jump into a room and start creating",
+      "join_room_label": "Room code",
+      "join_room_placeholder": "Enter room code",
+      "join_room": "Join Room",
+      "join_room_error": "Add a room code to continue.",
+      "join_room_hint": "Paste or type a room code from a friend.",
+      "create_room_label": "New here?",
+      "creating_room": "Creating...",
+      "create_room_hint": "Spin up a fresh room and share the code with your team.",
+      "how_it_works_title": "How it works",
+      "step_join": "Join or create a room from this page.",
+      "step_invite": "Share the code so others can hop in instantly.",
+      "step_collaborate": "Collaborate in real-time with chat and shared tools."
+    },
+    "room": {
+      "username": "Username",
+      "connect": "Connect",
+      "not_open": "This room is not open for new players.",
+      "error_does_not_exist": "This room does not exist.",
+      "error_join": "Error when joining the room: {msg}"
+    },
+    "lobby": {
+      "title": "Game Setup",
+      "players": "Players",
+      "you": "You",
+      "online": "Online",
+      "offline": "Offline",
+      "manager": "Manager",
+      "start_game": "Start Game",
+      "wait_message": "Waiting for the manager to start the game.",
+      "not_enough_players": "There must be at least 2 players to start the game.",
+      "too_many_players": "Too many players (7 max).",
+      "settings": {
+        "complete_city_size": "Number of districts to complete city"
+      }
+    },
+    "game": {
+      "characters": "Characters",
+      "messages": {
+        "welcome": "Welcome to Citadels Classic Edition!",
+        "choose_characters": {
+          "initial": "The player owning the crown will start choosing characters.",
+          "put_aside_face_up": "{0} must choose a character to put aside face up.",
+          "put_aside_face_down": "{0} must choose a character to put aside face down.",
+          "choose_character": "{0} must choose a character.",
+          "done": "Characters have been chosen."
+        },
+        "actions": {
+          "initial": "The call is going to start.",
+          "choose_card": "Choose the card to keep.",
+          "choose_action": "Choose an action to carry out.",
+          "assassin_kill": "Choose a character to kill.",
+          "thief_rob": "Choose a character to rob.",
+          "magician_exchange_hand": "Choose a player with whom you will exchange hands.",
+          "magician_discard_cards": "Choose cards you wish to discard.",
+          "merchant_take_1_gold": "Take an extra gold coin?",
+          "architect_draw_2_cards": "Draw 2 extra cards?",
+          "warlord_destroy_district": "Choose a district to destroy.",
+          "graveyard_recover_district": "Recover destroyed district from the graveyard for 1 gold?",
+          "graveyard_recover_district_others": "The player owning the graveyard must choose whether to recover the destroyed district.",
+          "laboratory_discard_card": "Choose the card to discard to gain 2 gold.",
+          "build_district": "Choose a district to build.",
+          "done": "End of turn!"
+        },
+        "end": "End of game.",
+        "errors": {
+          "invalid_state": "Error: invalid game state."
+        }
+      },
+      "actions": {
+        "accept": "Accept",
+        "decline": "Decline",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "take_gold": "Take 2 coins",
+        "draw_cards": "Draw 2 cards",
+        "draw_cards_3": "Draw 3 cards",
+        "assassin_kill": "Kill character",
+        "thief_rob": "Rob character",
+        "magician_exchange_hand": "Exchange hand",
+        "choose_hand": "Choose this hand",
+        "magician_discard_cards": "Exchange cards",
+        "take_gold_earnings": "Collect earnings ({0})",
+        "warlord_destroy_district": "Destroy district",
+        "graveyard_recover_district": "Recover district",
+        "smithy_draw_cards": "Use smithy",
+        "laboratory_discard_card": "Use laboratory",
+        "build_district": "Build district",
+        "finish_turn": "Finish turn"
+      },
+      "crown": "Crown"
+    },
+    "score": {
+      "title": "Score",
+      "base": "Districts value",
+      "extra_stash": "Imperial Treasury",
+      "extra_hand": "Map Room",
+      "extra_district_types": "All district types",
+      "extra_complete_city": "Complete city",
+      "total": "Total"
+    }
+  },
+  "characters": [
+    {
+      "name": "",
+      "description": "Unknown character",
+      "turn": ""
+    },
+    {
+      "name": "Assassin",
+      "description": "Call a character you wish to kill. The killed character skips their turn.",
+      "turn": "The Assassin is called."
+    },
+    {
+      "name": "Thief",
+      "description": "Call a character you wish to rob. When the robbed character is revealed, you take all his gold.",
+      "turn": "The Thief is called."
+    },
+    {
+      "name": "Magician",
+      "description": "Either exchange hands of cards with another player or discard any number of cards to gain an equal number of cards.",
+      "turn": "The Magician is called."
+    },
+    {
+      "name": "King",
+      "description": "Take the crown. Gain 1 gold for each of your Noble districts.",
+      "turn": "The King is called."
+    },
+    {
+      "name": "Bishop",
+      "description": "The Warlord cannot use its ability on your districts. Gain 1 gold for each of your Religious districts.",
+      "turn": "The Bishop is called."
+    },
+    {
+      "name": "Merchant",
+      "description": "Gain 1 extra gold. Gain 1 gold for each of your Trade districts.",
+      "turn": "The Merchant is called."
+    },
+    {
+      "name": "Architect",
+      "description": "Gain 2 extra cards. You can build up to 3 districts.",
+      "turn": "The Architect is called."
+    },
+    {
+      "name": "Warlord",
+      "description": "Destroy 1 district by paying 1 fewer gold than its cost. Gain 1 gold for each of your Military districts.",
+      "turn": "The Warlord is called."
+    }
+  ],
+  "districts": {
+    "manor": {
+      "name": "Manor"
+    },
+    "castle": {
+      "name": "Castle"
+    },
+    "palace": {
+      "name": "Palace"
+    },
+    "temple": {
+      "name": "Temple"
+    },
+    "church": {
+      "name": "Church"
+    },
+    "monastery": {
+      "name": "Monastery"
+    },
+    "cathedral": {
+      "name": "Cathedral"
+    },
+    "tavern": {
+      "name": "Tavern"
+    },
+    "market": {
+      "name": "Market"
+    },
+    "trading_post": {
+      "name": "Trading Post"
+    },
+    "docks": {
+      "name": "Docks"
+    },
+    "harbor": {
+      "name": "Harbor"
+    },
+    "town_hall": {
+      "name": "Town Hall"
+    },
+    "watchtower": {
+      "name": "Watchtower"
+    },
+    "prison": {
+      "name": "Prison"
+    },
+    "barracks": {
+      "name": "Barracks"
+    },
+    "fortress": {
+      "name": "Fortress"
+    },
+    "dragon_gate": {
+      "name": "Dragon Gate",
+      "description": "At the end of the game, score 2 extra points."
+    },
+    "university": {
+      "name": "University",
+      "description": "At the end of the game, score 2 extra points."
+    },
+    "map_room": {
+      "name": "Map Room",
+      "description": "At the end of the game, score 1 extra point for each card in your hand."
+    },
+    "imperial_treasury": {
+      "name": "Imperial Treasury",
+      "description": "At the end of the game, score 1 extra point for each gold in your stash."
+    },
+    "haunted_quarter": {
+      "name": "Haunted Quarter",
+      "description": "At the end of the game, the Haunted Quarter counts as any 1 district type of your choice."
+    },
+    "school_of_magic": {
+      "name": "School of Magic",
+      "description": "For abilities that gain resources for your districts, the School of Magic counts as the district type of your choice."
+    },
+    "keep": {
+      "name": "Keep",
+      "description": "The Warlord cannot use its ability on the Keep."
+    },
+    "great_wall": {
+      "name": "Great Wall",
+      "description": "The Warlord must pay 1 extra gold to destroy your other districts."
+    },
+    "graveyard": {
+      "name": "Graveyard",
+      "description": "When the Warlord destroys a district, you may pay 1 gold to recover it in your hand. You cannot use this ability if you are Warlord yourself."
+    },
+    "observatory": {
+      "name": "Observatory",
+      "description": "If you choose to draw cards when gathering resources, draw 3 cards instead of 2."
+    },
+    "library": {
+      "name": "Library",
+      "description": "If you choose to draw cards when gathering resources, keep all drawn cards."
+    },
+    "laboratory": {
+      "name": "Laboratory",
+      "description": "Once per turn, discard 1 card from your hand to gain 2 gold."
+    },
+    "smithy": {
+      "name": "Smithy",
+      "description": "Once per turn, pay 2 gold to gain 3 cards."
+    }
+  }
+} as const;
 
+export const messages = {
+  en,
+  es: {},
+} as const;
+
+export type Messages = typeof messages;
+export type Locale = keyof Messages;
+
+export let locale: Locale = 'en';
 const defaultLocale: Locale = 'en';
-const currentLocale = ref<Locale>(defaultLocale);
-const supportedLocales: Locale[] = [defaultLocale];
-export const availableLocales = supportedLocales;
 
-function isLocale(locale: unknown): locale is Locale {
-  return typeof locale === 'string' && (locale === 'en' || locale === 'es');
-}
+export const availableLocales = Object.keys(messages) as Locale[];
 
-type TranslateParams = Record<string, unknown> | Array<string | number>;
-
-function resolveValue(locale: Locale, key: string): unknown {
-  return key.split('.').reduce<unknown>((value, segment) => {
+function resolveDotNotation(source: Record<string, unknown>, path: string): unknown {
+  return path.split('.').reduce<unknown>((value, segment) => {
     if (value && typeof value === 'object') {
       return (value as Record<string, unknown>)[segment];
     }
     return undefined;
-  }, messages[locale]);
+  }, source);
 }
 
-function formatValue(value: unknown, params?: TranslateParams): string {
-  const base = typeof value === 'string' || typeof value === 'number'
-    ? String(value)
-    : '';
-
-  if (!params) {
-    return base;
-  }
-
-  if (Array.isArray(params)) {
-    return base.replace(/\{(\d+)\}/g, (_, index: string) => {
-      const replacement = params[Number(index)];
-      return replacement !== undefined ? String(replacement) : '';
-    });
-  }
-
-  if (typeof params === 'object') {
-    return base.replace(/\{(\w+)\}/g, (_, name: string) => {
-      const replacement = (params as Record<string, unknown>)[name];
-      return replacement !== undefined ? String(replacement) : '';
-    });
-  }
-
-  return base;
-}
-
-export function setLocale(locale: Locale): void {
-  currentLocale.value = isLocale(locale) ? locale : defaultLocale;
+export function setLocale(newLocale: string): void {
+  locale = (Object.prototype.hasOwnProperty.call(messages, newLocale)
+    ? (newLocale as Locale)
+    : defaultLocale);
 }
 
 export function getLocale(): Locale {
-  return currentLocale.value;
+  return locale;
 }
 
-export function t(key: string, localeOrParams?: Locale | TranslateParams, maybeParams?: TranslateParams): string {
-  let locale: Locale = currentLocale.value;
-  let params: TranslateParams | undefined;
+export function t(key: string, targetLocale?: string): string {
+  const selectedLocale: Locale = (targetLocale && Object.prototype.hasOwnProperty.call(messages, targetLocale)
+    ? (targetLocale as Locale)
+    : locale);
+  const value = resolveDotNotation(messages[selectedLocale], key);
 
-  if (isLocale(localeOrParams)) {
-    locale = localeOrParams;
-    params = maybeParams;
-  } else if (localeOrParams !== undefined) {
-    params = localeOrParams as TranslateParams;
+  if (value === undefined || value === null) {
+    return key;
   }
 
-  const localized = resolveValue(locale, key);
-  const fallback = locale !== defaultLocale ? resolveValue(defaultLocale, key) : undefined;
-  const valueToFormat = localized ?? fallback ?? key;
-
-  return formatValue(valueToFormat, params);
+  return String(value);
 }
 
 export function updateTitle(): void {
   document.title = t('ui.title');
 }
-
-export { messages };
