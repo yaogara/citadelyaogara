@@ -8,8 +8,8 @@ import App from './App.vue';
 import i18n from './i18n';
 
 import 'bootstrap';
-import './assets/tailwind.css';
 import './scss/main.scss';
+import './assets/tailwind.css';
 
 const app = createApp(App);
 

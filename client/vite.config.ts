@@ -17,4 +17,16 @@ export default defineConfig({
       'citadels-common': 'citadels-common/src/index.ts',
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        includePaths: ['node_modules'],
+        additionalData: `
+    @import "@/scss/theme.scss";
+    @import "@/scss/bootstrap.scss";
+    @import "@/scss/animation.scss";
+  `,
+      },
+    },
+  },
 });
