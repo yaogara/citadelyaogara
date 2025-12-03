@@ -1,542 +1,1308 @@
-diff --git a/client/src/components/game/elements/CharactersList.vue b/client/src/components/game/elements/CharactersList.vue
-index 4da1edf787b79cb6c9585d228228651b4b2493e5..1a708586d52409bc15d4b026aaa39ce3a5322795 100644
---- a/client/src/components/game/elements/CharactersList.vue
-+++ b/client/src/components/game/elements/CharactersList.vue
-@@ -1,172 +1,461 @@
+diff --git a/client/package-lock.json b/client/package-lock.json
+index c6eff3837bae96de18f277f89f4bf3d502d6854e..ac0f2a0badf2878c2d322e03491aa44c1b2b4e4c 100644
+--- a/client/package-lock.json
++++ b/client/package-lock.json
+@@ -1,48 +1,47 @@
+ {
+   "name": "citadels-client",
+   "version": "0.0.1",
+   "lockfileVersion": 2,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "citadels-client",
+       "version": "0.0.1",
+       "license": "MIT",
+       "dependencies": {
+         "@types/twemoji": "^12.1.2",
+         "@vitejs/plugin-vue": "^1.1.5",
+         "bootstrap": "^4.6.0",
+         "citadels-common": "file:../common",
+         "jquery": "^3.6.0",
+         "popper.js": "^1.16.1",
+         "sass": "~1.32.8",
+         "socket.io-client": "^4.0.0",
+         "twemoji": "^13.1.0",
+         "vite": "^2.0.5",
+         "vue": "^3.0.5",
+-        "vue-i18n": "^9.0.0",
+         "vue-router": "^4.0.5",
+         "vuex": "^4.0.0"
+       },
+       "devDependencies": {
+         "@types/bootstrap": "^4.6.0",
+         "@types/jquery": "^3.5.5",
+         "@typescript-eslint/eslint-plugin": "^4.17.0",
+         "@typescript-eslint/parser": "^4.17.0",
+         "@vue/compiler-sfc": "^3.0.5",
+         "eslint": "^7.21.0",
+         "eslint-config-airbnb-base": "^14.2.1",
+         "eslint-plugin-import": "^2.22.1",
+         "eslint-plugin-vue": "^7.7.0",
+         "typescript": "^4.1.3"
+       }
+     },
+     "../common": {
+       "name": "citadels-common",
+       "version": "0.0.1",
+       "license": "MIT",
+       "dependencies": {
+         "typescript": "^4.9.5"
+       },
+       "devDependencies": {
+         "@typescript-eslint/eslint-plugin": "^4.19.0",
+@@ -3481,67 +3480,50 @@
+       }
+     },
+     "node_modules/vue-eslint-parser/node_modules/eslint-visitor-keys": {
+       "version": "1.3.0",
+       "resolved": "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-1.3.0.tgz",
+       "integrity": "sha512-6J72N8UNa462wa/KFODt/PJ3IU60SDpC3QXC1Hjc1BXXpfL2C9R5+AU7jhe0F6GREqVMh4Juu+NY7xn+6dipUQ==",
+       "dev": true,
+       "engines": {
+         "node": ">=4"
+       }
+     },
+     "node_modules/vue-eslint-parser/node_modules/espree": {
+       "version": "6.2.1",
+       "resolved": "https://registry.npmjs.org/espree/-/espree-6.2.1.tgz",
+       "integrity": "sha512-ysCxRQY3WaXJz9tdbWOwuWr5Y/XrPTGX9Kiz3yoUXwW0VZ4w30HTkQLaGx/+ttFjF8i+ACbArnB4ce68a9m5hw==",
+       "dev": true,
+       "dependencies": {
+         "acorn": "^7.1.1",
+         "acorn-jsx": "^5.2.0",
+         "eslint-visitor-keys": "^1.1.0"
+       },
+       "engines": {
+         "node": ">=6.0.0"
+       }
+     },
+-    "node_modules/vue-i18n": {
+-      "version": "9.1.6",
+-      "resolved": "https://registry.npmjs.org/vue-i18n/-/vue-i18n-9.1.6.tgz",
+-      "integrity": "sha512-FEC4HZkTH6QRIu/A0wlo0VS/GH3w/fuCC6xfvoC8IyhhtbG9A+go9NfW+HZ1ZXdAcO4EWcVQi04M+iSwuxgixw==",
+-      "dependencies": {
+-        "@intlify/core-base": "9.1.6",
+-        "@intlify/shared": "9.1.6",
+-        "@intlify/vue-devtools": "9.1.6",
+-        "@vue/devtools-api": "^6.0.0-beta.7"
+-      },
+-      "engines": {
+-        "node": ">= 10"
+-      },
+-      "peerDependencies": {
+-        "vue": "^3.0.0"
+-      }
+-    },
+     "node_modules/vue-router": {
+       "version": "4.0.10",
+       "resolved": "https://registry.npmjs.org/vue-router/-/vue-router-4.0.10.tgz",
+       "integrity": "sha512-YbPf6QnZpyyWfnk7CUt2Bme+vo7TLfg1nGZNkvYqKYh4vLaFw6Gn8bPGdmt5m4qrGnKoXLqc4htAsd3dIukICA==",
+       "dependencies": {
+         "@vue/devtools-api": "^6.0.0-beta.14"
+       },
+       "peerDependencies": {
+         "vue": "^3.0.0"
+       }
+     },
+     "node_modules/vuex": {
+       "version": "4.0.2",
+       "resolved": "https://registry.npmjs.org/vuex/-/vuex-4.0.2.tgz",
+       "integrity": "sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q==",
+       "dependencies": {
+         "@vue/devtools-api": "^6.0.0-beta.11"
+       },
+       "peerDependencies": {
+         "vue": "^3.0.2"
+       }
+     },
+     "node_modules/which": {
+       "version": "2.0.2",
+       "resolved": "https://registry.npmjs.org/which/-/which-2.0.2.tgz",
+@@ -6192,61 +6174,50 @@
+         "eslint-visitor-keys": "^1.1.0",
+         "espree": "^6.2.1",
+         "esquery": "^1.4.0",
+         "lodash": "^4.17.15"
+       },
+       "dependencies": {
+         "eslint-visitor-keys": {
+           "version": "1.3.0",
+           "resolved": "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-1.3.0.tgz",
+           "integrity": "sha512-6J72N8UNa462wa/KFODt/PJ3IU60SDpC3QXC1Hjc1BXXpfL2C9R5+AU7jhe0F6GREqVMh4Juu+NY7xn+6dipUQ==",
+           "dev": true
+         },
+         "espree": {
+           "version": "6.2.1",
+           "resolved": "https://registry.npmjs.org/espree/-/espree-6.2.1.tgz",
+           "integrity": "sha512-ysCxRQY3WaXJz9tdbWOwuWr5Y/XrPTGX9Kiz3yoUXwW0VZ4w30HTkQLaGx/+ttFjF8i+ACbArnB4ce68a9m5hw==",
+           "dev": true,
+           "requires": {
+             "acorn": "^7.1.1",
+             "acorn-jsx": "^5.2.0",
+             "eslint-visitor-keys": "^1.1.0"
+           }
+         }
+       }
+     },
+-    "vue-i18n": {
+-      "version": "9.1.6",
+-      "resolved": "https://registry.npmjs.org/vue-i18n/-/vue-i18n-9.1.6.tgz",
+-      "integrity": "sha512-FEC4HZkTH6QRIu/A0wlo0VS/GH3w/fuCC6xfvoC8IyhhtbG9A+go9NfW+HZ1ZXdAcO4EWcVQi04M+iSwuxgixw==",
+-      "requires": {
+-        "@intlify/core-base": "9.1.6",
+-        "@intlify/shared": "9.1.6",
+-        "@intlify/vue-devtools": "9.1.6",
+-        "@vue/devtools-api": "^6.0.0-beta.7"
+-      }
+-    },
+     "vue-router": {
+       "version": "4.0.10",
+       "resolved": "https://registry.npmjs.org/vue-router/-/vue-router-4.0.10.tgz",
+       "integrity": "sha512-YbPf6QnZpyyWfnk7CUt2Bme+vo7TLfg1nGZNkvYqKYh4vLaFw6Gn8bPGdmt5m4qrGnKoXLqc4htAsd3dIukICA==",
+       "requires": {
+         "@vue/devtools-api": "^6.0.0-beta.14"
+       }
+     },
+     "vuex": {
+       "version": "4.0.2",
+       "resolved": "https://registry.npmjs.org/vuex/-/vuex-4.0.2.tgz",
+       "integrity": "sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q==",
+       "requires": {
+         "@vue/devtools-api": "^6.0.0-beta.11"
+       }
+     },
+     "which": {
+       "version": "2.0.2",
+       "resolved": "https://registry.npmjs.org/which/-/which-2.0.2.tgz",
+       "integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
+       "dev": true,
+       "requires": {
+         "isexe": "^2.0.0"
+       }
+     },
+@@ -6270,26 +6241,26 @@
+       "dev": true
+     },
+     "wrappy": {
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz",
+       "integrity": "sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=",
+       "dev": true
+     },
+     "ws": {
+       "version": "7.4.6",
+       "resolved": "https://registry.npmjs.org/ws/-/ws-7.4.6.tgz",
+       "integrity": "sha512-YmhHDO4MzaDLB+M9ym/mDA5z0naX8j7SIlT8f8z+I0VtzsRbekxEutHSme7NPS2qE8StCYQNUnfWdXta/Yu85A==",
+       "requires": {}
+     },
+     "yallist": {
+       "version": "3.1.1",
+       "resolved": "https://registry.npmjs.org/yallist/-/yallist-3.1.1.tgz",
+       "integrity": "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="
+     },
+     "yeast": {
+       "version": "0.1.2",
+       "resolved": "https://registry.npmjs.org/yeast/-/yeast-0.1.2.tgz",
+       "integrity": "sha1-AI4G2AlDIMNy28L47XagymyKxBk="
+     }
+   }
+-}
++}
+\ No newline at end of file
+diff --git a/client/package.json b/client/package.json
+index 671b8ad1b48060d2cb2abc2e1716e1ab9cc785fe..ffbe5ac52f424bb3bd6e82d0bf2ccb7abbd8f037 100644
+--- a/client/package.json
++++ b/client/package.json
+@@ -1,44 +1,43 @@
+ {
+   "name": "citadels-client",
+   "version": "0.0.1",
+   "description": "Online Citadels board game (web client)",
+   "repository": "https://github.com/antbrl/citadels-online",
+   "author": "Antoine Brûlé",
+   "license": "MIT",
+   "scripts": {
+     "dev": "vite",
+     "build": "vite build",
+     "serve": "vite preview",
+     "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore ."
+   },
+   "dependencies": {
+     "@types/twemoji": "^12.1.2",
+     "@vitejs/plugin-vue": "^1.1.5",
+     "bootstrap": "^4.6.0",
+     "citadels-common": "file:../common",
+     "jquery": "^3.6.0",
+     "popper.js": "^1.16.1",
+     "socket.io-client": "^4.0.0",
+     "twemoji": "^13.1.0",
+     "vue": "^3.0.5",
+-    "vue-i18n": "^9.0.0",
+     "vue-router": "^4.0.5",
+     "vuex": "^4.0.0"
+   },
+   "devDependencies": {
+     "@types/bootstrap": "^4.6.0",
+     "@types/jquery": "^3.5.5",
+     "@typescript-eslint/eslint-plugin": "^4.17.0",
+     "@typescript-eslint/parser": "^4.17.0",
+     "@vue/compiler-sfc": "^3.0.5",
+     "eslint": "^7.21.0",
+     "eslint-config-airbnb-base": "^14.2.1",
+     "eslint-plugin-import": "^2.22.1",
+     "eslint-plugin-vue": "^7.7.0",
+     "typescript": "^4.1.3",
+     "autoprefixer": "^10.4.0",
+     "sass": "^1.32.8",
+     "tailwindcss": "^2.2.19",
+     "vite": "^2.3.8"
+   }
+ }
+diff --git a/client/src/components/LocaleSelector.vue b/client/src/components/LocaleSelector.vue
+index 723a9caa84fc16dea54803430a557e7191807543..1f834369f4dae0624b5669a0de0e351eaf3d540d 100644
+--- a/client/src/components/LocaleSelector.vue
++++ b/client/src/components/LocaleSelector.vue
+@@ -1,30 +1,37 @@
  <template>
--<div v-if="characters.length > 0" class="card bg-dark">
--  <div v-if="title" class="card-header bg-secondary text-light text-center px-0">
--    {{ title }}
--  </div>
--  <ul class="list-group list-group-flush text-dark shadow-sm">
--    <li
--      v-for="(character, i) in processedCharacters" :key="i"
--      class="list-group-item p-1 d-flex justify-content-between align-items-center"
--      :class="{
--        'list-group-item-dark': !character.killed,
--        'list-group-item-danger': character.killed,
--        'bg-secondary text-white-50': character.id < current || character.id === 0,
--        'active bg-white text-dark border-dark mx-n1 shadow-sm rounded':
--          character.id === current && current !== 0 && !(killMode || robMode),
--        'bg-light': character.id > current && !character.killed,
--        'bg-white text-dark cursor-pointer hover-hint-hitbox': character.selectable,
--      }"
--      v-tooltip="$t(`characters.${character.id}.description`)"
--      data-placement="left"
--      @click="selectCharacter(i, character.id)"
-+  <div v-if="characters.length > 0" class="card bg-dark characters-list">
-+    <div v-if="title" class="card-header bg-secondary text-light text-center px-0">
-+      {{ title }}
-+    </div>
-+    <div
-+      v-if="killMode || robMode || putAsideMode"
-+      class="mode-banner px-3 py-2 text-light"
-     >
--      <!-- unknown character id -->
--      <span
--        v-if="character.id === 0"
--        class="badge px-2 py-2 shadow-sm bg-dark text-light"
--      >?</span>
--      <!-- character id -->
--      <span
--        v-else
--        class="badge px-2 py-2 shadow-sm"
--        :class="`bg-${bgColor(character.id)} text-${textColor(character.id)}`"
--      >{{ character.id }}</span>
--      <!-- character name -->
--      <span
--        class="badge text-truncate flex-fill text-left"
--      >{{ $t(`characters.${character.id}.name`) }}</span>
--      <!-- character state (killed or robbed) -->
--      <span
--        v-if="character.killed"
--        class="badge badge-pill badge-danger p-1 shadow-sm"
--      ><emoji emoji="💀"></emoji></span>
--      <span
--        v-else-if="character.robbed"
--        class="badge badge-pill badge-dark p-1 shadow-sm"
--      ><emoji emoji="💰"></emoji></span>
--      <!-- hover action hint -->
--      <span class="hover-hint">
--        <span
--          v-if="killMode"
--          class="badge badge-pill badge-danger p-1 shadow-sm"
--        ><emoji emoji="💀"></emoji></span>
--        <span
--          v-else-if="robMode"
--          class="badge badge-pill badge-dark p-1 shadow-sm"
--        ><emoji emoji="💰"></emoji></span>
--        <span
--          v-else-if="putAsideMode"
--        ><emoji emoji="⬇️"></emoji></span>
--        <span
--          v-else
--        ><emoji emoji="✅"></emoji></span>
-+      <span v-if="killMode" class="mode-chip kill">
-+        <emoji emoji="💀"></emoji>
-+        <span class="ml-1">{{ $t('game.actions.assassin_kill') }}</span>
-+      </span>
-+      <span v-if="robMode" class="mode-chip rob">
-+        <emoji emoji="💰"></emoji>
-+        <span class="ml-1">{{ $t('game.actions.thief_rob') }}</span>
-+      </span>
-+      <span v-if="putAsideMode" class="mode-chip put-aside">
-+        <emoji emoji="⬇️"></emoji>
-+        <span class="ml-1">{{ $t('game.messages.choose_characters.put_aside_face_up') }}</span>
-       </span>
--    </li>
--  </ul>
--</div>
-+    </div>
-+    <div class="characters-layout">
-+      <article
-+        v-for="(character, i) in processedCharacters"
-+        :key="i"
-+        class="character-card"
-+        :class="[
-+          accentClass(character.id),
-+          {
-+            'is-current': character.id === current && current !== 0 && !(killMode || robMode),
-+            'is-killed': character.killed,
-+            'is-robbed': character.robbed,
-+            'is-past': character.id < current || character.id === 0,
-+            'is-selectable': character.selectable,
-+          },
-+        ]"
-+        v-tooltip="$t(`characters.${character.id}.description`)"
-+        data-placement="left"
-+        role="button"
-+        :aria-pressed="character.id === current"
-+        :aria-disabled="!character.selectable"
-+        @click="selectCharacter(i, character.id)"
-+      >
-+        <div class="card-visual">
-+          <div class="card-art">
-+            <div class="art-icon" aria-hidden="true">
-+              <emoji :emoji="characterIcon(character.id)"></emoji>
-+            </div>
-+            <span class="art-number" :class="`text-${textColor(character.id)}`">{{ character.id }}</span>
-+          </div>
-+        </div>
-+        <div class="card-body text-left">
-+          <div class="card-title-row">
-+            <span class="character-name text-light">{{ $t(`characters.${character.id}.name`) }}</span>
-+            <span v-if="character.selectable" class="state-chip selectable">
-+              <emoji emoji="✅"></emoji>
-+            </span>
-+          </div>
-+          <div class="state-chips">
-+            <span v-if="character.id === 0" class="state-chip muted">?</span>
-+            <span v-if="character.id === current && current !== 0 && !(killMode || robMode)" class="state-chip current">
-+              <emoji emoji="👑"></emoji>
-+              <span class="ml-1">Current turn</span>
-+            </span>
-+            <span v-if="character.killed" class="state-chip killed">
-+              <emoji emoji="💀"></emoji>
-+              <span class="ml-1">{{ $t('game.actions.assassin_kill') }}</span>
-+            </span>
-+            <span v-else-if="character.robbed" class="state-chip robbed">
-+              <emoji emoji="💰"></emoji>
-+              <span class="ml-1">{{ $t('game.actions.thief_rob') }}</span>
-+            </span>
-+            <span v-if="putAsideMode && character.id !== 0" class="state-chip put-aside">
-+              <emoji emoji="⬇️"></emoji>
-+              <span class="ml-1">{{ $t('game.messages.choose_characters.put_aside_face_down') }}</span>
-+            </span>
-+          </div>
-+        </div>
-+      </article>
-+    </div>
-+  </div>
+ <div class="input-group">
+   <div class="input-group-prepend">
+     <label class="input-group-text px-2" for="inputGroupLocale">
+-      <emoji :emoji="$t('flag', $i18n.locale)"></emoji>
++      <emoji :emoji="$t('flag', currentLocale)"></emoji>
+     </label>
+   </div>
+-  <select class="custom-select" v-model="$i18n.locale" id="inputGroupLocale">
+-    <option v-for="locale in $i18n.availableLocales" :key="`locale-${locale}`" :value="locale">
+-      {{ $t('name', locale, locale) }}
++  <select class="custom-select" v-model="currentLocale" id="inputGroupLocale">
++    <option v-for="locale in availableLocales" :key="`locale-${locale}`" :value="locale">
++      {{ $t('name', locale) }}
+     </option>
+   </select>
+ </div>
  </template>
  
  <script lang="ts">
- import { defineComponent } from 'vue';
- import { Move, MoveType } from 'citadels-common';
- import { store } from '../../../store';
+-import { defineComponent } from 'vue';
+-import { updateTitle } from '../i18n';
++import { computed, defineComponent } from 'vue';
++import { availableLocales, getLocale, setLocale, updateTitle } from '../i18n';
  
  export default defineComponent({
-   name: 'CharactersList',
-   props: {
-     title: {
-       type: String,
-       default: '',
-     },
-     characters: {
-       type: Array,
-       required: true,
-     },
-     current: {
-       type: Number,
-       default: 0,
-     },
-     killMode: {
-       type: Boolean,
-       default: false,
-     },
-     robMode: {
-       type: Boolean,
-       default: false,
-     },
-     putAsideMode: {
-       type: Boolean,
-       default: false,
-     },
-   },
-   computed: {
-     processedCharacters() {
-       return this.characters.map((character) => ({
-         selectable: (this.killMode && character.id > 1)
-           || (this.robMode && character.id > 2 && !character.killed),
-         ...character,
-       }));
-     },
-   },
-   methods: {
--    bgColor(character: number) {
--      if (character < this.current) {
--        return 'dark';
-+    accentClass(character: number) {
-+      if (character === 0 || character < this.current) {
-+        return 'accent-dark';
-       }
-       switch (character) {
-         case 4:
--          return 'warning';
-+          return 'accent-warning';
-         case 5:
--          return 'primary';
-+          return 'accent-primary';
-         case 6:
--          return 'success';
-+          return 'accent-success';
-         case 8:
--          return 'danger';
-+          return 'accent-danger';
-         default:
--          return 'secondary';
-+          return 'accent-secondary';
-+      }
-+    },
-+    characterIcon(character: number) {
-+      switch (character) {
-+        case 1:
-+          return '🗡️';
-+        case 2:
-+          return '🎭';
-+        case 3:
-+          return '🪄';
-+        case 4:
-+          return '👑';
-+        case 5:
-+          return '✝️';
-+        case 6:
-+          return '💰';
-+        case 7:
-+          return '🏗️';
-+        case 8:
-+          return '⚔️';
-+        default:
-+          return '❓';
-       }
-     },
-     textColor(character: number) {
-       if (character < this.current) {
-         return 'light';
-       }
-       switch (character) {
-         case 4:
-           return 'dark';
-         default:
-           return 'light';
-       }
-     },
-     async selectCharacter(index: number, characterId: number) {
-       if (!this.processedCharacters[index].selectable) return;
- 
-       let moveType = MoveType.CHOOSE_CHARACTER;
-       let moveData = index;
- 
-       if (this.killMode) {
-         moveData = characterId;
-         moveType = MoveType.ASSASSIN_KILL;
-       } else if (this.robMode) {
-         moveType = MoveType.THIEF_ROB;
-         moveData = characterId;
-       }
- 
-       const move: Move = { type: moveType, data: moveData };
-       await store.dispatch('sendMove', move);
-     },
+   name: 'LocaleSelector',
+-  watch: {
+-    '$i18n.locale': {
+-      handler() {
++  setup() {
++    const currentLocale = computed<ReturnType<typeof getLocale>>({
++      get: () => getLocale(),
++      set: (locale) => {
++        setLocale(locale);
+         updateTitle();
+       },
+-    },
++    });
++
++    return {
++      availableLocales,
++      currentLocale,
++    };
    },
  });
  </script>
+diff --git a/client/src/i18n/index.ts b/client/src/i18n/index.ts
+index 08bb319d13212f90c0250c7cfae72d8f615bdf3f..dcd409514873096e2a3f6edb494d4e6578a410f7 100644
+--- a/client/src/i18n/index.ts
++++ b/client/src/i18n/index.ts
+@@ -1,19 +1,80 @@
+-import { createI18n } from 'vue-i18n';
++import { ref } from 'vue';
++import { messages, Locale } from './messages';
  
- <style lang="scss" scoped>
--.hover-hint {
--  display: none;
-+.characters-list {
-+  border: 1px solid rgba(255, 255, 255, 0.12);
+-import fr from './locale.fr.json';
+-import en from './locale.en.json';
++const defaultLocale: Locale = 'en';
++const currentLocale = ref<Locale>(defaultLocale);
++const supportedLocales: Locale[] = [defaultLocale];
++export const availableLocales = supportedLocales;
+ 
+-export const messages = { fr, en };
++function isLocale(locale: unknown): locale is Locale {
++  return typeof locale === 'string' && (locale === 'en' || locale === 'es');
 +}
 +
-+.mode-banner {
-+  display: flex;
-+  flex-wrap: wrap;
-+  gap: 0.5rem;
-+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
++type TranslateParams = Record<string, unknown> | Array<string | number>;
++
++function resolveValue(locale: Locale, key: string): unknown {
++  return key.split('.').reduce<unknown>((value, segment) => {
++    if (value && typeof value === 'object') {
++      return (value as Record<string, unknown>)[segment];
++    }
++    return undefined;
++  }, messages[locale]);
 +}
 +
-+.mode-chip {
-+  display: inline-flex;
-+  align-items: center;
-+  padding: 0.25rem 0.65rem;
-+  border-radius: 999px;
-+  font-size: 0.85rem;
-+  background: rgba(255, 255, 255, 0.08);
-+  border: 1px solid rgba(255, 255, 255, 0.12);
++function formatValue(value: unknown, params?: TranslateParams): string {
++  const base = typeof value === 'string' || typeof value === 'number'
++    ? String(value)
++    : '';
 +
-+  &.kill {
-+    border-color: #b71c1c;
-+    color: #ffb3b3;
++  if (!params) {
++    return base;
 +  }
 +
-+  &.rob {
-+    border-color: #3a2f1c;
-+    color: #f5d29f;
++  if (Array.isArray(params)) {
++    return base.replace(/\{(\d+)\}/g, (_, index: string) => {
++      const replacement = params[Number(index)];
++      return replacement !== undefined ? String(replacement) : '';
++    });
 +  }
 +
-+  &.put-aside {
-+    border-color: #1c3a5a;
-+    color: #b9d7ff;
-+  }
-+}
-+
-+.characters-layout {
-+  display: grid;
-+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-+  gap: 0.75rem;
-+  padding: 0.75rem;
-+}
-+
-+.character-card {
-+  --accent-soft: #3c3f46;
-+  --accent-strong: #2b2d33;
-+  --accent-contrast: #f8f9fa;
-+
-+  display: flex;
-+  flex-direction: column;
-+  gap: 0.75rem;
-+  padding: 0.75rem;
-+  border-radius: 0.85rem;
-+  border: 1px solid rgba(255, 255, 255, 0.1);
-+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-+  cursor: pointer;
-+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, opacity 150ms ease;
-+
-+  &:hover {
-+    transform: translateY(-2px);
-+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
++  if (typeof params === 'object') {
++    return base.replace(/\{(\w+)\}/g, (_, name: string) => {
++      const replacement = (params as Record<string, unknown>)[name];
++      return replacement !== undefined ? String(replacement) : '';
++    });
 +  }
 +
-+  &[aria-disabled='true'] {
-+    cursor: not-allowed;
-+    opacity: 0.65;
-+  }
++  return base;
 +}
 +
-+.card-visual {
-+  position: relative;
-+  border-radius: 0.75rem;
-+  overflow: hidden;
-+  background: linear-gradient(135deg, var(--accent-soft), var(--accent-strong));
-+  color: var(--accent-contrast);
-+  min-height: 120px;
-+  display: flex;
-+  align-items: center;
-+  justify-content: center;
-+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
++export function setLocale(locale: Locale): void {
++  currentLocale.value = isLocale(locale) ? locale : defaultLocale;
 +}
 +
-+.card-art {
-+  text-align: center;
-+  position: relative;
-+  width: 100%;
-+  height: 100%;
-+  display: flex;
-+  flex-direction: column;
-+  align-items: center;
-+  justify-content: center;
-+  gap: 0.25rem;
-+  padding: 0.75rem;
-+}
-+
-+.art-icon {
-+  font-size: 2rem;
-+}
-+
-+.art-number {
-+  position: absolute;
-+  top: 0.5rem;
-+  left: 0.65rem;
-+  font-weight: 700;
-+}
-+
-+.card-body {
-+  display: flex;
-+  flex-direction: column;
-+  gap: 0.35rem;
-+}
-+
-+.card-title-row {
-+  display: flex;
-+  align-items: center;
-+  justify-content: space-between;
-+  gap: 0.5rem;
-+}
-+
-+.character-name {
-+  font-weight: 600;
-+  font-size: 1rem;
-+}
-+
-+.state-chips {
-+  display: flex;
-+  flex-wrap: wrap;
-+  gap: 0.35rem;
-+}
-+
-+.state-chip {
-+  display: inline-flex;
-+  align-items: center;
-+  padding: 0.15rem 0.6rem;
-+  border-radius: 999px;
-+  font-size: 0.8rem;
-+  background: rgba(255, 255, 255, 0.08);
-+  border: 1px solid rgba(255, 255, 255, 0.12);
-+  color: #f8f9fa;
-+
-+  &.muted {
-+    opacity: 0.75;
-+  }
-+
-+  &.current {
-+    background: rgba(255, 215, 0, 0.15);
-+    border-color: #c7a300;
-+    color: #ffd700;
-+  }
-+
-+  &.killed {
-+    background: rgba(255, 0, 0, 0.16);
-+    border-color: #b71c1c;
-+    color: #ffc4c4;
-+  }
-+
-+  &.robbed {
-+    background: rgba(255, 215, 0, 0.08);
-+    border-color: #6b4e0f;
-+    color: #f5d29f;
-+  }
-+
-+  &.put-aside {
-+    background: rgba(100, 181, 246, 0.12);
-+    border-color: #1c3a5a;
-+    color: #b9d7ff;
-+  }
-+
-+  &.selectable {
-+    border-color: #198754;
-+    color: #b4f3d6;
-+    background: rgba(25, 135, 84, 0.15);
-+  }
-+}
-+
-+.accent-secondary {
-+  --accent-soft: #50545c;
-+  --accent-strong: #32353c;
-+  --accent-contrast: #f8f9fa;
-+}
-+
-+.accent-warning {
-+  --accent-soft: #f2c55c;
-+  --accent-strong: #d18b16;
-+  --accent-contrast: #1f1300;
-+}
-+
-+.accent-primary {
-+  --accent-soft: #8fb6ff;
-+  --accent-strong: #1f5eff;
-+  --accent-contrast: #0c1a33;
++export function getLocale(): Locale {
++  return currentLocale.value;
 +}
  
-+.accent-success {
-+  --accent-soft: #8fd5b5;
-+  --accent-strong: #1f7a4d;
-+  --accent-contrast: #0b251a;
-+}
+-const i18n = createI18n({
+-  locale: 'fr',
+-  fallbackLocale: 'fr',
+-  messages,
+-  warnHtmlInMessage: 'off',
+-});
++export function t(key: string, localeOrParams?: Locale | TranslateParams, maybeParams?: TranslateParams): string {
++  let locale: Locale = currentLocale.value;
++  let params: TranslateParams | undefined;
 +
-+.accent-danger {
-+  --accent-soft: #f5a0a0;
-+  --accent-strong: #b71c1c;
-+  --accent-contrast: #fff5f5;
-+}
-+
-+.accent-dark {
-+  --accent-soft: #575d68;
-+  --accent-strong: #2c3038;
-+  --accent-contrast: #f8f9fa;
-+}
-+
-+.character-card.is-current {
-+  border-color: #ffd700;
-+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2), 0 10px 24px rgba(0, 0, 0, 0.35);
-+}
-+
-+.character-card.is-killed {
-+  filter: grayscale(0.2);
-+  opacity: 0.8;
-+}
-+
-+.character-card.is-robbed {
-+  box-shadow: inset 0 0 0 2px rgba(109, 76, 65, 0.5), 0 6px 16px rgba(0, 0, 0, 0.25);
-+}
-+
-+.character-card.is-past {
-+  opacity: 0.6;
-+}
-+
-+.character-card.is-selectable:not([aria-disabled='true']) {
-+  border-color: #198754;
-+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.25), 0 10px 24px rgba(0, 0, 0, 0.35);
-+}
-+
-+@media (max-width: 720px) {
-+  .characters-layout {
-+    display: flex;
-+    flex-direction: column;
++  if (isLocale(localeOrParams)) {
++    locale = localeOrParams;
++    params = maybeParams;
++  } else if (localeOrParams !== undefined) {
++    params = localeOrParams as TranslateParams;
 +  }
 +
-+  .character-card {
-+    flex-direction: row;
-+    align-items: stretch;
-+  }
++  const localized = resolveValue(locale, key);
++  const fallback = locale !== defaultLocale ? resolveValue(defaultLocale, key) : undefined;
++  const valueToFormat = localized ?? fallback ?? key;
 +
-+  .card-visual {
-+    width: 90px;
-+    min-height: 90px;
-+  }
-+
-+  .card-body {
-+    flex: 1 1 auto;
-+  }
++  return formatValue(valueToFormat, params);
++}
+ 
+-export function updateTitle() {
+-  document.title = i18n.global.t('ui.title');
++export function updateTitle(): void {
++  document.title = t('ui.title');
  }
  
--.hover-hint-hitbox:hover {
--  .hover-hint {
--    display: block;
-+@media (min-width: 1200px) {
-+  .characters-layout {
-+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-   }
- }
- </style>
+-export default i18n;
++export { messages };
+diff --git a/client/src/i18n/locale.en.json b/client/src/i18n/locale.en.json
+deleted file mode 100644
+index 97b550a4811a143d6a674586bdde0922ec927496..0000000000000000000000000000000000000000
+--- a/client/src/i18n/locale.en.json
++++ /dev/null
+@@ -1,262 +0,0 @@
+-{
+-    "flag": "🇬🇧",
+-    "name": "English",
+-    "ui": {
+-        "title": "Citadels",
+-        "subtitle1": "Bruno Faidutti's",
+-        "subtitle2": "Classic Edition",
+-        "loading": "Loading...",
+-        "cancel": "Cancel",
+-        "confirm": "Confirm",
+-        "close": "Close",
+-        "unknown_error": "Unknown error.",
+-        "about": {
+-            "title": "About",
+-            "text": "Original board game created by <a target='_blank' href='http://faidutti.com'>Bruno Faidutti</a>.<br> Unofficial online version developped by <a target='_blank' href='https://brule.info'>Antoine Brûlé</a>.<br> This implementation of the game is <a target='_blank' href='https://github.com/antbrl/citadels-online'>open source</a>.<br> Emoji CC-BY 4.0 <a target='_blank' href='https://twemoji.twitter.com/'>Twemoji</a>",
+-            "picture_credits": "Picture credits",
+-            "by": "by"
+-        },
+-        "homepage": {
+-            "intro_text": "Create a new room",
+-            "create_room": "Create a room"
+-        },
+-        "room": {
+-            "username": "Username",
+-            "connect": "Connect",
+-            "not_open": "This room is not open for new players.",
+-            "error_does_not_exist": "This room does not exist.",
+-            "error_join": "Error when joining the room: {msg}"
+-        },
+-        "lobby": {
+-            "title": "Game Setup",
+-            "players": "Players",
+-            "you": "You",
+-            "online": "Online",
+-            "offline": "Offline",
+-            "manager": "Manager",
+-            "start_game": "Start Game",
+-            "wait_message": "Waiting for the manager to start the game.",
+-            "not_enough_players": "There must be at least 2 players to start the game.",
+-            "too_many_players": "Too many players (7 max).",
+-            "settings": {
+-                "complete_city_size": "Number of districts to complete city"
+-            }
+-        },
+-        "game": {
+-            "characters": "Characters",
+-            "messages": {
+-                "welcome": "Welcome to Citadels Classic Edition!",
+-                "choose_characters": {
+-                    "initial": "The player owning the crown will start choosing characters.",
+-                    "put_aside_face_up": "{0} must choose a character to put aside face up.",
+-                    "put_aside_face_down": "{0} must choose a character to put aside face down.",
+-                    "choose_character": "{0} must choose a character.",
+-                    "done": "Characters have been chosen."
+-                },
+-                "actions": {
+-                    "initial": "The call is going to start.",
+-                    "choose_card": "Choose the card to keep.",
+-                    "choose_action": "Choose an action to carry out.",
+-                    "assassin_kill": "Choose a character to kill.",
+-                    "thief_rob": "Choose a character to rob.",
+-                    "magician_exchange_hand": "Choose a player with whom you will exchange hands.",
+-                    "magician_discard_cards": "Choose cards you wish to discard.",
+-                    "merchant_take_1_gold": "Take an extra gold coin?",
+-                    "architect_draw_2_cards": "Draw 2 extra cards?",
+-                    "warlord_destroy_district": "Choose a district to destroy.",
+-                    "graveyard_recover_district": "Recover destroyed district from the graveyard for 1 gold?",
+-                    "graveyard_recover_district_others": "The player owning the graveyard must choose whether to recover the destroyed district.",
+-                    "laboratory_discard_card": "Choose the card to discard to gain 2 gold.",
+-                    "build_district": "Choose a district to build.",
+-                    "done": "End of turn!"
+-                },
+-                "end": "End of game.",
+-                "errors": {
+-                    "invalid_state": "Error: invalid game state."
+-                }
+-            },
+-            "actions": {
+-                "accept": "Accept",
+-                "decline": "Decline",
+-                "confirm": "Confirm",
+-                "cancel": "Cancel",
+-                "take_gold": "Take 2 coins",
+-                "draw_cards": "Draw 2 cards",
+-                "draw_cards_3": "Draw 3 cards",
+-                "assassin_kill": "Kill character",
+-                "thief_rob": "Rob character",
+-                "magician_exchange_hand": "Exchange hand",
+-                "choose_hand": "Choose this hand",
+-                "magician_discard_cards": "Exchange cards",
+-                "take_gold_earnings": "Collect earnings ({0})",
+-                "warlord_destroy_district": "Destroy district",
+-                "graveyard_recover_district": "Recover district",
+-                "smithy_draw_cards": "Use smithy",
+-                "laboratory_discard_card": "Use laboratory",
+-                "build_district": "Build district",
+-                "finish_turn": "Finish turn"
+-            }
+-        },
+-        "score": {
+-            "title": "Score",
+-            "base": "Districts value",
+-            "extra_stash": "Imperial Treasury",
+-            "extra_hand": "Map Room",
+-            "extra_district_types": "All district types",
+-            "extra_complete_city": "Complete city",
+-            "total": "Total"
+-        }
+-    },
+-    "characters": [
+-        {
+-            "name": "",
+-            "description": "Unknown character",
+-            "turn": ""
+-        },
+-        {
+-            "name": "Assassin",
+-            "description": "Call a character you wish to kill. The killed character skips their turn.",
+-            "turn": "The Assassin is called."
+-        },
+-        {
+-            "name": "Thief",
+-            "description": "Call a character you wish to rob. When the robbed character is revealed, you take all his gold.",
+-            "turn": "The Thief is called."
+-        },
+-        {
+-            "name": "Magician",
+-            "description": "Either exchange hands of cards with another player or discard any number of cards to gain an equal number of cards.",
+-            "turn": "The Magician is called."
+-        },
+-        {
+-            "name": "King",
+-            "description": "Take the crown. Gain 1 gold for each of your Noble districts.",
+-            "turn": "The King is called."
+-        },
+-        {
+-            "name": "Bishop",
+-            "description": "The Warlord cannot use its ability on your districts. Gain 1 gold for each of your Religious districts.",
+-            "turn": "The Bishop is called."
+-        },
+-        {
+-            "name": "Merchant",
+-            "description": "Gain 1 extra gold. Gain 1 gold for each of your Trade districts.",
+-            "turn": "The Merchant is called."
+-        },
+-        {
+-            "name": "Architect",
+-            "description": "Gain 2 extra cards. You can build up to 3 districts.",
+-            "turn": "The Architect is called."
+-        },
+-        {
+-            "name": "Warlord",
+-            "description": "Destroy 1 district by paying 1 fewer gold than its cost. Gain 1 gold for each of your Military districts.",
+-            "turn": "The Warlord is called."
+-        }
+-    ],
+-    "districts": {
+-        "manor": {
+-            "name": "Manor"
+-        },
+-        "castle": {
+-            "name": "Castle"
+-        },
+-        "palace": {
+-            "name": "Palace"
+-        },
+-        "temple": {
+-            "name": "Temple"
+-        },
+-        "church": {
+-            "name": "Church"
+-        },
+-        "monastery": {
+-            "name": "Monastery"
+-        },
+-        "cathedral": {
+-            "name": "Cathedral"
+-        },
+-        "tavern": {
+-            "name": "Tavern"
+-        },
+-        "market": {
+-            "name": "Market"
+-        },
+-        "trading_post": {
+-            "name": "Trading Post"
+-        },
+-        "docks": {
+-            "name": "Docks"
+-        },
+-        "harbor": {
+-            "name": "Harbor"
+-        },
+-        "town_hall": {
+-            "name": "Town Hall"
+-        },
+-        "watchtower": {
+-            "name": "Watchtower"
+-        },
+-        "prison": {
+-            "name": "Prison"
+-        },
+-        "barracks": {
+-            "name": "Barracks"
+-        },
+-        "fortress": {
+-            "name": "Fortress"
+-        },
+-        "dragon_gate": {
+-            "name": "Dragon Gate",
+-            "description": "At the end of the game, score 2 extra points."
+-        },
+-        "university": {
+-            "name": "University",
+-            "description": "At the end of the game, score 2 extra points."
+-        },
+-        "map_room": {
+-            "name": "Map Room",
+-            "description": "At the end of the game, score 1 extra point for each card in your hand."
+-        },
+-        "imperial_treasury": {
+-            "name": "Imperial Treasury",
+-            "description": "At the end of the game, score 1 extra point for each gold in your stash."
+-        },
+-        "haunted_quarter": {
+-            "name": "Haunted Quarter",
+-            "description": "At the end of the game, the Haunted Quarter counts as any 1 district type of your choice."
+-        },
+-        "school_of_magic": {
+-            "name": "School of Magic",
+-            "description": "For abilities that gain resources for your districts, the School of Magic counts as the district type of your choice."
+-        },
+-        "keep": {
+-            "name": "Keep",
+-            "description": "The Warlord cannot use its ability on the Keep."
+-        },
+-        "great_wall": {
+-            "name": "Great Wall",
+-            "description": "The Warlord must pay 1 extra gold to destroy your other districts."
+-        },
+-        "graveyard": {
+-            "name": "Graveyard",
+-            "description": "When the Warlord destroys a district, you may pay 1 gold to recover it in your hand. You cannot use this ability if you are Warlord yourself."
+-        },
+-        "observatory": {
+-            "name": "Observatory",
+-            "description": "If you choose to draw cards when gathering resources, draw 3 cards instead of 2."
+-        },
+-        "library": {
+-            "name": "Library",
+-            "description": "If you choose to draw cards when gathering resources, keep all drawn cards."
+-        },
+-        "laboratory": {
+-            "name": "Laboratory",
+-            "description": "Once per turn, discard 1 card from your hand to gain 2 gold."
+-        },
+-        "smithy": {
+-            "name": "Smithy",
+-            "description": "Once per turn, pay 2 gold to gain 3 cards."
+-        }
+-    }
+-}
+diff --git a/client/src/i18n/locale.fr.json b/client/src/i18n/locale.fr.json
+deleted file mode 100644
+index 166dfb11c9f8abdc11288cd926ffd77c517eb2cc..0000000000000000000000000000000000000000
+--- a/client/src/i18n/locale.fr.json
++++ /dev/null
+@@ -1,262 +0,0 @@
+-{
+-    "flag": "🇫🇷",
+-    "name": "Français",
+-    "ui": {
+-        "title": "Citadelles",
+-        "subtitle1": "Un jeu de Bruno Faidutti",
+-        "subtitle2": "Édition Classique",
+-        "loading": "Chargement...",
+-        "cancel": "Annuler",
+-        "confirm": "Confirmer",
+-        "close": "Fermer",
+-        "unknown_error": "Erreur inconnue.",
+-        "about": {
+-            "title": "À propos",
+-            "text": "Jeu de société original créé par <a target='_blank' href='http://faidutti.com'>Bruno Faidutti</a>.<br> Version en ligne non officielle développée par <a target='_blank' href='https://brule.info'>Antoine Brûlé</a>.<br> Cette implémentation du jeu est <a target='_blank' href='https://github.com/antbrl/citadels-online'>open-source</a>.<br> Emoji CC-BY 4.0 <a target='_blank' href='https://twemoji.twitter.com/'>Twemoji</a>",
+-            "picture_credits": "Crédits photos",
+-            "by": "par"
+-        },
+-        "homepage": {
+-            "intro_text": "Créer un nouveau salon",
+-            "create_room": "Créer un salon"
+-        },
+-        "room": {
+-            "username": "Nom d'utilisateur",
+-            "connect": "Se connecter",
+-            "not_open": "Ce salon n'est pas ouvert à de nouveaux joueurs.",
+-            "error_does_not_exist": "Ce salon n'existe pas.",
+-            "error_join": "Erreur en rejoignant le salon : {msg}"
+-        },
+-        "lobby": {
+-            "title": "Mise en place de la partie",
+-            "players": "Joueurs",
+-            "you": "Vous",
+-            "online": "En ligne",
+-            "offline": "Hors ligne",
+-            "manager": "Gestionnaire",
+-            "start_game": "Commencer la partie",
+-            "wait_message": "En attente du lancement de la partie par le gestionnaire.",
+-            "not_enough_players": "Il faut au moins 2 joueurs pour commencer une partie.",
+-            "too_many_players": "Trop de joueurs (7 max).",
+-            "settings": {
+-                "complete_city_size": "Nombre de quartiers pour constituer une cité"
+-            }
+-        },
+-        "game": {
+-            "characters": "Personnages",
+-            "messages": {
+-                "welcome": "Bienvenue dans Citadelles Édition Classique !",
+-                "choose_characters": {
+-                    "initial": "Le joueur possédant la Couronne va débuter le choix des personnages.",
+-                    "put_aside_face_up": "{0} doit choisir un personnage à mettre de côté face visible.",
+-                    "put_aside_face_down": "{0} doit choisir un personnage à mettre de côté face cachée.",
+-                    "choose_character": "{0} doit choisir un personnage.",
+-                    "done": "Les personnages sont choisis."
+-                },
+-                "actions": {
+-                    "initial": "L'appel va débuter.",
+-                    "choose_card": "Choisissez la carte à conserver.",
+-                    "choose_action": "Choisissez une action à effectuer.",
+-                    "assassin_kill": "Choisissez un personnage à tuer.",
+-                    "thief_rob": "Choisissez un personnage à voler.",
+-                    "magician_exchange_hand": "Choisissez un joueur avec lequel échanger votre main.",
+-                    "magician_discard_cards": "Choisissez les cartes à défausser.",
+-                    "merchant_take_1_gold": "Prendre une pièce d'or supplémentaire ?",
+-                    "architect_draw_2_cards": "Piocher 2 cartes supplémentaires ?",
+-                    "warlord_destroy_district": "Choisissez un quartier à détruire.",
+-                    "graveyard_recover_district": "Récupérer le quartier détruit du cimetière pour une pièce d'or ?",
+-                    "graveyard_recover_district_others": "Le joueur possédant le cimetière doit choisir s'il récupère le quartier détruit.",
+-                    "laboratory_discard_card": "Choisissez la carte à défausser pour recevoir 2 pièces d'or.",
+-                    "build_district": "Choisissez un quartier à construire.",
+-                    "done": "C'est la fin du tour !"
+-                },
+-                "end": "Fin de la partie.",
+-                "errors": {
+-                    "invalid_state": "Erreur : l'état de la partie est invalide."
+-                }
+-            },
+-            "actions": {
+-                "accept": "Accepter",
+-                "decline": "Refuser",
+-                "confirm": "Confirmer",
+-                "cancel": "Annuler",
+-                "take_gold": "Prendre 2 pièces",
+-                "draw_cards": "Piocher 2 cartes",
+-                "draw_cards_3": "Piocher 3 cartes",
+-                "assassin_kill": "Tuer un personnage",
+-                "thief_rob": "Voler un personnage",
+-                "magician_exchange_hand": "Échanger la main",
+-                "choose_hand": "Choisir cette main",
+-                "magician_discard_cards": "Échanger des cartes",
+-                "take_gold_earnings": "Recevoir les revenus ({0})",
+-                "warlord_destroy_district": "Détruire un quartier",
+-                "graveyard_recover_district": "Récupérer",
+-                "smithy_draw_cards": "Utiliser la forge",
+-                "laboratory_discard_card": "Utiliser le laboratoire",
+-                "build_district": "Construire un quartier",
+-                "finish_turn": "Terminer le tour"
+-            }
+-        },
+-        "score": {
+-            "title": "Score",
+-            "base": "Valeur des quartiers",
+-            "extra_stash": "Trésor Impérial",
+-            "extra_hand": "Salle des Cartes",
+-            "extra_district_types": "Tous les types",
+-            "extra_complete_city": "Cité complète",
+-            "total": "Total"
+-        }
+-    },
+-    "characters": [
+-        {
+-            "name": "",
+-            "description": "Personnage inconnu",
+-            "turn": ""
+-        },
+-        {
+-            "name": "Assassin",
+-            "description": "L'Assassin peut tuer un personnage de son choix. Celui-ci ne jouera pas durant ce tour.",
+-            "turn": "C'est au tour de l'Assassin."
+-        },
+-        {
+-            "name": "Voleur",
+-            "description": "Le Voleur peut voler le trésor du personnage de son choix. Il ne peut dépouiller ni l'Assassin, ni sa victime. Quand le personnage détroussé sera révélé, il donnera tout son or au voleur.",
+-            "turn": "C'est au tour du Voleur."
+-        },
+-        {
+-            "name": "Magicien",
+-            "description": "Au choix - Le Magicien peut échanger la totalité des cartes de sa main avec celles du joueur de son choix. Ou - Le magicien peut échanger des cartes de sa main contre le même nombre de cartes de la pioche.",
+-            "turn": "C'est au tour du Magicien."
+-        },
+-        {
+-            "name": "Roi",
+-            "description": "Le Roi prend la Couronne, et choisira en premier son personnage lors du prochain tour. Chaque quartier Noble dans sa cité lui rapporte 1 pièce d'or.",
+-            "turn": "C'est au tour du Roi."
+-        },
+-        {
+-            "name": "Évêque",
+-            "description": "L'Évêque ne peut pas être attaqué par le Condottiere, sauf s'il a été assassiné. Chaque quartier Religieux dans sa cité lui rapporte 1 pièce d'or.",
+-            "turn": "C'est au tour de l'Évêque."
+-        },
+-        {
+-            "name": "Marchand",
+-            "description": "Le Marchand reçoit 1 pièce d'or supplémentaire au début de son tour. Chaque quartier Commerçant dans sa cité lui rapporte 1 pièce d'or.",
+-            "turn": "C'est au tour du Marchand."
+-        },
+-        {
+-            "name": "Architecte",
+-            "description": "L'Architecte pioche 2 cartes supplémentaires au début de son tour. Il peut bâtir jusqu'à 3 quartiers.",
+-            "turn": "C'est au tour de l'Architecte."
+-        },
+-        {
+-            "name": "Condottiere",
+-            "description": "Le Condottiere peut détruire un quartier en payant son coût de construction moins 1. Chaque quartier Militaire dans sa cité lui rapporte 1 pièce d'or.",
+-            "turn": "C'est au tour du Condottiere."
+-        }
+-    ],
+-    "districts": {
+-        "manor": {
+-            "name": "Manoir"
+-        },
+-        "castle": {
+-            "name": "Château"
+-        },
+-        "palace": {
+-            "name": "Palais"
+-        },
+-        "temple": {
+-            "name": "Temple"
+-        },
+-        "church": {
+-            "name": "Église"
+-        },
+-        "monastery": {
+-            "name": "Monastère"
+-        },
+-        "cathedral": {
+-            "name": "Cathédrale"
+-        },
+-        "tavern": {
+-            "name": "Taverne"
+-        },
+-        "market": {
+-            "name": "Marché"
+-        },
+-        "trading_post": {
+-            "name": "Échoppe"
+-        },
+-        "docks": {
+-            "name": "Comptoir"
+-        },
+-        "harbor": {
+-            "name": "Port"
+-        },
+-        "town_hall": {
+-            "name": "Hôtel de Ville"
+-        },
+-        "watchtower": {
+-            "name": "Tour de Guet"
+-        },
+-        "prison": {
+-            "name": "Prison"
+-        },
+-        "barracks": {
+-            "name": "Caserne"
+-        },
+-        "fortress": {
+-            "name": "Forteresse"
+-        },
+-        "dragon_gate": {
+-            "name": "Dracoport",
+-            "description": "Coûte 6 pièces d'or à bâtir mais vaut 8 points pour le calcul du score."
+-        },
+-        "university": {
+-            "name": "Université",
+-            "description": "Coûte 6 pièces d'or à bâtir mais vaut 8 points pour le calcul du score."
+-        },
+-        "map_room": {
+-            "name": "Salle des Cartes",
+-            "description": "À la fin de la partie, marquez 1 point supplémentaire pour chaque carte dans votre main."
+-        },
+-        "imperial_treasury": {
+-            "name": "Trésor Impérial",
+-            "description": "À la fin de la partie, marquez 1 point supplémentaire pour chaque pièce d'or dans votre trésor."
+-        },
+-        "haunted_quarter": {
+-            "name": "Cour des Miracles",
+-            "description": "Pour le calcul du score, la Cour des Miracles est considérée comme un quartier de la couleur de votre choix."
+-        },
+-        "school_of_magic": {
+-            "name": "École de Magie",
+-            "description": "Pour la perception des revenus, l'École de Magie est considérée comme un quartier de la couleur de votre choix. Elle vous rapporte donc si vous êtes Roi, Évêque, Marchand ou Condottiere."
+-        },
+-        "keep": {
+-            "name": "Donjon",
+-            "description": "Le Donjon ne peut pas être détruit par le Condottiere."
+-        },
+-        "great_wall": {
+-            "name": "Grande Muraille",
+-            "description": "Le prix à payer par le Condottiere pour détruire vos autres quartiers est augmenté de 1."
+-        },
+-        "graveyard": {
+-            "name": "Cimetière",
+-            "description": "Lorsque le Condottiere détruit un quartier, vous pouvez payer 1 pièce d'or pour le prendre dans votre main. Vous ne pouvez pas le faire si vous êtes vous-même Condottiere."
+-        },
+-        "observatory": {
+-            "name": "Observatoire",
+-            "description": "Si vous choisissez de piocher des cartes au début de votre tour, piochez-en 3 au lieu de 2. Choisissez-en une et défaussez les 2 autres."
+-        },
+-        "library": {
+-            "name": "Bibliothèque",
+-            "description": "Si vous choisissez de piocher des cartes au début de votre tour, conservez-les toutes."
+-        },
+-        "laboratory": {
+-            "name": "Laboratoire",
+-            "description": "Une fois par tour, vous pouvez défausser 1 carte et recevoir 2 pièces d'or."
+-        },
+-        "smithy": {
+-            "name": "Forge",
+-            "description": "Une fois par tour, vous pouvez payer 2 pièces d'or pour piocher 3 cartes."
+-        }
+-    }
+-}
+diff --git a/client/src/i18n/messages.ts b/client/src/i18n/messages.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..5a83360c3c0e0c8142ab684b012cda8d0026e722
+--- /dev/null
++++ b/client/src/i18n/messages.ts
+@@ -0,0 +1,286 @@
++export type Locale = 'en' | 'es';
++
++const en = {
++  "flag": "\ud83c\uddec\ud83c\udde7",
++  "name": "English",
++  "ui": {
++    "title": "Citadels",
++    "subtitle1": "Bruno Faidutti's",
++    "subtitle2": "Classic Edition",
++    "loading": "Loading...",
++    "cancel": "Cancel",
++    "confirm": "Confirm",
++    "close": "Close",
++    "unknown_error": "Unknown error.",
++    "about": {
++      "title": "About",
++      "text": "Original board game created by <a target='_blank' href='http://faidutti.com'>Bruno Faidutti</a>.<br> Unofficial online version developped by <a target='_blank' href='https://brule.info'>Antoine Br\u00fbl\u00e9</a>.<br> This implementation of the game is <a target='_blank' href='https://github.com/antbrl/citadels-online'>open source</a>.<br> Emoji CC-BY 4.0 <a target='_blank' href='https://twemoji.twitter.com/'>Twemoji</a>",
++      "picture_credits": "Picture credits",
++      "by": "by"
++    },
++    "homepage": {
++      "intro_text": "Create a new room",
++      "create_room": "Create a Room",
++      "intro_label": "Real-time collaboration",
++      "headline": "Jump into a room and start creating",
++      "join_room_label": "Room code",
++      "join_room_placeholder": "Enter room code",
++      "join_room": "Join Room",
++      "join_room_error": "Add a room code to continue.",
++      "join_room_hint": "Paste or type a room code from a friend.",
++      "create_room_label": "New here?",
++      "creating_room": "Creating...",
++      "create_room_hint": "Spin up a fresh room and share the code with your team.",
++      "how_it_works_title": "How it works",
++      "step_join": "Join or create a room from this page.",
++      "step_invite": "Share the code so others can hop in instantly.",
++      "step_collaborate": "Collaborate in real-time with chat and shared tools."
++    },
++    "room": {
++      "username": "Username",
++      "connect": "Connect",
++      "not_open": "This room is not open for new players.",
++      "error_does_not_exist": "This room does not exist.",
++      "error_join": "Error when joining the room: {msg}"
++    },
++    "lobby": {
++      "title": "Game Setup",
++      "players": "Players",
++      "you": "You",
++      "online": "Online",
++      "offline": "Offline",
++      "manager": "Manager",
++      "start_game": "Start Game",
++      "wait_message": "Waiting for the manager to start the game.",
++      "not_enough_players": "There must be at least 2 players to start the game.",
++      "too_many_players": "Too many players (7 max).",
++      "settings": {
++        "complete_city_size": "Number of districts to complete city"
++      }
++    },
++    "game": {
++      "characters": "Characters",
++      "messages": {
++        "welcome": "Welcome to Citadels Classic Edition!",
++        "choose_characters": {
++          "initial": "The player owning the crown will start choosing characters.",
++          "put_aside_face_up": "{0} must choose a character to put aside face up.",
++          "put_aside_face_down": "{0} must choose a character to put aside face down.",
++          "choose_character": "{0} must choose a character.",
++          "done": "Characters have been chosen."
++        },
++        "actions": {
++          "initial": "The call is going to start.",
++          "choose_card": "Choose the card to keep.",
++          "choose_action": "Choose an action to carry out.",
++          "assassin_kill": "Choose a character to kill.",
++          "thief_rob": "Choose a character to rob.",
++          "magician_exchange_hand": "Choose a player with whom you will exchange hands.",
++          "magician_discard_cards": "Choose cards you wish to discard.",
++          "merchant_take_1_gold": "Take an extra gold coin?",
++          "architect_draw_2_cards": "Draw 2 extra cards?",
++          "warlord_destroy_district": "Choose a district to destroy.",
++          "graveyard_recover_district": "Recover destroyed district from the graveyard for 1 gold?",
++          "graveyard_recover_district_others": "The player owning the graveyard must choose whether to recover the destroyed district.",
++          "laboratory_discard_card": "Choose the card to discard to gain 2 gold.",
++          "build_district": "Choose a district to build.",
++          "done": "End of turn!"
++        },
++        "end": "End of game.",
++        "errors": {
++          "invalid_state": "Error: invalid game state."
++        }
++      },
++      "actions": {
++        "accept": "Accept",
++        "decline": "Decline",
++        "confirm": "Confirm",
++        "cancel": "Cancel",
++        "take_gold": "Take 2 coins",
++        "draw_cards": "Draw 2 cards",
++        "draw_cards_3": "Draw 3 cards",
++        "assassin_kill": "Kill character",
++        "thief_rob": "Rob character",
++        "magician_exchange_hand": "Exchange hand",
++        "choose_hand": "Choose this hand",
++        "magician_discard_cards": "Exchange cards",
++        "take_gold_earnings": "Collect earnings ({0})",
++        "warlord_destroy_district": "Destroy district",
++        "graveyard_recover_district": "Recover district",
++        "smithy_draw_cards": "Use smithy",
++        "laboratory_discard_card": "Use laboratory",
++        "build_district": "Build district",
++        "finish_turn": "Finish turn"
++      },
++      "crown": "Crown"
++    },
++    "score": {
++      "title": "Score",
++      "base": "Districts value",
++      "extra_stash": "Imperial Treasury",
++      "extra_hand": "Map Room",
++      "extra_district_types": "All district types",
++      "extra_complete_city": "Complete city",
++      "total": "Total"
++    }
++  },
++  "characters": [
++    {
++      "name": "",
++      "description": "Unknown character",
++      "turn": ""
++    },
++    {
++      "name": "Assassin",
++      "description": "Call a character you wish to kill. The killed character skips their turn.",
++      "turn": "The Assassin is called."
++    },
++    {
++      "name": "Thief",
++      "description": "Call a character you wish to rob. When the robbed character is revealed, you take all his gold.",
++      "turn": "The Thief is called."
++    },
++    {
++      "name": "Magician",
++      "description": "Either exchange hands of cards with another player or discard any number of cards to gain an equal number of cards.",
++      "turn": "The Magician is called."
++    },
++    {
++      "name": "King",
++      "description": "Take the crown. Gain 1 gold for each of your Noble districts.",
++      "turn": "The King is called."
++    },
++    {
++      "name": "Bishop",
++      "description": "The Warlord cannot use its ability on your districts. Gain 1 gold for each of your Religious districts.",
++      "turn": "The Bishop is called."
++    },
++    {
++      "name": "Merchant",
++      "description": "Gain 1 extra gold. Gain 1 gold for each of your Trade districts.",
++      "turn": "The Merchant is called."
++    },
++    {
++      "name": "Architect",
++      "description": "Gain 2 extra cards. You can build up to 3 districts.",
++      "turn": "The Architect is called."
++    },
++    {
++      "name": "Warlord",
++      "description": "Destroy 1 district by paying 1 fewer gold than its cost. Gain 1 gold for each of your Military districts.",
++      "turn": "The Warlord is called."
++    }
++  ],
++  "districts": {
++    "manor": {
++      "name": "Manor"
++    },
++    "castle": {
++      "name": "Castle"
++    },
++    "palace": {
++      "name": "Palace"
++    },
++    "temple": {
++      "name": "Temple"
++    },
++    "church": {
++      "name": "Church"
++    },
++    "monastery": {
++      "name": "Monastery"
++    },
++    "cathedral": {
++      "name": "Cathedral"
++    },
++    "tavern": {
++      "name": "Tavern"
++    },
++    "market": {
++      "name": "Market"
++    },
++    "trading_post": {
++      "name": "Trading Post"
++    },
++    "docks": {
++      "name": "Docks"
++    },
++    "harbor": {
++      "name": "Harbor"
++    },
++    "town_hall": {
++      "name": "Town Hall"
++    },
++    "watchtower": {
++      "name": "Watchtower"
++    },
++    "prison": {
++      "name": "Prison"
++    },
++    "barracks": {
++      "name": "Barracks"
++    },
++    "fortress": {
++      "name": "Fortress"
++    },
++    "dragon_gate": {
++      "name": "Dragon Gate",
++      "description": "At the end of the game, score 2 extra points."
++    },
++    "university": {
++      "name": "University",
++      "description": "At the end of the game, score 2 extra points."
++    },
++    "map_room": {
++      "name": "Map Room",
++      "description": "At the end of the game, score 1 extra point for each card in your hand."
++    },
++    "imperial_treasury": {
++      "name": "Imperial Treasury",
++      "description": "At the end of the game, score 1 extra point for each gold in your stash."
++    },
++    "haunted_quarter": {
++      "name": "Haunted Quarter",
++      "description": "At the end of the game, the Haunted Quarter counts as any 1 district type of your choice."
++    },
++    "school_of_magic": {
++      "name": "School of Magic",
++      "description": "For abilities that gain resources for your districts, the School of Magic counts as the district type of your choice."
++    },
++    "keep": {
++      "name": "Keep",
++      "description": "The Warlord cannot use its ability on the Keep."
++    },
++    "great_wall": {
++      "name": "Great Wall",
++      "description": "The Warlord must pay 1 extra gold to destroy your other districts."
++    },
++    "graveyard": {
++      "name": "Graveyard",
++      "description": "When the Warlord destroys a district, you may pay 1 gold to recover it in your hand. You cannot use this ability if you are Warlord yourself."
++    },
++    "observatory": {
++      "name": "Observatory",
++      "description": "If you choose to draw cards when gathering resources, draw 3 cards instead of 2."
++    },
++    "library": {
++      "name": "Library",
++      "description": "If you choose to draw cards when gathering resources, keep all drawn cards."
++    },
++    "laboratory": {
++      "name": "Laboratory",
++      "description": "Once per turn, discard 1 card from your hand to gain 2 gold."
++    },
++    "smithy": {
++      "name": "Smithy",
++      "description": "Once per turn, pay 2 gold to gain 3 cards."
++    }
++  }
++} as const;
++
++const es: typeof en = JSON.parse(JSON.stringify(en));
++
++export const messages = {
++  en,
++  es,
++} as const;
+diff --git a/client/src/main.ts b/client/src/main.ts
+index 9bc23dd7d0ed982b5521f066d18b218886c306ba..e933da8f2cca424f0494b7daabc7a9b497171e3a 100644
+--- a/client/src/main.ts
++++ b/client/src/main.ts
+@@ -1,33 +1,33 @@
+ import { createApp } from 'vue';
+ import $ from 'jquery';
+ import { Boundary } from 'popper.js';
+ import twemoji from 'twemoji';
+ import router from './router';
+ import { store } from './store';
+ import App from './App.vue';
+-import i18n from './i18n';
++import { t, setLocale } from './i18n';
+ 
+ import 'bootstrap';
+ import './scss/main.scss';
+ import './assets/tailwind.css';
+ 
+ const app = createApp(App);
+ 
+ // Input focus directive
+ app.directive('focus', {
+   mounted(el) {
+     el.focus();
+   },
+ });
+ 
+ app.component('emoji', {
+   data() {
+     return {
+       html: '',
+     };
+   },
+   props: {
+     emoji: {
+       type: String,
+       required: true,
+     },
+@@ -49,27 +49,28 @@ app.component('emoji', {
+       this.updateEmoji();
+     },
+   },
+   template: '<span v-html="html"></span>',
+ });
+ 
+ // Bootstrap tooltip directive
+ const tooltipOptions = { boundary: 'window' as Boundary };
+ app.directive('tooltip', {
+   mounted(el, binding) {
+     const title = binding.value ?? '';
+     $(el).tooltip({ ...tooltipOptions, title });
+   },
+   updated(el, binding) {
+     $(el).tooltip('dispose');
+     const title = binding.value ?? '';
+     $(el).tooltip({ ...tooltipOptions, title });
+   },
+   unmounted(el) {
+     $(el).tooltip('dispose');
+   },
+ });
+ 
+ app.use(store);
+ app.use(router);
+-app.use(i18n);
++app.config.globalProperties.$t = t;
++setLocale('en');
+ app.mount('#app');
