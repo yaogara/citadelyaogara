@@ -1,5 +1,6 @@
 import express from 'express';
 import { createServer } from 'http';
+import path from 'path';
 import { Server } from 'socket.io';
 import history from 'connect-history-api-fallback';
 import { initSocket } from './socket/server';
@@ -22,7 +23,9 @@ const io = new Server(http, { path: '/s/' });
 initSocket(io);
 
 app.use(history());
-app.use(express.static('../client/dist'));
+
+const clientDistPath = path.resolve(__dirname, '..', '..', 'client', 'dist');
+app.use(express.static(clientDistPath));
 
 http.listen(port, () => {
   console.log(`Citadels game server listening on http://localhost:${port}`);
