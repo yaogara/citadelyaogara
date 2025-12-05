@@ -1,5 +1,27 @@
 <template>
   <div class="home-screen">
+    <!-- Background with gradient sky and landscape silhouette -->
+    <div class="background" :style="{ backgroundImage: `url(${backgroundImage})` }"></div>
+    
+    <!-- Title/Logo -->
+    <div class="title-container">
+      <img 
+        :src="logoImage" 
+        alt="PLATA O PLOMO" 
+        class="logo-image"
+      />
+    </div>
+    
+    <!-- Characters -->
+    <div class="characters-container">
+      <img 
+        :src="charactersImage" 
+        alt="Game Characters" 
+        class="characters-image"
+      />
+    </div>
+    
+    <!-- Buttons -->
     <div class="button-container">
       <button
         class="host-btn"
@@ -10,9 +32,29 @@
         {{ creatingRoom ? 'CREATING...' : 'HOST GAME' }}
       </button>
       
-      <div class="divider">OR</div>
-      
-      <div class="join-section">
+      <button
+        class="join-btn"
+        type="button"
+        @click="showJoinModal = true"
+      >
+        JOIN GAME
+      </button>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <span class="version">Version 1.0.0</span>
+      <button class="settings-btn" @click="showSettings" aria-label="Settings">
+        <svg class="settings-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97c0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.4-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Join Game Modal -->
+    <div v-if="showJoinModal" class="modal-overlay" @click="showJoinModal = false">
+      <div class="modal-content" @click.stop>
+        <h2>Join Game</h2>
         <div class="input-row">
           <input
             v-model="roomId"
@@ -23,14 +65,14 @@
             @keyup.enter="joinRoom()"
           >
         </div>
-        <button
-          class="join-btn"
-          type="button"
-          @click="joinRoom()"
-          :disabled="!roomId.trim()"
-        >
-          JOIN GAME
-        </button>
+        <div class="modal-actions">
+          <button class="join-btn-modal" @click="joinRoom()" :disabled="!roomId.trim()">
+            JOIN
+          </button>
+          <button class="cancel-btn" @click="showJoinModal = false">
+            CANCEL
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -39,6 +81,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { store } from '../store';
+import logoImage from '../assets/logo-plata-o-plomo.png';
+import charactersImage from '../assets/characters-group.png';
+import backgroundImage from '../assets/background-night.png';
 
 export default defineComponent({
   name: 'HomeScreen',
@@ -47,7 +92,10 @@ export default defineComponent({
       roomId: '',
       creatingRoom: false,
       joinAttempted: false,
-      inputId: `room-input-${Math.random().toString(36).slice(2)}`,
+      showJoinModal: false,
+      logoImage,
+      charactersImage,
+      backgroundImage,
     };
   },
   methods: {
@@ -67,309 +115,322 @@ export default defineComponent({
         this.creatingRoom = false;
       }
     },
+    showSettings() {
+      // TODO: Implement settings functionality
+      console.log('Settings clicked');
+    },
   },
 });
 </script>
 
 <style scoped lang="scss">
 .home-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 10% 20%, rgba(88, 86, 214, 0.12), transparent 35%),
-    radial-gradient(circle at 90% 10%, rgba(32, 201, 151, 0.1), transparent 30%),
-    linear-gradient(135deg, rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.7));
-  color: white;
-  padding: 0 !important;
-  margin: 0 !important;
+  height: 100vh;
   width: 100vw;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-.button-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
-  width: 100%;
-  max-width: 320px;
-  padding: 2rem;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 1rem 1rem;
+  box-sizing: border-box;
 }
 
-.host-btn, .join-btn {
+// Background with gradient sky and landscape silhouette
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+// Title/Logo Container
+.title-container {
+  position: relative;
+  z-index: 1;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-image {
+  max-width: 90%;
+  max-height: 140px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+// Characters Container
+.characters-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  max-width: 100%;
+  margin: 2rem 0;
+}
+
+.characters-image {
+  max-width: 90%;
+  max-height: 350px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+// Button Container
+.button-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
   width: 100%;
-  padding: 1.25rem;
+  max-width: 320px;
+  margin-bottom: 2rem;
+}
+
+.host-btn,
+.join-btn {
+  width: 100%;
+  padding: 1.25rem 2rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 50px;
   font-size: 1.1rem;
-  font-weight: bold;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    0 0 20px currentColor;
 }
 
 .host-btn {
-  background: linear-gradient(45deg, #ff9800, #ffc107);
-  color: #1a237e;
+  background: linear-gradient(90deg, #ff6b35 0%, #ffa500 50%, #ffd700 100%);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    0 0 25px rgba(255, 107, 53, 0.6),
+    0 0 40px rgba(255, 165, 0, 0.4);
 }
 
 .join-btn {
-  background: linear-gradient(45deg, #00bcd4, #00e5ff);
-  color: #0d47a1;
+  background: linear-gradient(90deg, #0096ff 0%, #00bfff 50%, #00e5ff 100%);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    0 0 25px rgba(0, 150, 255, 0.6),
+    0 0 40px rgba(0, 191, 255, 0.4);
 }
 
-.host-btn:disabled, .join-btn:disabled {
+.host-btn:disabled,
+.join-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.host-btn:not(:disabled):hover, .join-btn:not(:disabled):hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+.host-btn:not(:disabled):hover,
+.join-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    0 0 30px currentColor,
+    0 0 50px rgba(255, 255, 255, 0.3);
 }
 
-.divider {
-  color: white;
-  text-transform: uppercase;
-  font-weight: bold;
+.host-btn:not(:disabled):active,
+.join-btn:not(:disabled):active {
+  transform: translateY(0);
+}
+
+// Footer
+.footer {
   position: relative;
-  width: 100%;
-  text-align: center;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.divider::before {
-  left: 0;
-}
-
-.divider::after {
-  right: 0;
-}
-
-.join-section {
-  width: 100%;
+  z-index: 1;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 0 1rem 1rem;
+}
+
+.version {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.settings-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.9;
+}
+
+.settings-btn:hover {
+  transform: rotate(90deg);
+  opacity: 1;
+}
+
+.settings-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+// Modal for Join Game
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: linear-gradient(145deg, #1a1a2e 0%, #0d0d1e 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  color: white;
+  
+  h2 {
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+}
+
+.input-row {
+  margin-bottom: 1.5rem;
 }
 
 .room-input {
   width: 100%;
   padding: 1rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.1);
   color: white;
   font-size: 1rem;
   text-align: center;
   text-transform: uppercase;
+  letter-spacing: 2px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: #00bfff;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+  }
+  
+  &.has-error {
+    border-color: #ff5252;
+    box-shadow: 0 0 15px rgba(255, 82, 82, 0.3);
+  }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.join-btn-modal,
+.cancel-btn {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.room-input:focus {
-  outline: none;
-  border-color: #00bcd4;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.room-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-}
-
-.room-input.has-error {
-  border-color: #ff5252;
-}
-
-.hero-card {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: clamp(1.5rem, 3vw, 2.5rem);
-  background: #fff;
-  border-radius: 24px;
-  padding: clamp(1.75rem, 4vw, 3rem);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  max-width: 1100px;
-  width: 100%;
-}
-
-.hero-content {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1rem, 2vw, 1.5rem);
-}
-
-.eyebrow {
-  font-size: clamp(0.85rem, 1.8vw, 1rem);
-  font-weight: 600;
-  color: var(--bs-primary);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.headline {
-  font-size: clamp(1.9rem, 4vw, 2.8rem);
-  line-height: 1.2;
-  font-weight: 700;
-  margin: 0;
-  color: var(--bs-emphasis-color, #111827);
-}
-
-.lede {
-  margin: 0;
-  color: var(--bs-secondary-color, #4b5563);
-  font-size: clamp(1rem, 2vw, 1.125rem);
-}
-
-.cta-group {
-  display: grid;
-  grid-template-columns: 2fr 1px 1.2fr;
-  gap: clamp(1rem, 2vw, 1.5rem);
-  align-items: center;
-}
-
-.divider {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.08), transparent);
-}
-
-@media (max-width: 768px) {
-  .cta-group {
-    grid-template-columns: 1fr;
+.join-btn-modal {
+  background: linear-gradient(90deg, #0096ff 0%, #00bfff 50%, #00e5ff 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 150, 255, 0.4);
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 150, 255, 0.5);
   }
-
-  .divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(15, 23, 42, 0.08), transparent);
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
 }
 
-.input-label {
-  font-weight: 600;
-  color: var(--bs-emphasis-color, #111827);
-  margin: 0;
-}
-
-.input-row {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.room-input {
-  flex: 1;
-  min-width: 200px;
-  border: 1px solid var(--bs-border-color, #e5e7eb);
-  border-radius: 12px;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.room-input:focus {
-  outline: none;
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 3px rgba(88, 86, 214, 0.18);
-}
-
-.room-input.has-error {
-  border-color: var(--bs-danger, #dc3545);
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.18);
-}
-
-button {
-  border: none;
-  border-radius: 12px;
-  padding: 0.75rem 1.25rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
-  font-size: 1rem;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-primary {
-  background: var(--bs-primary);
-  color: #fff;
-  box-shadow: 0 12px 30px rgba(88, 86, 214, 0.35);
-}
-
-.btn-primary:not(:disabled):hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 34px rgba(88, 86, 214, 0.4);
-}
-
-.btn-ghost {
-  background: rgba(17, 24, 39, 0.05);
-  color: var(--bs-emphasis-color, #111827);
-}
-
-.btn-ghost:not(:disabled):hover {
-  background: rgba(17, 24, 39, 0.08);
-  transform: translateY(-1px);
-}
-
-.helper-text {
-  margin: 0;
-  color: var(--bs-secondary-color, #4b5563);
-  font-size: 0.95rem;
-}
-
-.helper-text.error {
-  color: var(--bs-danger, #dc3545);
-}
-
-.supporting-panel {
-  background: linear-gradient(145deg, rgba(88, 86, 214, 0.1), rgba(32, 201, 151, 0.12));
-  border-radius: 16px;
-  padding: clamp(1.25rem, 3vw, 1.75rem);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-}
-
-.panel-title {
-  margin: 0;
-  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
-  font-weight: 700;
-  color: var(--bs-emphasis-color, #111827);
-}
-
-.panel-list {
-  margin: 0;
-  padding-left: 1.25rem;
-  display: grid;
-  gap: 0.5rem;
-  color: var(--bs-secondary-color, #4b5563);
-  line-height: 1.5;
+// Responsive adjustments
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 2rem;
+  }
+  
+  .characters-container {
+    margin: 1rem 0;
+  }
+  
+  .button-container {
+    max-width: 280px;
+  }
+  
+  .host-btn,
+  .join-btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
 }
 </style>

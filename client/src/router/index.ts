@@ -6,7 +6,7 @@ import CardsPreview from '../components/CardsPreview.vue';
 import { updateTitle } from '../i18n';
 
 const routes = [
-  { path: '/', component: HomeScreen },
+  { path: '/', name: 'home', component: HomeScreen },
   { path: '/room/:roomId', name: 'room', component: RoomScreen },
   { path: '/cards', name: 'cards', component: CardsPreview },
 

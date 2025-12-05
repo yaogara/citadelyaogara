@@ -22,7 +22,7 @@ export default defineComponent({
   },
   computed: {
     inGame() {
-      return this.$route.name === 'room';
+      return ['room', 'home'].includes(this.$route?.name);
     },
   },
   methods: {
