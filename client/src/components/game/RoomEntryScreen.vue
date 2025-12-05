@@ -1,26 +1,41 @@
 <template>
-<div class="container-fluid d-flex justify-content-center align-items-center">
+<div class="room-entry-screen">
+  <!-- Background with gradient sky and landscape silhouette -->
+  <div class="background" :style="{ backgroundImage: `url(${backgroundImage})` }"></div>
+  
+  <div class="content-container">
   <transition name="fade" mode="out-in">
-    <div v-if="loading">
+      <div v-if="loading" class="content-card">
       <LoadingSpinner />
     </div>
-    <div v-else-if="error">
-      {{ t(errorMessage, { msg: errorReason }) }}
+      <div v-else-if="error" class="content-card error-card">
+        <h2 class="error-title">Error</h2>
+        <p class="error-message">{{ t(errorMessage, { msg: errorReason }) }}</p>
+        <button class="back-btn" @click="$router.push('/')">
+          GO BACK
+        </button>
     </div>
-    <div v-else-if="askForUsername">
-      <form @submit.prevent="joinRoom" autocomplete="off">
-        <div class="form-group">
-          <label for="username">{{ t('ui.room.username') }}</label>
+      <div v-else-if="askForUsername" class="content-card">
+        <h2 class="form-title">Enter Your Name</h2>
+        <form @submit.prevent="joinRoom" autocomplete="off" class="username-form">
+          <div class="input-group">
           <input
             type="text"
-            class="form-control"
+              class="username-input"
             v-model="username"
             id="username"
+              placeholder="ENTER YOUR NAME"
             v-focus
+              :class="{ 'has-error': joinAttempted && !username.trim() }"
           >
         </div>
-        <div class="form-group">
-          <input class="btn btn-primary" type="submit" :value="t('ui.room.connect')">
+          <div class="form-actions">
+            <button class="connect-btn" type="submit" :disabled="!username.trim()">
+              {{ t('ui.room.connect') }}
+            </button>
+            <button class="cancel-btn" type="button" @click="$router.push('/')">
+              CANCEL
+            </button>
         </div>
       </form>
     </div>
