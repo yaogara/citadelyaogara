@@ -321,6 +321,15 @@ export function t(key: string, targetLocale?: string): string {
   return String(value);
 }
 
+export function te(key: string, targetLocale?: string): boolean {
+  const selectedLocale: Locale = (targetLocale && Object.prototype.hasOwnProperty.call(messages, targetLocale)
+    ? (targetLocale as Locale)
+    : locale);
+  const value = resolveDotNotation(messages[selectedLocale], key);
+
+  return value !== undefined && value !== null;
+}
+
 export function updateTitle(): void {
   document.title = t('ui.title');
 }

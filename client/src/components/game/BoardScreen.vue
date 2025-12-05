@@ -32,7 +32,7 @@
         class="section-card"
       >
         <div class="section-header">
-          <span>{{ $t('ui.game.characters') }}</span>
+          <span>{{ t('ui.game.characters') }}</span>
         </div>
         <CharactersList
           class="section-body characters-panel"
@@ -49,7 +49,7 @@
         class="section-card"
       >
         <div class="section-header">
-          <span>{{ $t('districts.graveyard.name') }}</span>
+          <span>{{ t('districts.graveyard.name') }}</span>
         </div>
         <div class="section-body graveyard-card">
           <DistrictCard
@@ -63,7 +63,7 @@
         class="section-card"
       >
         <div class="section-header">
-          <span>{{ $t('ui.game.characters') }}</span>
+          <span>{{ t('ui.game.characters') }}</span>
         </div>
         <CharactersList
           class="section-body characters-panel"
@@ -82,7 +82,7 @@
       ref="statusBarMessage"
     >
       <span
-        v-for="c, i in [...$t(statusBar.message, statusBar.args)]"
+        v-for="c, i in [...t(statusBar.message, statusBar.args)]"
         :key="i"
       >{{ c }}</span>
     </div>
@@ -93,7 +93,7 @@
         type="button"
         class="btn btn-sm action-pill"
         @click="sendMove(action.move, $event.target)">
-        {{ $t(`ui.game.actions.${action.title}`, action.args) }}
+        {{ t(`ui.game.actions.${action.title}`, action.args) }}
       </button>
     </div>
   </div>
@@ -111,6 +111,7 @@ import PlayerCity from './elements/PlayerCity.vue';
 import PlayerHand from './elements/PlayerHand.vue';
 import DistrictCard from './elements/DistrictCard.vue';
 import { getStatusBarData } from '../../data/statusBarData';
+import { t } from '../../i18n';
 
 export default defineComponent({
   components: {
@@ -210,6 +211,7 @@ export default defineComponent({
     },
   },
   methods: {
+    t,
     showConfirmationModal() {
       store.commit('prepareGameSetupConfirmation');
       $('#setupConfirmationModal').modal();

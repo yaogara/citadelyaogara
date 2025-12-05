@@ -6,13 +6,13 @@
       class="list-group-item list-group-item-dark p-2
         d-flex justify-content-between align-items-center"
     >
-      <span class="badge text-wrap">{{ $t(`ui.score.${line.title}`) }}</span>
+      <span class="badge text-wrap">{{ t(`ui.score.${line.title}`) }}</span>
       <span class="badge badge-secondary shadow-sm">{{ line.value ?? 0 }}</span>
     </li>
   </ul>
   <ul class="list-group list-group-flush text-dark shadow-sm">
     <li class="list-group-item list-group-item-warning p-2 d-flex justify-content-between">
-      <span class="badge">{{ $t('ui.score.total') }}</span>
+      <span class="badge">{{ t('ui.score.total') }}</span>
       <span class="badge badge-warning p-1 shadow-sm">{{ score.total ?? 0 }}</span>
     </li>
   </ul>
@@ -21,6 +21,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { t } from '../../../i18n';
 
 export default defineComponent({
   name: 'PlayerScore',
@@ -46,6 +47,9 @@ export default defineComponent({
       }
       return lines;
     },
+  },
+  methods: {
+    t,
   },
 });
 </script>

@@ -14,7 +14,7 @@
               <div class="chip-row">
                 <span v-if="board.crown" class="pill-chip crown-chip">
                   <emoji emoji="👑" class="mr-1"></emoji>
-                  <span>{{ $t('ui.game.crown') || 'Crown' }}</span>
+                  <span>{{ t('ui.game.crown') || 'Crown' }}</span>
                 </span>
                 <span class="pill-chip coin-chip">
                   <emoji emoji="🪙" class="mr-1"></emoji>
@@ -26,7 +26,7 @@
                   :class="{ 'btn-primary': exchangeHandMode, 'btn-outline-light text-light': !exchangeHandMode }"
                   :disabled="!exchangeHandMode"
                   @click="exchangeHand()"
-                  v-tooltip="exchangeHandMode ? $t('ui.game.actions.choose_hand') : ''"
+                  v-tooltip="exchangeHandMode ? t('ui.game.actions.choose_hand') : ''"
                 >
                   <emoji emoji="🃏" class="mr-1"></emoji>
                   <span>{{ board.hand.length }}</span>
@@ -70,6 +70,7 @@ import { store } from '../../../store';
 import CharactersList from './CharactersList.vue';
 import DistrictCard from './DistrictCard.vue';
 import PlayerScore from './PlayerScore.vue';
+import { t } from '../../../i18n';
 
 export default defineComponent({
   name: 'PlayerCity',
@@ -113,6 +114,7 @@ export default defineComponent({
     },
   },
   methods: {
+    t,
     canDestroy(name: DistrictId): boolean {
       if (!this.destroyMode) return false;
       const cost = store.getters.getDistrictDestroyPrice(this.playerId, name);

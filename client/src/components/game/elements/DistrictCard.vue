@@ -12,7 +12,7 @@
   <div
     v-if="data"
     class="card h-100 bg-black text-light shadow-sm overflow-hidden d-flex flex-column p-1"
-    v-tooltip="$te(description) ? $t(description) : ''"
+    v-tooltip="te(description) ? t(description) : ''"
     :data-placement="small ? 'right' : 'top'"
   >
 
@@ -35,10 +35,10 @@
       <div class="flex-fill"></div>
       <div v-if="!small" class="px-1" :class="{ 'pl-3': data.extra_points > 0 }">
         <div
-          v-if="$te(description)"
+          v-if="te(description)"
           class="badge badge-light p-1 w-100 text-truncate opacity-4"
           style="left: 0; right: 0; bottom: 0;"
-        >{{ $t(description) }}</div>
+        >{{ t(description) }}</div>
       </div>
 
       <!-- icon and name -->
@@ -50,7 +50,7 @@
         </span>
         <span
           class="title flex-fill text-center text-wrap"
-        >{{ $t(name) }}</span>
+        >{{ t(name) }}</span>
       </div>
     </div>
   </div>
@@ -75,6 +75,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
+import { t, te } from '../../../i18n';
 
 export default defineComponent({
   name: 'DistrictCard',
@@ -134,6 +135,8 @@ export default defineComponent({
     },
   },
   methods: {
+    t,
+    te,
     toggleSelected() {
       this.$emit('update:selected', !this.selected && this.selectable);
     },

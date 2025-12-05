@@ -4,7 +4,7 @@
       <div class="d-flex justify-content-end flex-wrap align-items-center chip-row mb-2">
         <span v-if="board.crown" class="pill-chip crown-chip">
           <emoji emoji="👑" class="mr-1"></emoji>
-          <span>{{ $t('ui.game.crown') || 'Crown' }}</span>
+          <span>{{ t('ui.game.crown') || 'Crown' }}</span>
         </span>
         <span class="pill-chip coin-chip">
           <emoji emoji="🪙" class="mr-1"></emoji>
@@ -54,6 +54,7 @@ import { defineComponent } from 'vue';
 import { Move, MoveType, DistrictId } from 'citadels-common';
 import { store } from '../../../store';
 import DistrictCard from './DistrictCard.vue';
+import { t } from '../../../i18n';
 
 export default defineComponent({
   name: 'PlayerHand',
@@ -89,6 +90,7 @@ export default defineComponent({
     },
   },
   methods: {
+    t,
     canBuild(name: DistrictId): boolean {
       if (!this.buildMode) return false;
       return !this.board.city.includes(name)
@@ -227,3 +229,4 @@ export default defineComponent({
   gap: 0.5rem;
 }
 </style>
+

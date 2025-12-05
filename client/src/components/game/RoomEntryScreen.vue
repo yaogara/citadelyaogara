@@ -5,12 +5,12 @@
       <LoadingSpinner />
     </div>
     <div v-else-if="error">
-      {{ $t(errorMessage, { msg: errorReason }) }}
+      {{ t(errorMessage, { msg: errorReason }) }}
     </div>
     <div v-else-if="askForUsername">
       <form @submit.prevent="joinRoom" autocomplete="off">
         <div class="form-group">
-          <label for="username">{{ $t('ui.room.username') }}</label>
+          <label for="username">{{ t('ui.room.username') }}</label>
           <input
             type="text"
             class="form-control"
@@ -20,12 +20,12 @@
           >
         </div>
         <div class="form-group">
-          <input class="btn btn-primary" type="submit" :value="$t('ui.room.connect')">
+          <input class="btn btn-primary" type="submit" :value="t('ui.room.connect')">
         </div>
       </form>
     </div>
     <div v-else>
-      {{ $t('ui.unknown_error') }}
+      {{ t('ui.unknown_error') }}
     </div>
   </transition>
 </div>
@@ -36,6 +36,7 @@ import { defineComponent } from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import { RoomId } from 'citadels-common';
 import { store } from '../../store';
+import { t } from '../../i18n';
 import LoadingSpinner from './elements/LoadingSpinner.vue';
 
 export default defineComponent({
@@ -61,6 +62,7 @@ export default defineComponent({
     },
   },
   methods: {
+    t,
     ...mapActions([
       'connect',
     ]),

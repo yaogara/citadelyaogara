@@ -1,13 +1,13 @@
 <template>
 <div class="card">
   <div class="card-header">
-    {{ $t('ui.lobby.players') }}
+    {{ t('ui.lobby.players') }}
   </div>
   <ul class="list-group list-group-flush text-dark">
     <li class="list-group-item">
         {{ self.username }}
-        <span class="badge badge-info">{{ $t('ui.lobby.you') }}</span>
-        <span v-if="self.manager" class="badge badge-danger">{{ $t('ui.lobby.manager') }}</span>
+        <span class="badge badge-info">{{ t('ui.lobby.you') }}</span>
+        <span v-if="self.manager" class="badge badge-danger">{{ t('ui.lobby.manager') }}</span>
     </li>
     <li
       class="list-group-item"
@@ -15,9 +15,9 @@
       :key="player.id"
     >
         {{ player.username }}
-        <span v-if="player.online" class="badge badge-success">{{ $t('ui.lobby.online') }}</span>
-        <span v-else class="badge badge-secondary">{{ $t('ui.lobby.offline') }}</span>
-        <span v-if="player.manager" class="badge badge-danger">{{ $t('ui.lobby.manager') }}</span>
+        <span v-if="player.online" class="badge badge-success">{{ t('ui.lobby.online') }}</span>
+        <span v-else class="badge badge-secondary">{{ t('ui.lobby.offline') }}</span>
+        <span v-if="player.manager" class="badge badge-danger">{{ t('ui.lobby.manager') }}</span>
     </li>
   </ul>
 </div>
@@ -26,6 +26,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
+import { t } from '../../../i18n';
 
 export default defineComponent({
   name: 'PlayersList',
@@ -40,6 +41,9 @@ export default defineComponent({
     self() {
       return this.gameState.players.get(this.gameState.self);
     },
+  },
+  methods: {
+    t,
   },
 });
 </script>

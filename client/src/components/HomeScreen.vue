@@ -1,65 +1,36 @@
 <template>
   <div class="home-screen">
-    <div class="hero-card">
-      <div class="hero-content">
-        <p class="eyebrow">{{ $t('ui.homepage.intro_label') || 'Real-time collaboration' }}</p>
-        <h1 class="headline">{{ $t('ui.homepage.headline') || 'Jump into a room and start creating' }}</h1>
-        <p class="lede">{{ $t('ui.homepage.intro_text') }}</p>
-        <div class="cta-group">
-          <div class="input-group">
-            <label class="input-label" :for="inputId">{{ $t('ui.homepage.join_room_label') || 'Room code' }}</label>
-            <div class="input-row">
-              <input
-                :id="inputId"
-                v-model="roomId"
-                class="room-input"
-                type="text"
-                :placeholder="$t('ui.homepage.join_room_placeholder') || 'Enter room code'"
-                :class="{ 'has-error': joinAttempted && !roomId.trim() }"
-                @keyup.enter="joinRoom()"
-              >
-              <button
-                class="btn-primary"
-                type="button"
-                @click="joinRoom()"
-                :disabled="!roomId.trim()"
-              >
-                {{ $t('ui.homepage.join_room') || 'Join Room' }}
-              </button>
-            </div>
-            <p class="helper-text" :class="{ error: joinAttempted && !roomId.trim() }">
-              <span v-if="joinAttempted && !roomId.trim()">
-                {{ $t('ui.homepage.join_room_error') || 'Add a room code to continue.' }}
-              </span>
-              <span v-else>
-                {{ $t('ui.homepage.join_room_hint') || 'Paste or type a room code from a friend.' }}
-              </span>
-            </p>
-          </div>
-          <div class="divider" role="separator" aria-hidden="true"></div>
-          <div class="input-group">
-            <p class="input-label">{{ $t('ui.homepage.create_room_label') || 'New here?' }}</p>
-            <button
-              class="btn-ghost"
-              type="button"
-              @click="createRoom()"
-              :disabled="creatingRoom"
-            >
-              {{ creatingRoom ? ($t('ui.homepage.creating_room') || 'Creating...') : ($t('ui.homepage.create_room') || 'Create a Room') }}
-            </button>
-            <p class="helper-text">
-              {{ $t('ui.homepage.create_room_hint') || 'Spin up a fresh room and share the code with your team.' }}
-            </p>
-          </div>
+    <div class="button-container">
+      <button
+        class="host-btn"
+        type="button"
+        @click="createRoom()"
+        :disabled="creatingRoom"
+      >
+        {{ creatingRoom ? 'CREATING...' : 'HOST GAME' }}
+      </button>
+      
+      <div class="divider">OR</div>
+      
+      <div class="join-section">
+        <div class="input-row">
+          <input
+            v-model="roomId"
+            class="room-input"
+            type="text"
+            placeholder="ENTER ROOM CODE"
+            :class="{ 'has-error': joinAttempted && !roomId.trim() }"
+            @keyup.enter="joinRoom()"
+          >
         </div>
-      </div>
-      <div class="supporting-panel">
-        <h2 class="panel-title">{{ $t('ui.homepage.how_it_works_title') || 'How it works' }}</h2>
-        <ol class="panel-list">
-          <li>{{ $t('ui.homepage.step_join') || 'Join or create a room from this page.' }}</li>
-          <li>{{ $t('ui.homepage.step_invite') || 'Share the code so others can hop in instantly.' }}</li>
-          <li>{{ $t('ui.homepage.step_collaborate') || 'Collaborate in real-time with chat and shared tools.' }}</li>
-        </ol>
+        <button
+          class="join-btn"
+          type="button"
+          @click="joinRoom()"
+          :disabled="!roomId.trim()"
+        >
+          JOIN GAME
+        </button>
       </div>
     </div>
   </div>
@@ -109,8 +80,117 @@ export default defineComponent({
   background: radial-gradient(circle at 10% 20%, rgba(88, 86, 214, 0.12), transparent 35%),
     radial-gradient(circle at 90% 10%, rgba(32, 201, 151, 0.1), transparent 30%),
     linear-gradient(135deg, rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.7));
-  color: var(--bs-body-color);
-  padding: clamp(1.5rem, 4vw, 3rem);
+  color: white;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100vw;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 320px;
+  padding: 2rem;
+}
+
+.host-btn, .join-btn {
+  width: 100%;
+  padding: 1.25rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.host-btn {
+  background: linear-gradient(45deg, #ff9800, #ffc107);
+  color: #1a237e;
+}
+
+.join-btn {
+  background: linear-gradient(45deg, #00bcd4, #00e5ff);
+  color: #0d47a1;
+}
+
+.host-btn:disabled, .join-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.host-btn:not(:disabled):hover, .join-btn:not(:disabled):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.divider {
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.join-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.room-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.room-input:focus {
+  outline: none;
+  border-color: #00bcd4;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.room-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.room-input.has-error {
+  border-color: #ff5252;
 }
 
 .hero-card {

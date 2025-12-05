@@ -1,14 +1,18 @@
 <template>
 <button type="button" class="btn btn-dark btn-lg text-light" disabled>
   <span class="spinner-border mr-2" role="status" aria-hidden="true"></span>
-  <span class="align-top">{{ $t('ui.loading') }}</span>
+  <span class="align-top">{{ t('ui.loading') }}</span>
 </button>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { t } from '../../../i18n';
 
 export default defineComponent({
   name: 'LoadingSpinner',
+  methods: {
+    t,
+  },
 });
 </script>

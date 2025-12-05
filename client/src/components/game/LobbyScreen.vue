@@ -10,9 +10,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="setupConfirmationModalLabel">
-          {{ $t('ui.lobby.start_game') }}
+          {{ t('ui.lobby.start_game') }}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" :aria-label="$t('ui.cancel')">
+        <button type="button" class="close" data-dismiss="modal" :aria-label="t('ui.cancel')">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -20,13 +20,13 @@
         <table class="table">
           <tbody>
             <tr>
-              <td>{{ $t('ui.lobby.settings.complete_city_size') }}</td>
+              <td>{{ t('ui.lobby.settings.complete_city_size') }}</td>
               <td>{{ gameSetupData.completeCitySize }}</td>
             </tr>
           </tbody>
         </table>
         <div class="card">
-          <div class="card-header">{{ $t('ui.lobby.players') }}</div>
+          <div class="card-header">{{ t('ui.lobby.players') }}</div>
           <ul class="list-group list-group-flush">
             <li
               class="list-group-item d-flex justify-content-between align-items-center"
@@ -38,40 +38,40 @@
               <span
                 v-if="playerId === gameState.self"
                 class="badge badge-info"
-              >{{ $t('ui.lobby.you') }}</span>
+              >{{ t('ui.lobby.you') }}</span>
               <span
                 v-else-if="!getPlayerFromId(playerId).online"
                 class="badge badge-secondary"
-              >{{ $t('ui.lobby.offline') }}</span>
+              >{{ t('ui.lobby.offline') }}</span>
               <span
                 v-else
                 class="badge badge-success"
-              >{{ $t('ui.lobby.online') }}</span>
+              >{{ t('ui.lobby.online') }}</span>
             </li>
           </ul>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          {{ $t('ui.cancel') }}
+          {{ t('ui.cancel') }}
         </button>
         <button
           type="button"
           class="btn btn-primary"
           @click="startGame"
           :disabled="startingGame"
-        >{{ $t('ui.confirm') }}</button>
+        >{{ t('ui.confirm') }}</button>
       </div>
     </div>
   </div>
 </div>
 <div class="card h-100">
-  <div class="card-header">{{ $t('ui.lobby.title') }}</div>
+  <div class="card-header">{{ t('ui.lobby.title') }}</div>
   <div class="row no-gutters h-100 overflow-auto">
     <div v-if="isManager" class="col p-3">
       <div class="form-group">
         <label for="completeCitySize">
-          {{ $t('ui.lobby.settings.complete_city_size') }}
+          {{ t('ui.lobby.settings.complete_city_size') }}
         </label>
         <select class="form-control" id="completeCitySize" v-model="completeCitySize">
           <option :value="7">7</option>
@@ -102,6 +102,7 @@ import { mapGetters } from 'vuex';
 import { PlayerRole } from 'citadels-common';
 import PlayersList from './elements/PlayersList.vue';
 import { store } from '../../store';
+import { t } from '../../i18n';
 
 export default defineComponent({
   components: { PlayersList },
@@ -130,7 +131,7 @@ export default defineComponent({
       if (playersCount > 7) {
         return {
           disabled: true,
-          message: this.$t('ui.lobby.too_many_players'),
+          message: t('ui.lobby.too_many_players'),
         };
       }
 
@@ -138,7 +139,7 @@ export default defineComponent({
       if (playersCount < 2) {
         return {
           disabled: true,
-          message: this.$t('ui.lobby.not_enough_players'),
+          message: t('ui.lobby.not_enough_players'),
         };
       }
 
@@ -146,18 +147,19 @@ export default defineComponent({
       if (!this.isManager) {
         return {
           disabled: true,
-          message: this.$t('ui.lobby.wait_message'),
+          message: t('ui.lobby.wait_message'),
         };
       }
 
       // pass all checks
       return {
         disabled: false,
-        message: this.$t('ui.lobby.start_game'),
+        message: t('ui.lobby.start_game'),
       };
     },
   },
   methods: {
+    t,
     showConfirmationModal() {
       const settings = { completeCitySize: this.completeCitySize };
       store.commit('prepareGameSetupConfirmation', settings);

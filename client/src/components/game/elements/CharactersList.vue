@@ -9,15 +9,15 @@
     >
       <span v-if="killMode" class="mode-chip kill">
         <emoji emoji="💀"></emoji>
-        <span class="ml-1">{{ $t('game.actions.assassin_kill') }}</span>
+        <span class="ml-1">{{ t('game.actions.assassin_kill') }}</span>
       </span>
       <span v-if="robMode" class="mode-chip rob">
         <emoji emoji="💰"></emoji>
-        <span class="ml-1">{{ $t('game.actions.thief_rob') }}</span>
+        <span class="ml-1">{{ t('game.actions.thief_rob') }}</span>
       </span>
       <span v-if="putAsideMode" class="mode-chip put-aside">
         <emoji emoji="⬇️"></emoji>
-        <span class="ml-1">{{ $t('game.messages.choose_characters.put_aside_face_up') }}</span>
+        <span class="ml-1">{{ t('game.messages.choose_characters.put_aside_face_up') }}</span>
       </span>
     </div>
     <div class="characters-layout">
@@ -35,7 +35,7 @@
             'is-selectable': character.selectable,
           },
         ]"
-        v-tooltip="$t(`characters.${character.id}.description`)"
+        v-tooltip="t(`characters.${character.id}.description`)"
         data-placement="left"
         role="button"
         :aria-pressed="character.id === current"
@@ -52,7 +52,7 @@
         </div>
         <div class="card-body text-left">
           <div class="card-title-row">
-            <span class="character-name text-light">{{ $t(`characters.${character.id}.name`) }}</span>
+            <span class="character-name text-light">{{ t(`characters.${character.id}.name`) }}</span>
             <span v-if="character.selectable" class="state-chip selectable">
               <emoji emoji="✅"></emoji>
             </span>
@@ -65,15 +65,15 @@
             </span>
             <span v-if="character.killed" class="state-chip killed">
               <emoji emoji="💀"></emoji>
-              <span class="ml-1">{{ $t('game.actions.assassin_kill') }}</span>
+              <span class="ml-1">{{ t('game.actions.assassin_kill') }}</span>
             </span>
             <span v-else-if="character.robbed" class="state-chip robbed">
               <emoji emoji="💰"></emoji>
-              <span class="ml-1">{{ $t('game.actions.thief_rob') }}</span>
+              <span class="ml-1">{{ t('game.actions.thief_rob') }}</span>
             </span>
             <span v-if="putAsideMode && character.id !== 0" class="state-chip put-aside">
               <emoji emoji="⬇️"></emoji>
-              <span class="ml-1">{{ $t('game.messages.choose_characters.put_aside_face_down') }}</span>
+              <span class="ml-1">{{ t('game.messages.choose_characters.put_aside_face_down') }}</span>
             </span>
           </div>
         </div>
@@ -86,6 +86,7 @@
 import { defineComponent } from 'vue';
 import { Move, MoveType } from 'citadels-common';
 import { store } from '../../../store';
+import { t } from '../../../i18n';
 
 export default defineComponent({
   name: 'CharactersList',
@@ -125,6 +126,7 @@ export default defineComponent({
     },
   },
   methods: {
+    t,
     accentClass(character: number) {
       if (character === 0 || character < this.current) {
         return 'accent-dark';

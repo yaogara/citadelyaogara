@@ -9,7 +9,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     proxy: {
-      '/s/': 'http://localhost:8081/s/',
+      '/s/': {
+        target: 'http://localhost:8081',
+        ws: true,
+        changeOrigin: true,
+      },
     },
   },
 
