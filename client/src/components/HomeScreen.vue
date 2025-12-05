@@ -130,11 +130,12 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 2rem 1rem 1rem;
+  padding: 1rem;
   box-sizing: border-box;
+  gap: 1rem;
 }
 
 // Background with gradient sky and landscape silhouette
@@ -154,15 +155,14 @@ export default defineComponent({
 .title-container {
   position: relative;
   z-index: 1;
-  margin-top: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .logo-image {
-  max-width: 90%;
-  max-height: 140px;
+  max-width: 100%;
+  max-height: 220px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -175,9 +175,8 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
   max-width: 100%;
-  margin: 2rem 0;
+  margin: 0;
 }
 
 .characters-image {
@@ -198,7 +197,7 @@ export default defineComponent({
   gap: 1.5rem;
   width: 100%;
   max-width: 320px;
-  margin-bottom: 2rem;
+  margin: 0;
 }
 
 .host-btn,
@@ -415,12 +414,12 @@ export default defineComponent({
 
 // Responsive adjustments
 @media (max-width: 480px) {
-  .game-title {
-    font-size: 2rem;
+  .logo-image {
+    max-height: 180px;
   }
   
-  .characters-container {
-    margin: 1rem 0;
+  .characters-image {
+    max-height: 280px;
   }
   
   .button-container {
