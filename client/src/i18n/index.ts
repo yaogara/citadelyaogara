@@ -53,6 +53,7 @@ const en = {
       "not_enough_players": "There must be at least 2 players to start the game.",
       "too_many_players": "Too many players (7 max).",
       "settings": {
+        "title": "Settings",
         "complete_city_size": "Number of districts to complete city"
       }
     },
