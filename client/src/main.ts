@@ -4,6 +4,7 @@ import { Boundary } from 'popper.js';
 import twemoji from 'twemoji';
 import router from './router';
 import { store } from './store';
+import { t } from './i18n';
 import App from './App.vue';
 import { t, setLocale } from './i18n';
 
@@ -68,6 +69,8 @@ app.directive('tooltip', {
     $(el).tooltip('dispose');
   },
 });
+
+app.config.globalProperties.$t = t;
 
 app.use(store);
 app.use(router);
