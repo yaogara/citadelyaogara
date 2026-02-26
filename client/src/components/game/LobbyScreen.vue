@@ -159,7 +159,7 @@ export default defineComponent({
       }
 
       // not enough players
-      if (playersCount < 2) {
+      if (playersCount < 1) {
         return {
           disabled: true,
           message: t('ui.lobby.not_enough_players'),

@@ -1,5 +1,4 @@
-import { DistrictId, PlayerBoard, PlayerScore } from 'citadels-common';
-import { CharacterType } from './CharacterManager';
+import { DistrictId, PlayerBoard, PlayerScore, RoleType } from 'citadels-common';
 import DistrictCard, { ALL_DISTRICTS } from './DistrictCard';
 
 export default class PlayerBoardState {
@@ -43,7 +42,8 @@ export default class PlayerBoardState {
     }
 
     // check price
-    const price = ALL_DISTRICTS.get(card)?.card.cost;
+    const cardData = ALL_DISTRICTS.get(card)?.card;
+    const price = cardData?.cost;
     if (price === undefined || price > this.stash) {
       return false;
     }
@@ -55,11 +55,15 @@ export default class PlayerBoardState {
     this.takeCardFromHand(card);
     this.city.push(card);
 
+    // Check if card has immediate effect?
+    // "Assets enter empire immediately".
+    // Some assets might have on-build effects but they are usually static abilities or end game points.
+
     return true;
   }
 
-  computeEarningsForCharacter(character: CharacterType): number {
-    const districtType = DistrictCard.getDistrictTypeFromCharacter(character);
+  computeEarningsForCharacter(role: RoleType): number {
+    const districtType = DistrictCard.getDistrictTypeFromRole(role);
 
     const earnings = districtType === undefined ? 0 : this.city.filter((card) => (
       ALL_DISTRICTS.get(card)?.card.type === districtType
@@ -116,7 +120,7 @@ export default class PlayerBoardState {
       this.score.extraPointsDistrictTypes = 3;
     }
 
-    this.score.total = this.score.base
+    this.score.total = (this.score.base ?? 0)
       + (this.score.extraPointsCompleteCity ?? 0)
       + (this.score.extraPointsStash ?? 0)
       + (this.score.extraPointsHand ?? 0)

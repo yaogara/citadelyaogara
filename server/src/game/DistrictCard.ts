@@ -1,5 +1,4 @@
-import { DistrictId, districts } from 'citadels-common';
-import { CharacterType } from './CharacterManager';
+import { DistrictId, districts, RoleType } from 'citadels-common';
 
 export enum DistrictType {
   NOBLE = 1,
@@ -22,15 +21,19 @@ export default class DistrictCard {
     this.extraPoints = extraPoints;
   }
 
-  static getDistrictTypeFromCharacter(character: CharacterType) {
-    switch (character) {
-      case CharacterType.KING:
+  static getDistrictTypeFromRole(role: RoleType) {
+    switch (role) {
+      case RoleType.BOSS:
         return DistrictType.NOBLE;
-      case CharacterType.BISHOP:
+      case RoleType.POLITICIAN:
         return DistrictType.RELIGIOUS;
-      case CharacterType.MERCHANT:
+      case RoleType.TRAFFICKER:
         return DistrictType.TRADE;
-      case CharacterType.WARLORD:
+      case RoleType.ENFORCER: // Warlord equivalent
+        // Note: In standard Citadels Warlord gets income from Red (Military).
+        // But in Plata o Plomo prompt, it didn't explicitly mention it.
+        // However, usually color matching roles get income.
+        // I will enabling it for consistency with "Warlord" mapping.
         return DistrictType.MILITARY;
       default:
         return undefined;
