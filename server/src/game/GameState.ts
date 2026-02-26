@@ -99,6 +99,7 @@ export default class GameState implements Subject {
       }
     });
     this.board = new BoardState(players);
+    this.progress = GameProgress.IN_GAME;
   }
 
   step(move = { type: MoveType.AUTO } as Move): boolean {
