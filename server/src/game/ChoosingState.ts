@@ -13,6 +13,9 @@ export class CharacterChoosingState {
 
   constructor(playerCount: number) {
     switch (playerCount) {
+      case 1:
+        this.states = CharacterChoosingState.choosingStates1P;
+        break;
       case 2:
         this.states = CharacterChoosingState.choosingStates2P;
         break;
@@ -54,6 +57,16 @@ export class CharacterChoosingState {
   getState() {
     return this.states[this.stateNumber];
   }
+
+  private static choosingStates1P: CharacterChoosingStateArray = [
+    { type: CCST.INITIAL, player: PlayerPosition.SPECTATOR },
+    { type: CCST.PUT_ASIDE_FACE_DOWN, player: PlayerPosition.PLAYER_1 },
+    { type: CCST.CHOOSE_CHARACTER, player: PlayerPosition.PLAYER_1 }, // Pick 1
+    // Maybe pick more for testing?
+    { type: CCST.CHOOSE_CHARACTER, player: PlayerPosition.PLAYER_1 }, // Pick 2
+    { type: CCST.CHOOSE_CHARACTER, player: PlayerPosition.PLAYER_1 }, // Pick 3
+    { type: CCST.DONE, player: PlayerPosition.SPECTATOR },
+  ];
 
   private static choosingStates2P: CharacterChoosingStateArray = [
     { type: CCST.INITIAL, player: PlayerPosition.SPECTATOR },

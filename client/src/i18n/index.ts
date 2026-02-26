@@ -50,8 +50,8 @@ const en = {
       "manager": "Manager",
       "start_game": "Start Game",
       "wait_message": "Waiting for the manager to start the game.",
-      "not_enough_players": "There must be at least 2 players to start the game.",
-      "too_many_players": "Too many players (7 max).",
+      "not_enough_players": "There must be at least 1 player to start the game.",
+      "too_many_players": "Too many players (8 max).",
       "settings": {
         "title": "Settings",
         "complete_city_size": "Number of districts to complete city"
@@ -126,48 +126,48 @@ const en = {
   "characters": [
     {
       "name": "",
-      "description": "Unknown character",
+      "description": "Unknown role",
       "turn": ""
     },
     {
-      "name": "Assassin",
-      "description": "Call a character you wish to kill. The killed character skips their turn.",
-      "turn": "The Assassin is called."
+      "name": "Sicario",
+      "description": "Choose a target Role Rank. That role does not act this round.",
+      "turn": "The Sicario acts."
     },
     {
-      "name": "Thief",
-      "description": "Call a character you wish to rob. When the robbed character is revealed, you take all his gold.",
-      "turn": "The Thief is called."
+      "name": "Mole",
+      "description": "Choose a target Role Rank. Steals ALL cash from target.",
+      "turn": "The Mole acts."
     },
     {
-      "name": "Magician",
-      "description": "Either exchange hands of cards with another player or discard any number of cards to gain an equal number of cards.",
-      "turn": "The Magician is called."
+      "name": "Launderer",
+      "description": "Swap hands with a target player OR discard hand and redraw.",
+      "turn": "The Launderer acts."
     },
     {
-      "name": "King",
-      "description": "Take the crown. Gain 1 gold for each of your Noble districts.",
-      "turn": "The King is called."
+      "name": "Boss",
+      "description": "Get +1 cash per Yellow asset. Immune to Mole theft.",
+      "turn": "The Boss acts."
     },
     {
-      "name": "Bishop",
-      "description": "The Warlord cannot use its ability on your districts. Gain 1 gold for each of your Religious districts.",
-      "turn": "The Bishop is called."
+      "name": "Politician",
+      "description": "Get +1 cash per Blue asset. Blue assets are immune to destruction.",
+      "turn": "The Politician acts."
     },
     {
-      "name": "Merchant",
-      "description": "Gain 1 extra gold. Gain 1 gold for each of your Trade districts.",
-      "turn": "The Merchant is called."
+      "name": "Trafficker",
+      "description": "Get +1 cash per Green asset. May take 3 cash instead of 2.",
+      "turn": "The Trafficker acts."
     },
     {
-      "name": "Architect",
-      "description": "Gain 2 extra cards. You can build up to 3 districts.",
-      "turn": "The Architect is called."
+      "name": "Cook",
+      "description": "Draw 4 cards keep 1. May build up to 3 assets.",
+      "turn": "The Cook acts."
     },
     {
-      "name": "Warlord",
-      "description": "Destroy 1 district by paying 1 fewer gold than its cost. Gain 1 gold for each of your Military districts.",
-      "turn": "The Warlord is called."
+      "name": "Enforcer",
+      "description": "Destroy 1 asset of target player OR Accuse The Rat.",
+      "turn": "The Enforcer acts."
     }
   ],
   "districts": {

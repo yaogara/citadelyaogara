@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import Debug from 'debug';
 import {
-  Move, MoveType, PlayerId, RoomId,
+  GamePhase, Move, MoveType, PlayerId, RoomId,
 } from 'citadels-common';
 import InMemoryGameStore from '../gameManager/InMemoryGameStore';
 import Player from '../game/Player';
@@ -169,16 +169,29 @@ export function initSocket(io: Server) {
         return;
       }
 
-      // player must be current player
-      if (player.id !== room.gameState.board?.getCurrentPlayerId()) {
-        callback({ status: 'error', message: 'you must be the current player' });
-        return;
+      // Check for simultaneous phases
+      const isSimultaneousPhase = room.gameState.board?.gamePhase === GamePhase.PLANNING;
+
+      // If not simultaneous phase, enforce turn order
+      if (!isSimultaneousPhase) {
+          if (player.id !== room.gameState.board?.getCurrentPlayerId()) {
+            callback({ status: 'error', message: 'you must be the current player' });
+            return;
+          }
       }
 
       // check move type (user move cannot be of AUTO type)
       if (move.type === MoveType.AUTO) {
         callback({ status: 'error', message: 'invalid move' });
         return;
+      }
+
+      // Inject player ID for planning phase moves
+      if (move.type === MoveType.SUBMIT_PLAN) {
+          move.data = {
+              playerId: player.id,
+              submission: move.data
+          };
       }
 
       // apply move

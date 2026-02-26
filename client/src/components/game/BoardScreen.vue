@@ -17,8 +17,13 @@
           />
         </div>
       </div>
+
+      <!-- Hand Panel / Planning Screen / Resolution Screen -->
       <div class="surface hand-panel">
+        <PlanningScreen v-if="isPlanningPhase" />
+        <ResolutionScreen v-else-if="isResolutionPhase" />
         <PlayerHand
+          v-else
           :board="selfBoard"
           :build-mode="buildMode"
           :discard-cards-mode="discardCardsMode"
@@ -26,7 +31,11 @@
         />
       </div>
     </section>
+
     <aside class="sidebar" aria-label="Character sections">
+      <!-- Resolution Log visible during Resolution -->
+      <!-- Or just standard panels -->
+
       <div
         v-if="gameProgress === 'IN_GAME'"
         class="section-card"
@@ -104,12 +113,14 @@
 import { defineComponent } from 'vue';
 import $ from 'jquery';
 import { mapGetters } from 'vuex';
-import { CharacterChoosingStateType as CCST, ClientTurnState, Move } from 'citadels-common';
+import { CharacterChoosingStateType as CCST, ClientTurnState, Move, GamePhase } from 'citadels-common';
 import { store } from '../../store';
 import CharactersList from './elements/CharactersList.vue';
 import PlayerCity from './elements/PlayerCity.vue';
 import PlayerHand from './elements/PlayerHand.vue';
 import DistrictCard from './elements/DistrictCard.vue';
+import PlanningScreen from './elements/PlanningScreen.vue';
+import ResolutionScreen from './elements/ResolutionScreen.vue';
 import { getStatusBarData } from '../../data/statusBarData';
 import { t } from '../../i18n';
 
@@ -119,6 +130,8 @@ export default defineComponent({
     PlayerCity,
     PlayerHand,
     DistrictCard,
+    PlanningScreen,
+    ResolutionScreen
   },
   name: 'LobbyScreen',
   data() {
@@ -166,6 +179,12 @@ export default defineComponent({
         default:
           return 'action-bar--normal';
       }
+    },
+    isPlanningPhase() {
+        return this.gameState?.board?.gamePhase === GamePhase.PLANNING;
+    },
+    isResolutionPhase() {
+        return this.gameState?.board?.gamePhase === GamePhase.RESOLUTION;
     },
     buildMode() {
       return this.isCurrentPlayerSelf

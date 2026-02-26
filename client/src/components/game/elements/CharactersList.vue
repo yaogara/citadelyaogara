@@ -147,21 +147,21 @@ export default defineComponent({
     characterIcon(character: number) {
       switch (character) {
         case 1:
-          return '🗡️';
+          return '🗡️'; // Sicario
         case 2:
-          return '🎭';
+          return '🕵️'; // Mole
         case 3:
-          return '🪄';
+          return '💵'; // Launderer
         case 4:
-          return '👑';
+          return '👑'; // Boss
         case 5:
-          return '✝️';
+          return '🏛️'; // Politician
         case 6:
-          return '💰';
+          return '📦'; // Trafficker
         case 7:
-          return '🏗️';
+          return '👨‍🍳'; // Cook
         case 8:
-          return '⚔️';
+          return '🔫'; // Enforcer
         default:
           return '❓';
       }
